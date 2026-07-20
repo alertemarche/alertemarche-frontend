@@ -47,7 +47,8 @@
 
       <div class="notice mb-2">🔒 Aperçu limité : détails complets et alertes réservés aux abonnés. <a href="inscription.html"><b>Créez un compte gratuit</b></a> et recevez 3 alertes offertes.</div>
 
-      <div id="tenderList"><p class="muted">Chargement des appels d'offres privés…</p></div>
+      <p class="muted mb-2" id="tenderCount"></p>
+      <div class="tenders-grid" id="tenderList"><p class="muted">Chargement des appels d'offres privés…</p></div>
     </div>
   </section>
 
@@ -61,39 +62,76 @@
 
   <script src="js/app.js"></script>
   <script>
+    const COUNTRIES = {
+      BJ: { flag: '🇧🇯', name: 'Bénin' },
+      TG: { flag: '🇹🇬', name: 'Togo' },
+      CI: { flag: '🇨🇮', name: "Côte d'Ivoire" },
+    };
+    const svg = {
+      inst: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01"/></svg>',
+      ref: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
+      cal: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+      ext: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>',
+    };
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+
+    // Formate une date ISO en français ; renvoie « À confirmer » si absente.
+    function fmtDate(d) {
+      if (!d) return 'À confirmer';
+      const dt = new Date(d);
+      return isNaN(dt) ? esc(d) : dt.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+    }
+
+    function tenderCard(t) {
+      const c = COUNTRIES[t.country] || { flag: '🌍', name: t.country || '' };
+      const org = t.institution || 'Organisme international';
+      const ref = t.reference ? `<div class="m">${svg.ref}<span>Référence : <b>${esc(t.reference)}</b></span></div>` : '';
+      // Lien vers la fiche officielle (documents de consultation) — nouvel onglet.
+      const url = t.dao_url || t.source_url || '';
+      const btn = url
+        ? `<a href="${esc(url)}" target="_blank" rel="noopener" class="btn btn-purple">Voir la consultation ${svg.ext}</a>`
+        : `<a href="inscription.html" class="btn btn-purple">Voir la consultation ${svg.ext}</a>`;
+      return `<article class="tender-card">
+        <div class="tc-top">
+          <span class="sector-badge" style="background:var(--purple-050);color:var(--purple);">🤝 Privé</span>
+          <span class="tc-time">${c.flag} ${esc(c.name)}</span>
+        </div>
+        <h3>${esc(t.title || 'Consultation')}</h3>
+        <div class="tc-meta">
+          <div class="m">${svg.inst}<span>${esc(org)}</span></div>
+          ${ref}
+          <div class="m">${svg.cal}<span>Date limite : <b>${fmtDate(t.deadline)}</b></span></div>
+        </div>
+        <div class="tc-actions">
+          <a href="inscription.html" class="btn btn-ghost">Recevoir les alertes</a>
+          ${btn}
+        </div>
+      </article>`;
+    }
+
     async function loadTenders() {
       const c = document.getElementById('fCountry').value;
       const s = document.getElementById('fSector').value;
       const q = document.getElementById('fSearch').value.trim();
       const list = document.getElementById('tenderList');
+      const count = document.getElementById('tenderCount');
       list.innerHTML = '<p class="muted">Chargement…</p>';
+      count.textContent = '';
       try {
-        const params = new URLSearchParams({ type: 'private' });
+        const params = new URLSearchParams({ type: 'prive', per_page: '50' });
         if (c) params.set('country', c);
         if (s) params.set('sector', s);
         if (q) params.set('q', q);
         const data = await api('/tenders?' + params.toString());
         const items = data.data || data.tenders || [];
+        // Tri par date limite croissante (les plus urgentes d'abord).
+        items.sort((a, b) => new Date(a.deadline || '2999-01-01') - new Date(b.deadline || '2999-01-01'));
         if (!items.length) { list.innerHTML = '<div class="card">Aucun appel d\'offres privé à afficher pour le moment.</div>'; return; }
-        list.innerHTML = items.map(renderTender).join('');
+        count.textContent = items.length + ' consultation(s) privée(s) en cours';
+        list.innerHTML = items.map(tenderCard).join('');
       } catch (e) {
         list.innerHTML = '<div class="card">Le flux sera alimenté dès la mise en service. <a href="inscription.html">Inscrivez-vous</a> pour être alerté en priorité.</div>';
       }
-    }
-    function renderTender(t) {
-      const c = COUNTRIES[t.country_code] || { flag: '🌍', name: t.country_code || '' };
-      return `<div class="tender">
-        <div class="tender__top">
-          <div><span class="chip chip--prive">Privé</span> <h3 style="display:inline;margin-left:8px;">${t.title || 'Consultation'}</h3></div>
-          <span class="chip">${c.flag} ${c.name}</span>
-        </div>
-        <p class="muted mt-1">${t.summary || t.description || 'Résumé disponible pour les abonnés.'}</p>
-        <div class="tender__meta">
-          <span>Secteur : <b>${t.sector || '—'}</b></span>
-          <span>Émetteur : <b>${t.source || '—'}</b></span>
-          <span>Clôture : <b>${t.deadline || 'À confirmer'}</b></span>
-        </div>
-      </div>`;
     }
     async function loadSectors() {
       try {
@@ -106,6 +144,8 @@
     }
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('fBtn').addEventListener('click', loadTenders);
+      document.getElementById('fSearch').addEventListener('keydown', e => { if (e.key === 'Enter') loadTenders(); });
+      document.getElementById('fCountry').addEventListener('change', loadTenders);
       loadSectors(); loadTenders();
     });
   </script>
