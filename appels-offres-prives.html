@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Appels d'offres privés — AlerteMarché · Bénin, Togo, Côte d'Ivoire</title>
+  <meta name="description" content="Consultations d'entreprises, grands groupes, ONG et bailleurs : recevez les appels d'offres privés du Bénin, du Togo et de la Côte d'Ivoire directement par WhatsApp et e-mail.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-RRXKSCN05J"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RRXKSCN05J');</script>
+</head>
+<body>
+
+  <header class="section section--tight" style="background:linear-gradient(180deg,#fff,var(--bg));">
+    <div class="container">
+      <span class="chip chip--prive">🤝 Marchés privés</span>
+      <h1 class="mt-2">Appels d'offres privés</h1>
+      <p class="lead mt-1">Grandes entreprises, groupes industriels, ONG et bailleurs de fonds publient chaque semaine des consultations privées. AlerteMarché les centralise et vous alerte selon votre secteur d'activité.</p>
+    </div>
+  </header>
+
+  <section class="section--tight">
+    <div class="container">
+      <div class="grid grid-4">
+        <div class="card"><div class="card__icon">🏭</div><h3>Grands groupes</h3><p>Consultations fournisseurs des entreprises industrielles et commerciales.</p></div>
+        <div class="card"><div class="card__icon">🤝</div><h3>ONG & bailleurs</h3><p>Appels à manifestation d'intérêt et consultations des organisations.</p></div>
+        <div class="card"><div class="card__icon">🏦</div><h3>Banques & assurances</h3><p>Prestations de services, IT, logistique et sous-traitance.</p></div>
+        <div class="card"><div class="card__icon">🏗️</div><h3>BTP & énergie</h3><p>Sous-traitance de chantiers et fournitures spécialisées.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:20px;">
+    <div class="container">
+      <div class="filters">
+        <select class="select" id="fCountry">
+          <option value="">Tous les pays</option>
+          <option value="BJ">🇧🇯 Bénin</option>
+          <option value="TG">🇹🇬 Togo</option>
+          <option value="CI">🇨🇮 Côte d'Ivoire</option>
+        </select>
+        <select class="select" id="fSector"><option value="">Tous les secteurs</option></select>
+        <input class="input" id="fSearch" placeholder="Rechercher un mot-clé…">
+        <button class="btn btn--primary" id="fBtn">Filtrer</button>
+      </div>
+
+      <div class="notice mb-2">🔒 Aperçu limité : détails complets et alertes réservés aux abonnés. <a href="inscription.html"><b>Créez un compte gratuit</b></a> et recevez 3 alertes offertes.</div>
+
+      <div id="tenderList"><p class="muted">Chargement des appels d'offres privés…</p></div>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--white);border-top:1px solid var(--line);">
+    <div class="container text-center">
+      <h2>Vous êtes une entreprise ou une ONG ?</h2>
+      <p class="lead mx-auto mt-1">Publiez gratuitement vos propres consultations et touchez des milliers de prestataires qualifiés.</p>
+      <div class="mt-3"><a href="inscription.html" class="btn btn--primary btn--lg">Publier une consultation</a></div>
+    </div>
+  </section>
+
+  <script src="js/app.js"></script>
+  <script>
+    async function loadTenders() {
+      const c = document.getElementById('fCountry').value;
+      const s = document.getElementById('fSector').value;
+      const q = document.getElementById('fSearch').value.trim();
+      const list = document.getElementById('tenderList');
+      list.innerHTML = '<p class="muted">Chargement…</p>';
+      try {
+        const params = new URLSearchParams({ type: 'private' });
+        if (c) params.set('country', c);
+        if (s) params.set('sector', s);
+        if (q) params.set('q', q);
+        const data = await api('/tenders?' + params.toString());
+        const items = data.data || data.tenders || [];
+        if (!items.length) { list.innerHTML = '<div class="card">Aucun appel d\'offres privé à afficher pour le moment.</div>'; return; }
+        list.innerHTML = items.map(renderTender).join('');
+      } catch (e) {
+        list.innerHTML = '<div class="card">Le flux sera alimenté dès la mise en service. <a href="inscription.html">Inscrivez-vous</a> pour être alerté en priorité.</div>';
+      }
+    }
+    function renderTender(t) {
+      const c = COUNTRIES[t.country_code] || { flag: '🌍', name: t.country_code || '' };
+      return `<div class="tender">
+        <div class="tender__top">
+          <div><span class="chip chip--prive">Privé</span> <h3 style="display:inline;margin-left:8px;">${t.title || 'Consultation'}</h3></div>
+          <span class="chip">${c.flag} ${c.name}</span>
+        </div>
+        <p class="muted mt-1">${t.summary || t.description || 'Résumé disponible pour les abonnés.'}</p>
+        <div class="tender__meta">
+          <span>Secteur : <b>${t.sector || '—'}</b></span>
+          <span>Émetteur : <b>${t.source || '—'}</b></span>
+          <span>Clôture : <b>${t.deadline || 'À confirmer'}</b></span>
+        </div>
+      </div>`;
+    }
+    async function loadSectors() {
+      try {
+        const data = await api('/sectors');
+        const sel = document.getElementById('fSector');
+        (data.data || data || []).forEach(s => {
+          const o = document.createElement('option'); o.value = s.code || s.id; o.textContent = s.name; sel.appendChild(o);
+        });
+      } catch {}
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('fBtn').addEventListener('click', loadTenders);
+      loadSectors(); loadTenders();
+    });
+  </script>
+</body>
+</html>

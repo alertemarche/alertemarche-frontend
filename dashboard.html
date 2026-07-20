@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon espace — AlerteMarché</title>
+  <meta name="description" content="Tableau de bord AlerteMarché : vos alertes, abonnements et paramètres.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-RRXKSCN05J"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RRXKSCN05J');</script>
+</head>
+<body data-no-chrome="1">
+
+  <nav class="nav">
+    <div class="container nav__inner">
+      <a href="index.html" class="brand"><span class="brand__mark">🔔</span><span>Alerte<b>Marché</b></span></a>
+      <div class="nav__actions">
+        <span class="nav__geo" id="uName">…</span>
+        <button class="btn btn--ghost btn--sm" id="logoutBtn">Déconnexion</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="dash">
+    <aside class="dash__side">
+      <a href="#" class="active" data-tab="overview">📊 Vue d'ensemble</a>
+      <a href="#" data-tab="alerts">🔔 Mes alertes</a>
+      <a href="#" data-tab="subs">💳 Abonnements</a>
+      <a href="#" data-tab="settings">⚙️ Paramètres</a>
+      <a href="tarifs.html">⬆️ Améliorer mon offre</a>
+    </aside>
+
+    <main class="dash__main">
+      <!-- Vue d'ensemble -->
+      <section data-panel="overview">
+        <h2 class="mb-2">Bonjour <span id="uHello"></span> 👋</h2>
+        <div class="kpi-grid">
+          <div class="kpi"><b id="kAlerts">—</b><span>Alertes reçues</span></div>
+          <div class="kpi"><b id="kFree">—</b><span>Alertes gratuites restantes</span></div>
+          <div class="kpi"><b id="kPlan">—</b><span>Formule actuelle</span></div>
+          <div class="kpi"><b id="kCountry">—</b><span>Pays principal</span></div>
+        </div>
+        <div class="card">
+          <h3 class="mb-2">Statut de votre compte</h3>
+          <div id="statusBox"><p class="muted">Chargement…</p></div>
+        </div>
+      </section>
+
+      <!-- Alertes -->
+      <section data-panel="alerts" class="hidden">
+        <h2 class="mb-2">Mes alertes</h2>
+        <div id="alertsList"><p class="muted">Chargement…</p></div>
+      </section>
+
+      <!-- Abonnements -->
+      <section data-panel="subs" class="hidden">
+        <h2 class="mb-2">Mes abonnements</h2>
+        <div id="subsList"><p class="muted">Chargement…</p></div>
+        <div class="notice mt-2">Pour ajouter un pays ou changer de formule, rendez-vous sur la page <a href="tarifs.html"><b>Tarifs</b></a>.</div>
+      </section>
+
+      <!-- Paramètres -->
+      <section data-panel="settings" class="hidden">
+        <h2 class="mb-2">Paramètres</h2>
+        <div class="config-box" style="max-width:560px;">
+          <div id="setMsg"></div>
+          <div class="field"><label>Nom / Structure</label><input class="input" id="sName"></div>
+          <div class="field"><label>Canaux d'alerte</label>
+            <label style="display:flex;gap:10px;align-items:center;font-weight:500;margin-bottom:8px;"><input type="checkbox" id="sEmail"> E-mail</label>
+            <label style="display:flex;gap:10px;align-items:center;font-weight:500;"><input type="checkbox" id="sWhatsapp"> WhatsApp <span class="muted" style="font-size:.82rem;">(abonnement payant)</span></label>
+          </div>
+          <button class="btn btn--primary" id="saveSettings">Enregistrer</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    if (!token()) location.href = 'connexion.html';
+    let ME = null;
+
+    function switchTab(tab) {
+      $$('.dash__side a[data-tab]').forEach(a => a.classList.toggle('active', a.dataset.tab === tab));
+      $$('[data-panel]').forEach(p => p.classList.toggle('hidden', p.dataset.panel !== tab));
+      if (tab === 'alerts') loadAlerts();
+      if (tab === 'subs') loadSubs();
+    }
+
+    async function loadMe() {
+      try {
+        const d = await api('/auth/me', { auth: true });
+        ME = d.user;
+        const sub = d.subscription;
+        document.getElementById('uName').textContent = ME.name || ME.email || ME.phone;
+        document.getElementById('uHello').textContent = (ME.name || '').split(' ')[0] || '';
+        document.getElementById('kFree').textContent = d.free_alerts_remaining ?? '—';
+        document.getElementById('kPlan').textContent = sub ? (PROFILES[ME.profile_type]?.label || ME.profile_type) : 'Gratuit';
+        document.getElementById('kCountry').textContent = (COUNTRIES[ME.primary_country]?.flag || '') + ' ' + (COUNTRIES[ME.primary_country]?.name || ME.primary_country || '—');
+        document.getElementById('sName').value = ME.name || '';
+        document.getElementById('sEmail').checked = !!ME.notify_email;
+        document.getElementById('sWhatsapp').checked = !!ME.notify_whatsapp;
+        const box = document.getElementById('statusBox');
+        if (sub && sub.status === 'active') {
+          box.innerHTML = `<p>✅ Abonnement <b>${PROFILES[ME.profile_type]?.label || ME.profile_type}</b> actif jusqu'au <b>${sub.ends_at || '—'}</b>.</p>`;
+        } else {
+          box.innerHTML = `<p>Vous êtes en formule <b>gratuite (freemium)</b>. Il vous reste <b>${d.free_alerts_remaining ?? 0}</b> alertes offertes.</p>
+            <div class="mt-2"><a href="tarifs.html" class="btn btn--primary">Passer à une offre complète</a></div>`;
+        }
+      } catch (e) { localStorage.removeItem('am_token'); location.href = 'connexion.html'; }
+    }
+
+    async function loadAlerts() {
+      const el = document.getElementById('alertsList'); el.innerHTML = '<p class="muted">Chargement…</p>';
+      try {
+        const d = await api('/alerts', { auth: true });
+        const items = d.data || d.alerts || [];
+        document.getElementById('kAlerts').textContent = d.total ?? items.length;
+        if (!items.length) { el.innerHTML = '<div class="card">Aucune alerte pour le moment. Dès qu\'une opportunité correspond à votre profil, elle apparaîtra ici.</div>'; return; }
+        el.innerHTML = items.map(a => `<div class="tender">
+          <div class="tender__top"><h3>${a.title || a.tender?.title || 'Alerte'}</h3><span class="chip">${a.channel || 'e-mail'}</span></div>
+          <p class="muted mt-1">${a.summary || a.tender?.summary || ''}</p>
+          <div class="tender__meta"><span>Envoyée le <b>${a.sent_at || a.created_at || '—'}</b></span></div>
+        </div>`).join('');
+      } catch { el.innerHTML = '<div class="card">Impossible de charger les alertes.</div>'; }
+    }
+
+    async function loadSubs() {
+      const el = document.getElementById('subsList'); el.innerHTML = '<p class="muted">Chargement…</p>';
+      try {
+        const d = await api('/subscriptions', { auth: true });
+        const items = d.data || d.subscriptions || [];
+        if (!items.length) { el.innerHTML = '<div class="card">Aucun abonnement actif. <a href="tarifs.html">Découvrez nos offres</a>.</div>'; return; }
+        el.innerHTML = items.map(s => `<div class="tender">
+          <div class="tender__top"><h3>${PROFILES[s.profile_type]?.label || s.profile_type}</h3><span class="chip">${s.status}</span></div>
+          <div class="tender__meta"><span>Pays : <b>${(s.countries||[]).join(', ')}</b></span><span>Montant : <b>${fmt(s.amount||0)}</b></span><span>Échéance : <b>${s.ends_at||'—'}</b></span></div>
+        </div>`).join('');
+      } catch { el.innerHTML = '<div class="card">Impossible de charger les abonnements.</div>'; }
+    }
+
+    async function saveSettings() {
+      const msg = document.getElementById('setMsg');
+      msg.innerHTML = '<div class="notice">Enregistrement…</div>';
+      try {
+        await api('/profile', { method: 'PUT', auth: true, body: {
+          name: document.getElementById('sName').value.trim(),
+          notify_email: document.getElementById('sEmail').checked,
+          notify_whatsapp: document.getElementById('sWhatsapp').checked,
+        }});
+        msg.innerHTML = '<div class="notice">✅ Paramètres enregistrés.</div>';
+      } catch { msg.innerHTML = '<div class="notice" style="border-color:var(--danger);color:var(--danger);">Échec de l\'enregistrement.</div>'; }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      $$('.dash__side a[data-tab]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); switchTab(a.dataset.tab); }));
+      document.getElementById('logoutBtn').addEventListener('click', async () => {
+        try { await api('/auth/logout', { method: 'POST', auth: true }); } catch {}
+        localStorage.removeItem('am_token'); location.href = 'index.html';
+      });
+      document.getElementById('saveSettings').addEventListener('click', saveSettings);
+      loadMe();
+    });
+  </script>
+</body>
+</html>

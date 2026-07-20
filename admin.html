@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Back-office — AlerteMarché</title>
+  <meta name="description" content="Administration AlerteMarché.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-no-chrome="1">
+
+  <nav class="nav">
+    <div class="container nav__inner">
+      <a href="index.html" class="brand"><span class="brand__mark">🔔</span><span>Alerte<b>Marché</b> · Admin</span></a>
+      <div class="nav__actions">
+        <span class="nav__geo" id="aName">Admin</span>
+        <button class="btn btn--ghost btn--sm" id="logoutBtn">Déconnexion</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="dash">
+    <aside class="dash__side">
+      <a href="#" class="active" data-tab="overview">📊 Statistiques</a>
+      <a href="#" data-tab="scrapers">🤖 Scrapers</a>
+      <a href="#" data-tab="users">👥 Utilisateurs</a>
+      <a href="#" data-tab="needs">📢 Besoins à valider</a>
+    </aside>
+
+    <main class="dash__main">
+      <section data-panel="overview">
+        <h2 class="mb-2">Statistiques</h2>
+        <div class="kpi-grid">
+          <div class="kpi"><b id="sUsers">—</b><span>Utilisateurs</span></div>
+          <div class="kpi"><b id="sSubs">—</b><span>Abonnements actifs</span></div>
+          <div class="kpi"><b id="sTenders">—</b><span>Appels d'offres</span></div>
+          <div class="kpi"><b id="sAlerts">—</b><span>Alertes envoyées</span></div>
+        </div>
+        <div class="card"><h3 class="mb-2">Revenus estimés</h3><div id="revBox"><p class="muted">Chargement…</p></div></div>
+      </section>
+
+      <section data-panel="scrapers" class="hidden">
+        <h2 class="mb-2">État des scrapers</h2>
+        <div id="scrapersList"><p class="muted">Chargement…</p></div>
+      </section>
+
+      <section data-panel="users" class="hidden">
+        <h2 class="mb-2">Utilisateurs</h2>
+        <div id="usersList"><p class="muted">Chargement…</p></div>
+      </section>
+
+      <section data-panel="needs" class="hidden">
+        <h2 class="mb-2">Besoins en attente de validation</h2>
+        <div id="needsList"><p class="muted">Chargement…</p></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    if (!token()) location.href = 'connexion.html';
+
+    function switchTab(tab) {
+      $$('.dash__side a[data-tab]').forEach(a => a.classList.toggle('active', a.dataset.tab === tab));
+      $$('[data-panel]').forEach(p => p.classList.toggle('hidden', p.dataset.panel !== tab));
+      if (tab === 'scrapers') loadScrapers();
+      if (tab === 'users') loadUsers();
+      if (tab === 'needs') loadNeeds();
+    }
+
+    async function loadStats() {
+      try {
+        const d = await api('/admin/stats', { auth: true });
+        document.getElementById('sUsers').textContent = d.users ?? '—';
+        document.getElementById('sSubs').textContent = d.active_subscriptions ?? d.subscriptions ?? '—';
+        document.getElementById('sTenders').textContent = d.tenders ?? '—';
+        document.getElementById('sAlerts').textContent = d.alerts ?? '—';
+        document.getElementById('revBox').innerHTML = `<p style="font-size:1.6rem;font-weight:800;color:var(--green-700);">${fmt(d.revenue || 0)}</p><p class="muted">Chiffre d'affaires cumulé estimé.</p>`;
+      } catch (e) {
+        if (e.status === 401 || e.status === 403) { location.href = 'connexion.html'; }
+      }
+    }
+    async function loadScrapers() {
+      const el = document.getElementById('scrapersList'); el.innerHTML = '<p class="muted">Chargement…</p>';
+      try {
+        const d = await api('/admin/scrapers', { auth: true });
+        const items = d.data || d.logs || d || [];
+        if (!items.length) { el.innerHTML = '<div class="card">Aucun log de scraper pour le moment.</div>'; return; }
+        el.innerHTML = items.map(s => `<div class="tender"><div class="tender__top"><h3>${(COUNTRIES[s.country_code]?.flag||'')} ${s.source || s.country_code}</h3><span class="chip ${s.status==='success'?'':'chip--prive'}">${s.status}</span></div>
+          <div class="tender__meta"><span>Trouvés : <b>${s.found ?? '—'}</b></span><span>Nouveaux : <b>${s.inserted ?? '—'}</b></span><span>Le <b>${s.created_at || '—'}</b></span></div></div>`).join('');
+      } catch { el.innerHTML = '<div class="card">Impossible de charger les logs.</div>'; }
+    }
+    async function loadUsers() {
+      const el = document.getElementById('usersList'); el.innerHTML = '<p class="muted">Chargement…</p>';
+      try {
+        const d = await api('/admin/users', { auth: true });
+        const items = d.data || d.users || [];
+        if (!items.length) { el.innerHTML = '<div class="card">Aucun utilisateur.</div>'; return; }
+        el.innerHTML = items.map(u => `<div class="tender"><div class="tender__top"><h3>${u.name || u.email || u.phone}</h3><span class="chip">${PROFILES[u.profile_type]?.label || u.profile_type}</span></div>
+          <div class="tender__meta"><span>${u.email || u.phone || ''}</span><span>Pays : <b>${u.primary_country||'—'}</b></span><span>Inscrit le <b>${u.created_at||'—'}</b></span></div></div>`).join('');
+      } catch { el.innerHTML = '<div class="card">Impossible de charger les utilisateurs.</div>'; }
+    }
+    async function loadNeeds() {
+      const el = document.getElementById('needsList'); el.innerHTML = '<p class="muted">Chargement…</p>';
+      try {
+        const d = await api('/admin/needs/pending', { auth: true });
+        const items = d.data || d.needs || [];
+        if (!items.length) { el.innerHTML = '<div class="card">Aucun besoin en attente.</div>'; return; }
+        el.innerHTML = items.map(n => `<div class="tender"><div class="tender__top"><h3>${n.title || 'Besoin'}</h3><button class="btn btn--primary btn--sm" onclick="validateNeed(${n.id})">Valider & diffuser</button></div>
+          <p class="muted mt-1">${n.description || ''}</p>
+          <div class="tender__meta"><span>${(COUNTRIES[n.country_code]?.flag||'')} ${n.city||''}</span><span>Contact : <b>${n.phone||n.name||'—'}</b></span></div></div>`).join('');
+      } catch { el.innerHTML = '<div class="card">Impossible de charger les besoins.</div>'; }
+    }
+    async function validateNeed(id) {
+      try { await api(`/admin/needs/${id}/validate`, { method: 'POST', auth: true }); loadNeeds(); }
+      catch { alert('Échec de la validation.'); }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      $$('.dash__side a[data-tab]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); switchTab(a.dataset.tab); }));
+      document.getElementById('logoutBtn').addEventListener('click', async () => {
+        try { await api('/auth/logout', { method: 'POST', auth: true }); } catch {}
+        localStorage.removeItem('am_token'); location.href = 'index.html';
+      });
+      loadStats();
+    });
+  </script>
+</body>
+</html>

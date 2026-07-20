@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tarifs — AlerteMarché</title>
+  <meta name="description" content="Des tarifs simples et transparents en FCFA. Profitez de -50% de réduction de lancement. Artisans, prestataires, administrations et ONG au Bénin, Togo et Côte d'Ivoire.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-RRXKSCN05J"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RRXKSCN05J');</script>
+</head>
+<body>
+
+  <header class="section section--tight text-center" style="background:linear-gradient(180deg,#fff,var(--bg));">
+    <div class="container">
+      <span class="badge">🎉 Offre de lancement : -50% sur tous les abonnements</span>
+      <h1 class="mt-2">Des tarifs clairs, en FCFA</h1>
+      <p class="lead mx-auto mt-1">Payez uniquement pour les pays qui vous intéressent. Un abonnement annuel, sans surprise, résiliable à tout moment.</p>
+    </div>
+  </header>
+
+  <!-- CONFIGURATEUR -->
+  <section class="section" style="padding-top:32px;">
+    <div class="container">
+      <div class="grid grid-2" style="align-items:start;gap:34px;">
+        <div class="config-box">
+          <h3 class="mb-2">Configurez votre abonnement</h3>
+          <div class="field">
+            <label>Votre profil</label>
+            <select class="select" id="cfgProfile">
+              <option value="artisan">🛠️ Artisan (auto-entrepreneur)</option>
+              <option value="prestataire" selected>🏢 Prestataire (entreprise, PME)</option>
+              <option value="admin_public">🏛️ Administration publique</option>
+              <option value="ong">🤝 ONG / Agence</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Pays à surveiller</label>
+            <div id="cfgCountries" style="display:flex;flex-direction:column;gap:10px;">
+              <label class="profile-opt" style="display:flex;align-items:center;gap:10px;text-align:left;cursor:pointer;">
+                <input type="checkbox" value="BJ" checked> <span>🇧🇯 Bénin</span></label>
+              <label class="profile-opt" style="display:flex;align-items:center;gap:10px;text-align:left;cursor:pointer;">
+                <input type="checkbox" value="TG"> <span>🇹🇬 Togo</span></label>
+              <label class="profile-opt" style="display:flex;align-items:center;gap:10px;text-align:left;cursor:pointer;">
+                <input type="checkbox" value="CI"> <span>🇨🇮 Côte d'Ivoire</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="price-out">
+            <div class="muted" id="poLabel">Prestataire · 1 pays</div>
+            <div class="amount"><span id="poAmount">25 000</span> <small>FCFA / an</small></div>
+            <div class="strike" id="poStrike">50 000 FCFA</div>
+            <div><span class="save" id="poSave">Vous économisez 25 000 FCFA</span></div>
+            <div class="mt-3"><a href="inscription.html" class="btn btn--primary btn--block btn--lg" id="poCta">S'abonner maintenant</a></div>
+          </div>
+          <div class="notice mt-2">Le prix affiché correspond au <b>tarif de lancement (-50%)</b>. Il est calculé automatiquement selon votre profil et le nombre de pays sélectionnés.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GRILLE PLANS -->
+  <section class="section" style="background:var(--white);border-top:1px solid var(--line);">
+    <div class="container">
+      <div class="section__head">
+        <div class="eyebrow">Grille tarifaire</div>
+        <h2>Un tarif par profil (par pays / an)</h2>
+        <p class="muted">Prix barré = tarif normal · Prix affiché = tarif de lancement -50%</p>
+      </div>
+      <div class="grid grid-4">
+        <div class="plan">
+          <h3>🛠️ Artisan</h3><p class="muted">Auto-entrepreneurs</p>
+          <div class="plan__price"><span class="strike" style="font-size:1rem;">10 000</span> 5 000 <small>FCFA/pays/an</small></div>
+          <ul>
+            <li>Alertes WhatsApp & e-mail</li>
+            <li>Besoins clients près de vous</li>
+            <li>Profil artisan visible</li>
+            <li>Résumés IA</li>
+          </ul>
+          <a href="inscription.html?profil=artisan" class="btn btn--ghost btn--block">Choisir</a>
+        </div>
+        <div class="plan plan--featured">
+          <div class="plan__tag">Le plus choisi</div>
+          <h3>🏢 Prestataire</h3><p class="muted">Entreprises & PME</p>
+          <div class="plan__price"><span class="strike" style="font-size:1rem;">50 000</span> 25 000 <small>FCFA/pays/an</small></div>
+          <ul>
+            <li>Appels d'offres publics & privés</li>
+            <li>Filtres par secteur</li>
+            <li>Alertes illimitées</li>
+            <li>Résumés IA & liens sources</li>
+            <li>Support prioritaire</li>
+          </ul>
+          <a href="inscription.html?profil=prestataire" class="btn btn--primary btn--block">Choisir</a>
+        </div>
+        <div class="plan">
+          <h3>🏛️ Administration</h3><p class="muted">Ministères, mairies</p>
+          <div class="plan__price"><span class="strike" style="font-size:1rem;">150 000</span> 75 000 <small>FCFA/pays/an</small></div>
+          <ul>
+            <li>Veille complète multi-secteurs</li>
+            <li>Publication d'avis</li>
+            <li>Comptes multi-utilisateurs</li>
+            <li>Tableau de bord dédié</li>
+          </ul>
+          <a href="inscription.html?profil=admin_public" class="btn btn--ghost btn--block">Choisir</a>
+        </div>
+        <div class="plan">
+          <h3>🤝 ONG / Agence</h3><p class="muted">Humanitaire & bailleurs</p>
+          <div class="plan__price"><span class="strike" style="font-size:1rem;">150 000</span> 75 000 <small>FCFA/pays/an</small></div>
+          <ul>
+            <li>AMI & consultations</li>
+            <li>Diffusion de vos appels</li>
+            <li>Comptes multi-utilisateurs</li>
+            <li>Support dédié</li>
+          </ul>
+          <a href="inscription.html?profil=ong" class="btn btn--ghost btn--block">Choisir</a>
+        </div>
+      </div>
+      <p class="text-center muted mt-3">💡 <b>Compte gratuit (freemium)</b> disponible : recevez <b>3 alertes offertes</b> pour tester la plateforme.</p>
+    </div>
+  </section>
+
+  <script src="js/app.js"></script>
+  <script>
+    function selectedCountries() {
+      return $$('#cfgCountries input:checked').map(i => i.value);
+    }
+    async function recompute() {
+      const profile = document.getElementById('cfgProfile').value;
+      const countries = selectedCountries();
+      const p = PROFILES[profile];
+      const n = Math.max(countries.length, 1);
+      let promo = p.promo * n, base = p.base * n;
+      // Essaie le calcul serveur (source de vérité), sinon fallback local.
+      try {
+        const q = await api('/pricing/quote', { method: 'POST', body: { profile_type: profile, country_count: n, promo: true } });
+        if (q && q.promo_total) { promo = q.promo_total; base = q.normal_total || base; }
+      } catch {}
+      document.getElementById('poLabel').textContent = `${p.label.replace(/s$/,'')} · ${n} pays`;
+      document.getElementById('poAmount').textContent = new Intl.NumberFormat('fr-FR').format(promo);
+      document.getElementById('poStrike').textContent = new Intl.NumberFormat('fr-FR').format(base) + ' FCFA';
+      document.getElementById('poSave').textContent = 'Vous économisez ' + new Intl.NumberFormat('fr-FR').format(base - promo) + ' FCFA';
+      document.getElementById('poCta').href = `inscription.html?profil=${profile}&pays=${countries.join(',')}`;
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('cfgProfile').addEventListener('change', recompute);
+      $$('#cfgCountries input').forEach(i => i.addEventListener('change', e => {
+        e.target.closest('.profile-opt').classList.toggle('active', e.target.checked);
+        recompute();
+      }));
+      $$('#cfgCountries input:checked').forEach(i => i.closest('.profile-opt').classList.add('active'));
+      recompute();
+    });
+  </script>
+</body>
+</html>

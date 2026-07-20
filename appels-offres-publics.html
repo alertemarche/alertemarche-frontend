@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Appels d'offres publics — AlerteMarché · Bénin, Togo, Côte d'Ivoire</title>
+  <meta name="description" content="Suivez en temps réel les appels d'offres publics (ARMP, DNCMP, ANRMP) du Bénin, du Togo et de la Côte d'Ivoire. Alertes automatiques par WhatsApp et e-mail.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-RRXKSCN05J"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RRXKSCN05J');</script>
+</head>
+<body>
+
+  <header class="section section--tight" style="background:linear-gradient(180deg,#fff,var(--bg));">
+    <div class="container">
+      <span class="chip chip--public">🏛️ Marchés publics</span>
+      <h1 class="mt-2">Appels d'offres publics</h1>
+      <p class="lead mt-1">AlerteMarché surveille en continu les sources officielles de commande publique du Bénin, du Togo et de la Côte d'Ivoire. Chaque avis est résumé par IA puis diffusé aux abonnés concernés.</p>
+    </div>
+  </header>
+
+  <section class="section--tight">
+    <div class="container">
+      <div class="grid grid-3">
+        <div class="card">
+          <div class="card__icon">🇧🇯</div>
+          <h3>Bénin</h3>
+          <p><b>ARMP</b> — Autorité de Régulation des Marchés Publics<br><b>DNCMP</b> — Direction Nationale de Contrôle des Marchés Publics.</p>
+        </div>
+        <div class="card">
+          <div class="card__icon">🇹🇬</div>
+          <h3>Togo</h3>
+          <p><b>ARMP Togo</b> — Autorité de Régulation de la Commande Publique et portail des marchés publics.</p>
+        </div>
+        <div class="card">
+          <div class="card__icon">🇨🇮</div>
+          <h3>Côte d'Ivoire</h3>
+          <p><b>ANRMP</b> — Autorité Nationale de Régulation des Marchés Publics et bulletins officiels.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:20px;">
+    <div class="container">
+      <div class="filters">
+        <select class="select" id="fCountry">
+          <option value="">Tous les pays</option>
+          <option value="BJ">🇧🇯 Bénin</option>
+          <option value="TG">🇹🇬 Togo</option>
+          <option value="CI">🇨🇮 Côte d'Ivoire</option>
+        </select>
+        <select class="select" id="fSector"><option value="">Tous les secteurs</option></select>
+        <input class="input" id="fSearch" placeholder="Rechercher un mot-clé…">
+        <button class="btn btn--primary" id="fBtn">Filtrer</button>
+      </div>
+
+      <div class="notice mb-2">🔒 Aperçu limité : les détails complets et les alertes personnalisées sont réservés aux abonnés. <a href="inscription.html"><b>Créer un compte gratuit</b></a> pour recevoir 3 alertes offertes.</div>
+
+      <div id="tenderList"><p class="muted">Chargement des appels d'offres publics…</p></div>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--white);border-top:1px solid var(--line);">
+    <div class="container text-center">
+      <h2>Recevez ces opportunités automatiquement</h2>
+      <p class="lead mx-auto mt-1">Ne consultez plus les sites un par un. Nous vous envoyons uniquement ce qui vous concerne.</p>
+      <div class="mt-3"><a href="inscription.html" class="btn btn--primary btn--lg">Activer mes alertes</a></div>
+    </div>
+  </section>
+
+  <script src="js/app.js"></script>
+  <script>
+    async function loadTenders() {
+      const c = document.getElementById('fCountry').value;
+      const s = document.getElementById('fSector').value;
+      const q = document.getElementById('fSearch').value.trim();
+      const list = document.getElementById('tenderList');
+      list.innerHTML = '<p class="muted">Chargement…</p>';
+      try {
+        const params = new URLSearchParams({ type: 'public' });
+        if (c) params.set('country', c);
+        if (s) params.set('sector', s);
+        if (q) params.set('q', q);
+        const data = await api('/tenders?' + params.toString());
+        const items = data.data || data.tenders || [];
+        if (!items.length) { list.innerHTML = '<div class="card">Aucun appel d\'offres public à afficher pour le moment. Les nouveaux avis apparaîtront ici dès leur publication.</div>'; return; }
+        list.innerHTML = items.map(renderTender).join('');
+      } catch (e) {
+        list.innerHTML = '<div class="card">Le flux d\'appels d\'offres sera disponible dès la mise en service des scrapers. <a href="inscription.html">Inscrivez-vous</a> pour être alerté en priorité.</div>';
+      }
+    }
+    function renderTender(t) {
+      const c = COUNTRIES[t.country_code] || { flag: '🌍', name: t.country_code || '' };
+      return `<div class="tender">
+        <div class="tender__top">
+          <div><span class="chip chip--public">Public</span> <h3 style="display:inline;margin-left:8px;">${t.title || 'Appel d\'offres'}</h3></div>
+          <span class="chip">${c.flag} ${c.name}</span>
+        </div>
+        <p class="muted mt-1">${t.summary || t.description || 'Résumé disponible pour les abonnés.'}</p>
+        <div class="tender__meta">
+          <span>Secteur : <b>${t.sector || '—'}</b></span>
+          <span>Source : <b>${t.source || '—'}</b></span>
+          <span>Clôture : <b>${t.deadline || 'À confirmer'}</b></span>
+        </div>
+      </div>`;
+    }
+    async function loadSectors() {
+      try {
+        const data = await api('/sectors');
+        const sel = document.getElementById('fSector');
+        (data.data || data || []).forEach(s => {
+          const o = document.createElement('option'); o.value = s.code || s.id; o.textContent = s.name; sel.appendChild(o);
+        });
+      } catch {}
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('fBtn').addEventListener('click', loadTenders);
+      loadSectors(); loadTenders();
+    });
+  </script>
+</body>
+</html>
