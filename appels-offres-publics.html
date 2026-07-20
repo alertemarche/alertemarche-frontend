@@ -64,7 +64,7 @@
       <!-- Résultats -->
       <div class="market-main">
         <div class="market-count">
-          <div class="cc"><b id="countNum">1 247</b> marchés trouvés <span id="updatedAt">Mis à jour aujourd'hui à 10:30</span></div>
+          <div class="cc"><b id="countNum">…</b> marchés trouvés <span id="updatedAt">Chargement…</span></div>
           <div class="view-toggle">
             <button class="active" data-view="grid"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Vue grille</button>
             <button data-view="list"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Vue liste</button>
@@ -73,16 +73,7 @@
 
         <div class="tenders-grid" id="tendersGrid"></div>
 
-        <div class="pagination">
-          <button>‹ Précédent</button>
-          <button class="active">1</button>
-          <button>2</button>
-          <button>3</button>
-          <span class="dots">…</span>
-          <button>104</button>
-          <button>Suivant ›</button>
-        </div>
-        <div class="market-showing">Affichage de 1 à 12 sur 1 247 marchés</div>
+        <div class="market-showing">Chargement des avis officiels du Bénin…</div>
       </div>
     </div>
   </section>
@@ -119,26 +110,36 @@
       ext:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>',
     };
 
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
     function tenderCard(t) {
       const budget = t.budget
         ? `<span class="tc-budget">Budget : ${new Intl.NumberFormat('fr-FR').format(t.budget)} FCFA</span>`
         : `<span class="tc-budget na">Budget : Non communiqué</span>`;
+      const ref = t.reference ? `<div class="m">${svg.inst}<span>Référence : <b>${esc(t.reference)}</b></span></div>` : '';
+      const lots = (t.nbLots && t.nbLots > 1) ? `<span class="tag">${t.nbLots} lots</span>` : '';
+      // Lien officiel : DAO si disponible, sinon page source. Ouverture nouvel onglet.
+      const officialUrl = t.daoUrl || t.url || '';
+      const officialBtn = officialUrl
+        ? `<a href="${esc(officialUrl)}" target="_blank" rel="noopener" class="btn btn-primary">${t.daoUrl ? 'Télécharger le DAO' : 'Voir sur le site officiel'} ${svg.ext}</a>`
+        : `<a href="inscription.html" class="btn btn-primary">Voir sur le site officiel ${svg.ext}</a>`;
       return `<article class="tender-card">
         <div class="tc-top">
-          <span class="sector-badge ${t.badge}">${t.sector}</span>
-          <span class="tc-time">${t.time}${t.isNew ? '<span class="tc-new">Nouveau</span>' : ''}</span>
+          <span class="sector-badge ${t.badge}">${esc(t.sector)}</span>
+          <span class="tc-time">${esc(t.time)}${t.isNew ? '<span class="tc-new">Nouveau</span>' : ''}</span>
         </div>
-        <h3>${t.title}</h3>
+        <h3>${esc(t.title)}</h3>
         <div class="tc-meta">
-          <div class="m">${svg.inst}<span>${t.inst}</span></div>
-          <div class="m">${svg.pin}<span>${t.loc}</span></div>
+          <div class="m">${svg.inst}<span>${esc(t.inst)}</span></div>
+          ${ref}
+          <div class="m">${svg.pin}<span>${esc(t.loc)}</span></div>
           <div class="m">${budget}</div>
-          <div class="m">${svg.cal}<span>Date limite : ${t.deadline}</span></div>
+          <div class="m">${svg.cal}<span>Date limite : ${esc(t.deadline)}</span></div>
         </div>
-        <div class="tc-tags">${t.tags.map(x => `<span class="tag">${x}</span>`).join('')}</div>
+        <div class="tc-tags">${t.tags.map(x => `<span class="tag">${esc(x)}</span>`).join('')}${lots}</div>
         <div class="tc-actions">
-          <a href="#" class="btn btn-ghost">Voir les détails</a>
-          <a href="#" class="btn btn-primary">Voir sur le site officiel ${svg.ext}</a>
+          <a href="inscription.html" class="btn btn-ghost">Voir les détails</a>
+          ${officialBtn}
         </div>
       </article>`;
     }
@@ -155,7 +156,7 @@
 
       function render(list) {
         grid.innerHTML = list.length ? list.map(tenderCard).join('') : '<p class="muted" style="grid-column:1/-1;padding:30px;text-align:center;">Aucun marché ne correspond à votre recherche.</p>';
-        document.getElementById('countNum').textContent = list.length === SAMPLE_TENDERS.length ? '1 247' : list.length;
+        document.getElementById('countNum').textContent = new Intl.NumberFormat('fr-FR').format(list.length);
       }
 
       function applyFilters() {
@@ -172,6 +173,7 @@
         });
         const sort = document.getElementById('fSort').value;
         if (sort === 'budget') list.sort((a,b) => (b.budget||0) - (a.budget||0));
+        else if (sort === 'deadline') list.sort((a,b) => new Date(a._deadline||'2999-01-01') - new Date(b._deadline||'2999-01-01'));
         render(list);
       }
 
@@ -192,26 +194,65 @@
 
       render(data);
 
-      // Hydratation depuis l'API réelle (si disponible) — les vrais AO passent en tête.
+      // Déduit le secteur/badge à partir du type de marché officiel.
+      function deriveSector(mt) {
+        const s = (mt || '').toLowerCase();
+        if (s.includes('travaux')) return { sector: 'Travaux', badge: 'travaux' };
+        if (s.includes('fourn') || s.includes('bien')) return { sector: 'Fournitures', badge: 'fournitures' };
+        if (s.includes('service') || s.includes('prestation') || s.includes('intellect')) return { sector: 'Services', badge: 'services' };
+        return { sector: 'Marché public', badge: 'travaux' };
+      }
+      // Ancienneté lisible à partir de la date de publication.
+      function relTime(d) {
+        if (!d) return 'Récent';
+        const diff = Date.now() - new Date(d).getTime();
+        if (isNaN(diff)) return 'Récent';
+        const h = Math.floor(diff / 3.6e6), j = Math.floor(h / 24);
+        if (h < 1) return "À l'instant";
+        if (h < 24) return `Il y a ${h} heure${h > 1 ? 's' : ''}`;
+        if (j < 30) return `Il y a ${j} jour${j > 1 ? 's' : ''}`;
+        return new Date(d).toLocaleDateString('fr-FR');
+      }
+
+      // Hydratation depuis l'API réelle. Les vrais avis du Bénin remplacent l'exemple.
       api('/tenders?country=BJ&per_page=50').then(res => {
         const items = (res.data || res || []);
         if (Array.isArray(items) && items.length) {
-          const mapped = items.slice(0, 8).map(t => ({
-            sector: (t.type === 'prive' ? 'Services' : 'Travaux'),
-            badge: 'travaux',
-            time: 'Récent', isNew: true,
-            title: t.title, inst: t.institution || 'Institution publique',
-            loc: (t.country === 'BJ' ? 'Bénin' : t.country),
-            budget: (t.estimated_amount && /\d/.test(String(t.estimated_amount))) ? parseInt(String(t.estimated_amount).replace(/\D/g,'')) || null : null,
-            deadline: t.deadline ? new Date(t.deadline).toLocaleDateString('fr-FR') : 'À confirmer',
-            tags: Array.isArray(t.sectors) && t.sectors.length ? t.sectors : ['Marché public'],
-          }));
-          data = mapped.concat(SAMPLE_TENDERS);
+          const now = Date.now();
+          const mapped = items.map(t => {
+            const ds = deriveSector(t.market_type);
+            const isNew = t.publication_date ? (now - new Date(t.publication_date).getTime()) < 2 * 864e5 : false;
+            return {
+              sector: ds.sector, badge: ds.badge,
+              time: relTime(t.publication_date), isNew,
+              title: t.title, inst: t.institution || 'Institution publique',
+              loc: t.location || 'Bénin',
+              reference: t.reference || null,
+              nbLots: t.nb_lots || null,
+              daoUrl: t.dao_url || null,
+              url: t.source_url || null,
+              _deadline: t.deadline || null,
+              budget: (t.estimated_amount && /\d/.test(String(t.estimated_amount))) ? parseInt(String(t.estimated_amount).replace(/\D/g,'')) || null : null,
+              deadline: t.deadline ? new Date(t.deadline).toLocaleDateString('fr-FR') : 'À confirmer',
+              tags: [t.market_type].filter(Boolean),
+            };
+          });
+          data = mapped;
+          // Recharge les listes déroulantes institution / localisation depuis les vraies données.
+          const rInsts = [...new Set(mapped.map(t => t.inst))].filter(Boolean).sort();
+          const rLocs = [...new Set(mapped.map(t => t.loc))].filter(Boolean).sort();
+          ['fInstitution','fInstitution2'].forEach(id => { const s=document.getElementById(id); s.length=1; rInsts.forEach(i=>{const o=document.createElement('option');o.textContent=i;s.appendChild(o);}); });
+          ['fLocation','fLocation2'].forEach(id => { const s=document.getElementById(id); s.length=1; rLocs.forEach(i=>{const o=document.createElement('option');o.textContent=i;s.appendChild(o);}); });
           render(data);
+          document.getElementById('countNum').textContent = new Intl.NumberFormat('fr-FR').format(mapped.length);
+          const showEl = document.querySelector('.market-showing');
+          if (showEl) showEl.textContent = `Affichage de ${mapped.length} avis officiels du Bénin`;
           document.getElementById('updatedAt').textContent = 'Mis à jour à l\'instant';
         }
       }).catch(() => {});
     }
+
+    document.addEventListener('DOMContentLoaded', initPage);
   </script>
 </body>
 </html>

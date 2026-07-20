@@ -42,8 +42,15 @@
       </section>
 
       <section data-panel="scrapers" class="hidden">
-        <h2 class="mb-2">État des scrapers</h2>
+        <div class="flex" style="justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;">
+          <h2>État des robots de collecte</h2>
+          <button class="btn btn--ghost btn--sm" id="refreshScrapers">↻ Rafraîchir</button>
+        </div>
+        <div class="kpi-grid mt-2" id="scrapersSummary"></div>
+        <h3 class="mt-3 mb-2">Robots par source</h3>
         <div id="scrapersList"><p class="muted">Chargement…</p></div>
+        <h3 class="mt-3 mb-2">Journal des exécutions récentes</h3>
+        <div id="scrapersLogs"><p class="muted">Chargement…</p></div>
       </section>
 
       <section data-panel="users" class="hidden">
@@ -73,24 +80,76 @@
     async function loadStats() {
       try {
         const d = await api('/admin/stats', { auth: true });
-        document.getElementById('sUsers').textContent = d.users ?? '—';
-        document.getElementById('sSubs').textContent = d.active_subscriptions ?? d.subscriptions ?? '—';
-        document.getElementById('sTenders').textContent = d.tenders ?? '—';
-        document.getElementById('sAlerts').textContent = d.alerts ?? '—';
-        document.getElementById('revBox').innerHTML = `<p style="font-size:1.6rem;font-weight:800;color:var(--green-700);">${fmt(d.revenue || 0)}</p><p class="muted">Chiffre d'affaires cumulé estimé.</p>`;
+        document.getElementById('sUsers').textContent = d.users_total ?? '—';
+        document.getElementById('sSubs').textContent = d.active_subscriptions ?? '—';
+        document.getElementById('sTenders').textContent = d.tenders_total ?? '—';
+        document.getElementById('sAlerts').textContent = d.alerts_sent ?? '—';
+        document.getElementById('revBox').innerHTML = `<p style="font-size:1.6rem;font-weight:800;color:var(--green-700);">${fmt(d.revenue_active || 0)}</p><p class="muted">Chiffre d'affaires cumulé estimé · ${d.tenders_today ?? 0} avis collectés aujourd'hui.</p>`;
       } catch (e) {
         if (e.status === 401 || e.status === 403) { location.href = 'connexion.html'; }
       }
     }
+    const HEALTH = {
+      ok:    { label: 'Opérationnel', color: '#16a34a', bg: '#dcfce7', dot: '🟢' },
+      stale: { label: 'Inactif',      color: '#b45309', bg: '#fef3c7', dot: '🟡' },
+      down:  { label: 'En panne',     color: '#b91c1c', bg: '#fee2e2', dot: '🔴' },
+    };
+    function fmtDate(v) {
+      if (!v) return '—';
+      try { return new Date(v).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }); }
+      catch { return v; }
+    }
     async function loadScrapers() {
-      const el = document.getElementById('scrapersList'); el.innerHTML = '<p class="muted">Chargement…</p>';
+      const el = document.getElementById('scrapersList');
+      const sumEl = document.getElementById('scrapersSummary');
+      const logsEl = document.getElementById('scrapersLogs');
+      el.innerHTML = '<p class="muted">Chargement…</p>';
       try {
         const d = await api('/admin/scrapers', { auth: true });
-        const items = d.data || d.logs || d || [];
-        if (!items.length) { el.innerHTML = '<div class="card">Aucun log de scraper pour le moment.</div>'; return; }
-        el.innerHTML = items.map(s => `<div class="tender"><div class="tender__top"><h3>${(COUNTRIES[s.country_code]?.flag||'')} ${s.source || s.country_code}</h3><span class="chip ${s.status==='success'?'':'chip--prive'}">${s.status}</span></div>
-          <div class="tender__meta"><span>Trouvés : <b>${s.found ?? '—'}</b></span><span>Nouveaux : <b>${s.inserted ?? '—'}</b></span><span>Le <b>${s.created_at || '—'}</b></span></div></div>`).join('');
-      } catch { el.innerHTML = '<div class="card">Impossible de charger les logs.</div>'; }
+        const robots = d.robots || [];
+        const s = d.summary || {};
+        sumEl.innerHTML = `
+          <div class="kpi"><b>${s.total ?? robots.length}</b><span>Robots</span></div>
+          <div class="kpi"><b style="color:#16a34a">${s.ok ?? 0}</b><span>🟢 Opérationnels</span></div>
+          <div class="kpi"><b style="color:#b45309">${s.stale ?? 0}</b><span>🟡 Inactifs</span></div>
+          <div class="kpi"><b style="color:#b91c1c">${s.down ?? 0}</b><span>🔴 En panne</span></div>`;
+
+        if (!robots.length) {
+          el.innerHTML = '<div class="card">Aucun robot n\'a encore tourné. Lancez une première collecte.</div>';
+        } else {
+          el.innerHTML = robots.map(r => {
+            const h = HEALTH[r.health] || HEALTH.stale;
+            return `<div class="tender" style="border-left:4px solid ${h.color};">
+              <div class="tender__top">
+                <h3>${(COUNTRIES[r.country]?.flag||'')} ${r.source_name || r.country}</h3>
+                <span class="chip" style="background:${h.bg};color:${h.color};">${h.dot} ${h.label}</span>
+              </div>
+              <div class="tender__meta">
+                <span>Dernière exécution : <b>${fmtDate(r.last_run)}</b></span>
+                <span>Collectés : <b>${r.last_items_collected ?? '—'}</b></span>
+                <span>Nouveaux : <b>${r.last_items_new ?? '—'}</b></span>
+                <span>Échecs (24h) : <b style="color:${r.failures_24h>0?'#b91c1c':'inherit'}">${r.failures_24h ?? 0}</b></span>
+              </div>
+              ${r.last_message ? `<p class="muted mt-1" style="font-size:.85rem;">${r.last_message}</p>` : ''}
+            </div>`;
+          }).join('');
+        }
+
+        const logs = d.recent_logs || [];
+        logsEl.innerHTML = logs.length
+          ? `<div class="card" style="overflow-x:auto;padding:0;"><table style="width:100%;border-collapse:collapse;font-size:.88rem;">
+              <thead><tr style="background:var(--gray-50,#f8fafc);text-align:left;">
+                <th style="padding:.6rem .8rem;">Date</th><th style="padding:.6rem .8rem;">Pays</th><th style="padding:.6rem .8rem;">Source</th>
+                <th style="padding:.6rem .8rem;">Statut</th><th style="padding:.6rem .8rem;">Collectés</th><th style="padding:.6rem .8rem;">Nouveaux</th></tr></thead>
+              <tbody>${logs.map(l => `<tr style="border-top:1px solid var(--gray-100,#eef2f7);">
+                <td style="padding:.55rem .8rem;">${fmtDate(l.ran_at)}</td>
+                <td style="padding:.55rem .8rem;">${(COUNTRIES[l.country]?.flag||'')} ${l.country||''}</td>
+                <td style="padding:.55rem .8rem;">${l.source_name||'—'}</td>
+                <td style="padding:.55rem .8rem;"><span style="color:${l.status==='success'?'#16a34a':'#b91c1c'};font-weight:600;">${l.status==='success'?'✓ Succès':'✕ Échec'}</span></td>
+                <td style="padding:.55rem .8rem;">${l.items_collected ?? '—'}</td>
+                <td style="padding:.55rem .8rem;">${l.items_new ?? '—'}</td></tr>`).join('')}</tbody></table></div>`
+          : '<div class="card">Aucune exécution enregistrée.</div>';
+      } catch { el.innerHTML = '<div class="card">Impossible de charger l\'état des robots.</div>'; sumEl.innerHTML=''; logsEl.innerHTML=''; }
     }
     async function loadUsers() {
       const el = document.getElementById('usersList'); el.innerHTML = '<p class="muted">Chargement…</p>';
@@ -120,6 +179,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       $$('.dash__side a[data-tab]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); switchTab(a.dataset.tab); }));
+      const rs = document.getElementById('refreshScrapers'); if (rs) rs.addEventListener('click', loadScrapers);
       document.getElementById('logoutBtn').addEventListener('click', async () => {
         try { await api('/auth/logout', { method: 'POST', auth: true }); } catch {}
         localStorage.removeItem('am_token'); location.href = 'index.html';
