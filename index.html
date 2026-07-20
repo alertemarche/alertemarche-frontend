@@ -3,156 +3,181 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AlerteMarché — Veille intelligente des appels d'offres · Bénin, Togo, Côte d'Ivoire</title>
-  <meta name="description" content="Recevez automatiquement par WhatsApp et e-mail les appels d'offres publics et privés correspondant à votre secteur au Bénin, au Togo et en Côte d'Ivoire.">
+  <title>AlerteMarché — Recevez les meilleures opportunités au Bénin en temps réel</title>
+  <meta name="description" content="AlerteMarché surveille 24h/24 les sources officielles du Bénin et vous envoie chaque appel d'offres correspondant à vos activités par WhatsApp et Email.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
-  <!-- Google Analytics 4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RRXKSCN05J"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-RRXKSCN05J');
-  </script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RRXKSCN05J');</script>
 </head>
 <body>
 
   <!-- HERO -->
-  <header class="hero">
-    <div class="container hero__grid">
+  <section class="hero">
+    <div class="hero-bg" style="background-image:url('img/cotonou.jpg')"></div>
+    <div class="container hero-inner">
       <div>
-        <span class="badge">⚡ Opportunités • Veille • Croissance</span>
-        <h1>Ne manquez plus jamais un <span style="color:var(--green)">appel d'offres</span> en Afrique de l'Ouest.</h1>
-        <p class="lead">AlerteMarché surveille 24h/24 les sources officielles du Bénin, du Togo et de la Côte d'Ivoire, résume chaque opportunité par IA et vous l'envoie par <b>WhatsApp</b> et <b>e-mail</b>.</p>
+        <span class="hero-badge">🇧🇯 BÉNIN — Ne manquez aucune opportunité</span>
+        <h1>Recevez les meilleures opportunités <span class="green">au Bénin</span> en temps réel</h1>
+        <p class="lead">Soyez alerté instantanément par <b>WhatsApp</b> et <b>Email</b> dès qu'un appel d'offres correspondant à vos activités est publié.</p>
 
-        <div class="mt-3">
-          <div class="country-pills" id="heroCountries">
-            <button class="country-pill active" data-c="BJ">🇧🇯 Bénin</button>
-            <button class="country-pill" data-c="TG">🇹🇬 Togo</button>
-            <button class="country-pill" data-c="CI">🇨🇮 Côte d'Ivoire</button>
+        <div class="hero-channels">
+          <div class="channel-card">
+            <span class="channel-icon wa"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm4.52 11.99c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.8-.79.97-.14.16-.29.18-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.16.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.42l-.48-.01c-.16 0-.43.06-.66.31-.22.25-.87.85-.87 2.07 0 1.22.89 2.4 1.01 2.56.13.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.47-.07 1.47-.6 1.68-1.18.2-.58.2-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z"/></svg></span>
+            <div><b>Alertes WhatsApp</b><span>Instantanées et directes</span></div>
+          </div>
+          <div class="channel-card">
+            <span class="channel-icon mail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg></span>
+            <div><b>Alertes Email</b><span>Détaillées et organisées</span></div>
           </div>
         </div>
 
-        <div class="hero__cta">
-          <a href="inscription.html" class="btn btn--primary btn--lg">Commencer gratuitement →</a>
-          <a href="tarifs.html" class="btn btn--ghost btn--lg">Voir les tarifs</a>
+        <div class="hero-cta" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:22px;">
+          <a href="inscription.html" class="btn btn-primary btn-lg">Commencer gratuitement <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+          <a href="tarifs.html" class="btn btn-ghost btn-lg">Voir les tarifs</a>
         </div>
-        <div class="hero__trust">
-          <span>✅ <b>5 alertes offertes</b> sans carte bancaire</span>
-          <span>✅ <b>4 profils</b> adaptés</span>
-          <span>✅ Résumés <b>IA GPT-4o</b></span>
+
+        <div class="hero-mini">
+          <div><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span><span><b>100% automatique</b><small>Aucune recherche manuelle</small></span></div>
+          <div><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span><span><b>Ciblage intelligent</b><small>Uniquement ce qui vous concerne</small></span></div>
+          <div><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span><b>Temps réel</b><small>Soyez le premier informé</small></span></div>
         </div>
       </div>
 
-      <div>
-        <div class="alert-card">
-          <div class="alert-card__head">
-            <div class="alert-card__dot">✓</div>
-            <div><b>Nouvelle opportunité</b><br><small class="muted">via AlerteMarché · à l'instant</small></div>
+      <!-- Visuel : téléphone WhatsApp + email flottant -->
+      <div class="hero-visual">
+        <div class="wa-tag"><small>Alerte WhatsApp</small><b>Instantanée</b></div>
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-top">
+              <span class="pa">🔔</span>
+              <div><b>AlerteMarché ✓</b><small>en ligne</small></div>
+            </div>
+            <div class="wa-msg">
+              <div class="tt">🔔 Nouvelle opportunité !</div>
+              <h5>Travaux de construction d'un bâtiment R+2</h5>
+              <div class="row">🏛 Ministère des Infrastructures</div>
+              <div class="row">📍 Cotonou, Bénin</div>
+              <div class="row">📅 Date limite : 15 Août 2024</div>
+              <div class="btnlink">Voir les détails</div>
+              <div class="time">10:30 ✓✓</div>
+            </div>
           </div>
-          <div class="alert-card__row"><span class="k">📌 Objet</span><span class="v">Construction d'un centre de santé</span></div>
-          <div class="alert-card__row"><span class="k">🏛 Institution</span><span class="v">Ministère de la Santé</span></div>
-          <div class="alert-card__row"><span class="k">💰 Montant</span><span class="v">120 000 000 FCFA</span></div>
-          <div class="alert-card__row"><span class="k">📅 Date limite</span><span class="v">28 août 2026</span></div>
-          <div class="alert-card__row"><span class="k">🌍 Pays</span><span class="v" id="heroFlag">🇧🇯 Bénin</span></div>
-          <div class="alert-card__foot">👉 Voir sur le site officiel — Alerte envoyée par AlerteMarche.com</div>
+        </div>
+        <div class="email-float">
+          <div class="eh">
+            <span class="ei"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg></span>
+            <b>Alerte Email</b>
+          </div>
+          <h5>Nouvelle opportunité correspondant à vos activités</h5>
+          <p>Bonjour Entreprise BTP SARL, un nouvel appel d'offres correspond à vos critères.</p>
+          <div class="card-inline">
+            <div class="row"><b>Travaux de construction R+2</b></div>
+            <div class="row">🏛 Ministère des Infrastructures</div>
+            <div class="row">📅 15 Août 2024</div>
+          </div>
         </div>
       </div>
     </div>
-  </header>
+  </section>
 
-  <!-- LOGOS SOURCES -->
-  <section class="section--tight">
-    <div class="container text-center">
-      <p class="muted" style="font-size:.86rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700;">Sources officielles surveillées</p>
-      <div style="display:flex;gap:34px;justify-content:center;flex-wrap:wrap;margin-top:16px;font-weight:700;color:var(--muted);">
-        <span>ARMP Bénin</span><span>DNCMP</span><span>ARMP Togo</span><span>ANRMP Côte d'Ivoire</span><span>BCEAO</span><span>Banque Mondiale</span>
+  <!-- POURQUOI CHOISIR -->
+  <section class="section">
+    <div class="container">
+      <div class="features-band">
+        <div class="section-head" style="margin-bottom:34px;">
+          <span class="eyebrow">Pourquoi nous choisir</span>
+          <h2>Pourquoi choisir AlerteMarché au Bénin ?</h2>
+        </div>
+        <div class="feature-grid">
+          <div class="feature">
+            <div class="fi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Z"/></svg></div>
+            <h3>Livraison instantanée</h3>
+            <p>Recevez les alertes en temps réel sur WhatsApp, dès la publication.</p>
+          </div>
+          <div class="feature blue">
+            <div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg></div>
+            <h3>Dossiers détaillés</h3>
+            <p>Emails complets avec tous les détails importants de chaque opportunité.</p>
+          </div>
+          <div class="feature">
+            <div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></div>
+            <h3>Filtrage intelligent</h3>
+            <p>Nous filtrons pour vous selon vos secteurs d'activité et votre localité.</p>
+          </div>
+          <div class="feature">
+            <div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+            <h3>Jamais en retard</h3>
+            <p>Ne manquez aucune date limite importante grâce à nos rappels.</p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- COMMENT ÇA MARCHE -->
-  <section class="section">
+  <section class="section section-white">
     <div class="container">
-      <div class="section__head">
-        <span class="eyebrow">Comment ça marche</span>
-        <h2>De la source officielle à votre WhatsApp, en 6 étapes</h2>
-        <p class="muted">Un moteur d'alerte et de synthèse entièrement automatisé.</p>
+      <div class="section-head">
+        <span class="eyebrow">Simple et rapide</span>
+        <h2>Comment ça marche en 3 étapes simples</h2>
       </div>
-      <div class="grid grid-3 steps">
-        <div class="card"><div class="step__num">1</div><h3>Surveillance continue</h3><p>Nos robots analysent 24h/24 les sources officielles et privées de chaque pays cible.</p></div>
-        <div class="card"><div class="step__num">2</div><h3>Extraction métadonnées</h3><p>Institution, objet, montant, date limite, lien officiel. Aucun fichier DAO stocké.</p></div>
-        <div class="card"><div class="step__num">3</div><h3>Résumé IA GPT-4o</h3><p>Un résumé structuré, clair et professionnel en français est généré automatiquement.</p></div>
-        <div class="card"><div class="step__num">4</div><h3>Matching intelligent</h3><p>Croisement secteur + localité + pays pour les 4 profils, dont le matching inversé artisans.</p></div>
-        <div class="card"><div class="step__num">5</div><h3>Envoi multi-canal</h3><p>WhatsApp (premium, prioritaire) et e-mail en parallèle aux abonnés concernés.</p></div>
-        <div class="card"><div class="step__num">6</div><h3>Redirection officielle</h3><p>Vous êtes renvoyé vers le site gouvernemental d'origine pour le dossier complet.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- PROFILS -->
-  <section class="section" style="background:#fff;">
-    <div class="container">
-      <div class="section__head">
-        <span class="eyebrow">Pour qui ?</span>
-        <h2>4 profils, une seule plateforme</h2>
-        <p class="muted">Chaque profil démarre avec 1 pays au choix, extensible à 2 ou 3 pays. Tarif = base × nombre de pays.</p>
-      </div>
-      <div class="grid grid-4">
-        <div class="card"><div class="card__icon">🏢</div><h3>Prestataires</h3><p>Entreprises & PME cherchant des appels d'offres publics et privés par secteur.</p><p class="mt-1"><b style="color:var(--green-700)">25 000 FCFA</b>/mois <small class="strike">50 000</small></p></div>
-        <div class="card"><div class="card__icon">🛠️</div><h3>Artisans <span class="chip">Nouveau</span></h3><p>Auto-entrepreneurs recevant les besoins des entreprises (matching inversé) + AO publics.</p><p class="mt-1"><b style="color:var(--green-700)">5 000 FCFA</b>/mois <small class="strike">10 000</small></p></div>
-        <div class="card"><div class="card__icon">🏛️</div><h3>Administration</h3><p>Ministères, mairies, agences : liste des prestataires qualifiés pour leurs projets.</p><p class="mt-1"><b style="color:var(--green-700)">75 000 FCFA</b>/mois <small class="strike">150 000</small></p></div>
-        <div class="card"><div class="card__icon">🤝</div><h3>ONG</h3><p>Agences de développement & humanitaires : sourcing de prestataires et artisans.</p><p class="mt-1"><b style="color:var(--green-700)">75 000 FCFA</b>/mois <small class="strike">150 000</small></p></div>
-      </div>
-      <div class="text-center mt-3"><a href="tarifs.html" class="btn btn--primary">Configurer mon abonnement →</a></div>
-    </div>
-  </section>
-
-  <!-- STATS -->
-  <section class="section">
-    <div class="container">
-      <div class="stats">
-        <div class="grid grid-4">
-          <div class="stat"><b>3</b><span>Pays couverts</span></div>
-          <div class="stat"><b>24/7</b><span>Surveillance continue</span></div>
-          <div class="stat"><b>&lt; 5 min</b><span>Délai moyen d'alerte</span></div>
-          <div class="stat"><b>IA</b><span>Résumés GPT-4o</span></div>
+      <div class="steps-row">
+        <div class="step-box">
+          <div class="snum">1</div>
+          <h3>Créez votre compte</h3>
+          <p>Inscrivez-vous et sélectionnez vos secteurs d'activité en quelques clics.</p>
+        </div>
+        <div class="step-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+        <div class="step-box">
+          <div class="snum">2</div>
+          <h3>Définissez vos préférences</h3>
+          <p>Choisissez vos critères de recherche et vos canaux d'alerte.</p>
+        </div>
+        <div class="step-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+        <div class="step-box">
+          <div class="snum">3</div>
+          <h3>Recevez vos alertes</h3>
+          <p>Soyez alerté par WhatsApp et Email en temps réel, où que vous soyez.</p>
+          <div class="step-icons">
+            <span class="wa"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Z"/></svg></span>
+            <span class="mail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg></span>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- CTA FINAL -->
-  <section class="section" style="background:#fff;">
-    <div class="container text-center">
-      <h2>Prêt à saisir vos prochaines opportunités ?</h2>
-      <p class="lead mx-auto mt-1">Créez votre compte en 2 minutes et recevez vos 5 premières alertes gratuitement.</p>
-      <div class="mt-3"><a href="inscription.html" class="btn btn--primary btn--lg">Créer mon compte gratuit →</a></div>
+  <!-- CTA BANNER -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-banner">
+        <div>
+          <h2>Ne ratez plus aucune opportunité au Bénin !</h2>
+          <p>Rejoignez des milliers d'entreprises et d'artisans qui reçoivent déjà leurs alertes par WhatsApp et Email.</p>
+          <div class="cta-hand">C'est gratuit et sans engagement !</div>
+        </div>
+        <div class="cta-actions">
+          <a href="inscription.html" class="btn btn-white btn-lg btn-block"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Z"/></svg> S'inscrire avec WhatsApp</a>
+          <a href="inscription.html" class="btn btn-white btn-lg btn-block"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg> S'inscrire avec Email</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="section-tight stats-band">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item"><span class="si"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><b>2 500+</b><span>Utilisateurs actifs</span></div>
+        <div class="stat-item"><span class="si"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span><b>1 200+</b><span>Opportunités publiées</span></div>
+        <div class="stat-item"><span class="si"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span><b>95%</b><span>Alertes délivrées</span></div>
+        <div class="stat-item"><span class="si"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><b>24/7</b><span>Surveillance continue</span></div>
+      </div>
     </div>
   </section>
 
   <script src="js/app.js"></script>
-  <script>
-    // Sélecteur pays du hero
-    document.addEventListener('DOMContentLoaded', () => {
-      const pills = document.querySelectorAll('#heroCountries .country-pill');
-      const flag = document.getElementById('heroFlag');
-      const names = { BJ: '🇧🇯 Bénin', TG: '🇹🇬 Togo', CI: "🇨🇮 Côte d'Ivoire" };
-      pills.forEach(p => p.addEventListener('click', () => {
-        pills.forEach(x => x.classList.remove('active'));
-        p.classList.add('active');
-        const c = p.dataset.c;
-        flag.textContent = names[c];
-        setCountry(c);
-      }));
-      // Sync avec géoloc auto
-      document.addEventListener('am:country', (e) => {
-        pills.forEach(x => x.classList.toggle('active', x.dataset.c === e.detail));
-        if (names[e.detail]) flag.textContent = names[e.detail];
-      });
-    });
-  </script>
 </body>
 </html>
