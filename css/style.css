@@ -3,6 +3,11 @@
    Focus Bénin · FR · vert #1a7f5a
    ============================================================ */
 
+/* Garde-fou global : aucune icône SVG ne peut déborder même si sa règle
+   spécifique n'est pas (encore) appliquée. Les règles .xxx svg { } ci-dessous
+   restent prioritaires (spécificité de classe > élément). */
+svg { width: 1.25em; height: 1.25em; max-width: 100%; flex: none; }
+
 :root {
   --green: #1a7f5a;
   --green-600: #16805a;
