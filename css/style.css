@@ -133,7 +133,10 @@ p { color: var(--text); }
 }
 .header-actions { display: flex; align-items: center; gap: 12px; }
 .header-search { color: var(--muted); display: grid; place-items: center; width: 22px; height: 22px; }
-.nav-toggle { display: none; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--ink); }
+.nav-toggle { 
+  display: none; /* caché par défaut sur desktop */
+  background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--ink);
+}
 
 /* ---- Menus déroulants navigation ---- */
 .nav-dropdown { position: relative; display: inline-flex; align-items: center; gap: 2px; }
@@ -533,19 +536,35 @@ p { color: var(--text); }
   .market-layout { grid-template-columns: 1fr; }
 }
 @media (max-width: 860px) {
-  .main-nav { display: none; position: absolute; top: 76px; left: 0; right: 0; background: #fff; flex-direction: column; padding: 16px 24px; box-shadow: var(--shadow); gap: 4px; align-items: stretch; }
+  .header-inner { gap: 12px; } /* réduire l'espacement sur mobile */
+  .country-badge { font-size: 0.8rem; padding: 4px 10px; } /* badge pays plus compact */
+  .brand-tag { display: none; } /* cacher le slogan sur très petit écran */
+  .main-nav { display: none; position: absolute; top: 76px; left: 0; right: 0; background: #fff; flex-direction: column; padding: 16px 24px; box-shadow: var(--shadow); gap: 4px; align-items: stretch; z-index: 100; }
   .main-nav.open { display: flex; }
-  .main-nav a { padding: 10px 0; border-bottom: 1px solid var(--line); }
-  .nav-toggle { display: block; }
-  /* Dropdowns : affichés à plat (accordéon statique) sur mobile */
-  .nav-dropdown { width: 100%; flex-wrap: wrap; }
-  .nav-dropdown > .nav-dd-link { flex: 1; padding: 10px 0; border-bottom: 1px solid var(--line); }
-  .nav-dropdown > .nav-dd-caret { padding: 10px 0; border-bottom: 1px solid var(--line); }
-  .nav-dd-menu {
-    flex-basis: 100%; position: static; transform: none; opacity: 1; visibility: visible; box-shadow: none;
-    border: none; padding: 0 0 6px 12px; min-width: 0; background: transparent;
+  .main-nav a { padding: 14px 8px; border-bottom: 1px solid var(--line); font-size: 1rem; }
+  .nav-toggle { 
+    display: flex; /* visible sur mobile */
+    padding: 8px; min-width: 44px; min-height: 44px; /* zone tactile optimale 44×44px (Apple/Google HIG) */
+    align-items: center; justify-content: center;
   }
-  .nav-dd-menu a { padding: 8px 0; border-bottom: none; }
+  /* Dropdowns : accordéon mobile avec toggle (caché par défaut, ouvert au clic) */
+  .nav-dropdown { width: 100%; flex-wrap: wrap; }
+  .nav-dropdown > .nav-dd-link { flex: 1; padding: 14px 8px; border-bottom: 1px solid var(--line); font-size: 1rem; }
+  .nav-dropdown > .nav-dd-caret { 
+    padding: 14px 12px; border-bottom: 1px solid var(--line); 
+    min-width: 44px; min-height: 44px; /* zone tactile recommandée Apple/Google */
+    display: flex; align-items: center; justify-content: center;
+  }
+  .nav-dropdown > .nav-dd-caret .caret { font-size: 0.9rem; opacity: 1; }
+  /* Sous-menu caché par défaut sur mobile */
+  .nav-dd-menu {
+    flex-basis: 100%; position: static; transform: none; box-shadow: none;
+    border: none; padding: 0 0 8px 16px; min-width: 0; background: #f9fafb;
+    max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.3s ease, opacity 0.2s ease;
+  }
+  /* Sous-menu visible quand le dropdown est ouvert */
+  .nav-dropdown.open .nav-dd-menu { max-height: 400px; opacity: 1; padding: 8px 0 8px 16px; }
+  .nav-dd-menu a { padding: 12px 8px; border-bottom: none; font-size: 0.95rem; }
   .hero-inner, .signup-hero-grid { grid-template-columns: 1fr; }
   .hero-visual { min-height: 420px; margin-top: 20px; }
   .cta-banner { grid-template-columns: 1fr; }
