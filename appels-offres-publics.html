@@ -193,7 +193,7 @@
       render(data);
 
       // Hydratation depuis l'API réelle (si disponible) — les vrais AO passent en tête.
-      api('/tenders').then(res => {
+      api('/tenders?country=BJ&per_page=50').then(res => {
         const items = (res.data || res || []);
         if (Array.isArray(items) && items.length) {
           const mapped = items.slice(0, 8).map(t => ({
