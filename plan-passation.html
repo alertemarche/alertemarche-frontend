@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plans de Passation de Marchés (PPM) au Bénin — AlerteMarché</title>
+  <meta name="description" content="Plans de passation de marchés (PPM) des autorités contractantes au Bénin. Anticipez les marchés à venir grâce aux sources officielles du gouvernement.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Titre + breadcrumb -->
+  <section class="page-head">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Accueil</a><span class="sep">›</span>Plans de Passation</div>
+      <div class="page-title">
+        <div>
+          <h1>Plans de Passation</h1>
+          <p>Plans de passation de marchés des autorités contractantes — Bénin</p>
+        </div>
+        <div class="official-note" style="background:var(--indigo-050);border-color:#c9cbfb;color:#4338ca;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          Plans de passation des marchés (PPM) publiés par les autorités contractantes, collectés depuis les sources officielles du gouvernement.
+        </div>
+      </div>
+
+      <!-- Barre de recherche + filtres -->
+      <div class="market-toolbar">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="searchInput" placeholder="Rechercher un marché, une autorité contractante, un mot clé…">
+        </div>
+        <div class="filter-select"><select id="fCategory"><option value="">Catégorie</option><option>Travaux</option><option>Fournitures</option><option>Services</option><option>Prestations intellectuelles</option></select></div>
+        <div class="filter-select"><select id="fInstitution"><option value="">Autorité contractante</option></select></div>
+        <div class="filter-select"><select id="fYear"><option value="">Année</option><option>2026</option><option>2025</option><option>2024</option></select></div>
+        <div class="filter-select"><select id="fSort"><option value="recent">Trier par : Plus récents</option><option value="deadline">Date d'ouverture</option><option value="amount">Montant</option></select></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container">
+    <div class="market-layout">
+      <!-- Filtres avancés -->
+      <aside class="filters-panel">
+        <div class="fp-head"><b>Filtres</b><a id="resetFilters">Réinitialiser</a></div>
+        <div class="filter-group"><label>Mots clés</label><input type="text" id="fKeyword" placeholder="Ex : construction, fourniture, étude…"></div>
+        <div class="filter-group"><label>Catégorie</label><select id="fCategory2"><option value="">Toutes les catégories</option><option>Travaux</option><option>Fournitures</option><option>Services</option><option>Prestations intellectuelles</option></select></div>
+        <div class="filter-group"><label>Autorité contractante</label><select id="fInstitution2"><option value="">Toutes les autorités</option></select></div>
+        <div class="filter-group"><label>Année</label><select id="fYear2"><option value="">Toutes les années</option><option>2026</option><option>2025</option><option>2024</option></select></div>
+        <button class="btn btn-indigo btn-block" id="applyFilters">Filtrer les résultats</button>
+
+        <div class="alert-box" style="background:var(--indigo-050);border-color:#c9cbfb;">
+          <b style="color:#4338ca;">Alertes personnalisées</b>
+          <p>Recevez par WhatsApp ou Email les nouveaux plans de passation qui vous correspondent.</p>
+          <a href="inscription.html" class="btn btn-outline btn-sm btn-block"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> Créer une alerte</a>
+        </div>
+      </aside>
+
+      <!-- Résultats -->
+      <div class="market-main">
+        <div class="market-count">
+          <div class="cc"><b id="countNum">…</b> plans trouvés <span id="updatedAt">Chargement…</span></div>
+          <div class="view-toggle">
+            <button class="active" data-view="grid"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Vue grille</button>
+            <button data-view="list"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Vue liste</button>
+          </div>
+        </div>
+
+        <div class="tenders-grid" id="tendersGrid"></div>
+
+        <div class="market-showing">Chargement des plans de passation du Bénin…</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRUST BAR -->
+  <section class="section-tight trust-bar" style="background:var(--indigo-050);">
+    <div class="container">
+      <div class="trust-grid">
+        <div class="trust-item"><span class="ti" style="color:#4338ca;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span><div><b>Anticipez vos marchés</b><span>Préparez vos dossiers avant l'ouverture des plis</span></div></div>
+        <div class="trust-item"><span class="ti" style="color:#4338ca;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><div><b>Mise à jour en temps réel</b><span>Nouveaux plans ajoutés dès leur publication officielle</span></div></div>
+        <div class="trust-item"><span class="ti" style="color:#4338ca;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></span><div><b>Sources officielles</b><span>Données des plateformes officielles du gouvernement</span></div></div>
+        <div class="trust-item"><span class="ti" style="color:#4338ca;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span><div><b>Redirection officielle</b><span>Accédez au plan complet sur le site source</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <script src="js/app.js"></script>
+  <script>
+    const svg = {
+      inst:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11"/></svg>',
+      ref:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
+      cal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+      tag:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>',
+      ext:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>',
+    };
+
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+    function fmtDate(d) {
+      if (!d) return 'N/A';
+      const dt = new Date(d);
+      return isNaN(dt) ? esc(d) : dt.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+    }
+    function relTime(d) {
+      if (!d) return 'Récent';
+      const diff = Date.now() - new Date(d).getTime();
+      if (isNaN(diff)) return 'Récent';
+      const h = Math.floor(diff / 3.6e6), j = Math.floor(h / 24);
+      if (h < 1) return "À l'instant";
+      if (h < 24) return `Il y a ${h} heure${h > 1 ? 's' : ''}`;
+      if (j < 30) return `Il y a ${j} jour${j > 1 ? 's' : ''}`;
+      return new Date(d).toLocaleDateString('fr-FR');
+    }
+    // Normalise la catégorie du marché vers un libellé standard.
+    function deriveCategory(c) {
+      const s = (c || '').toLowerCase();
+      if (s.includes('travaux')) return 'Travaux';
+      if (s.includes('fourn') || s.includes('bien')) return 'Fournitures';
+      if (s.includes('intellect') || s.includes('étude') || s.includes('etude') || s.includes('conseil')) return 'Prestations intellectuelles';
+      if (s.includes('service') || s.includes('prestation')) return 'Services';
+      return c || null;
+    }
+
+    function tenderCard(t) {
+      const amount = t.amount
+        ? `<span class="tc-budget" style="color:#4338ca;">Montant estimé : ${new Intl.NumberFormat('fr-FR').format(t.amount)} FCFA</span>`
+        : `<span class="tc-budget na">Montant estimé : N/A</span>`;
+      const ref = t.reference ? `<div class="m">${svg.ref}<span>Référence : <b>${esc(t.reference)}</b></span></div>` : '';
+      const cat = t.category ? `<div class="m">${svg.tag}<span>Catégorie : ${esc(t.category)}</span></div>` : '';
+      const pub = t.publication ? `<div class="m">${svg.cal}<span>Publié le : ${esc(t.publication)}</span></div>` : '';
+      // Redirection vers le plan officiel (pas de téléchargement direct).
+      const url = t.url || '';
+      const btn = url
+        ? `<a href="${esc(url)}" target="_blank" rel="noopener" class="btn btn-indigo">Voir le plan ${svg.ext}</a>`
+        : `<a href="inscription.html" class="btn btn-indigo">Voir le plan ${svg.ext}</a>`;
+      return `<article class="tender-card">
+        <div class="tc-top">
+          <span class="sector-badge plan-ppm">Plan PPM</span>
+          <span class="tc-time">${esc(t.time)}${t.isNew ? '<span class="tc-new">Nouveau</span>' : ''}</span>
+        </div>
+        <h3>${esc(t.title)}</h3>
+        <div class="tc-meta">
+          <div class="m">${svg.inst}<span>${esc(t.inst)}</span></div>
+          ${ref}
+          ${cat}
+          <div class="m">${amount}</div>
+          ${pub}
+          <div class="m">${svg.cal}<span>Date d'ouverture : <b>${esc(t.deadline)}</b></span></div>
+        </div>
+        <div class="tc-actions">
+          <a href="inscription.html" class="btn btn-ghost">Recevoir les alertes</a>
+          ${btn}
+        </div>
+      </article>`;
+    }
+
+    function initPage() {
+      const grid = document.getElementById('tendersGrid');
+      let data = [];
+
+      function render(list) {
+        grid.innerHTML = list.length ? list.map(tenderCard).join('') : '<p class="muted" style="grid-column:1/-1;padding:30px;text-align:center;">Aucun plan disponible pour le moment.</p>';
+        document.getElementById('countNum').textContent = new Intl.NumberFormat('fr-FR').format(list.length);
+      }
+
+      function applyFilters() {
+        const kw = (document.getElementById('searchInput').value || document.getElementById('fKeyword').value || '').toLowerCase();
+        const cat = document.getElementById('fCategory').value || document.getElementById('fCategory2').value;
+        const inst = document.getElementById('fInstitution').value || document.getElementById('fInstitution2').value;
+        const year = document.getElementById('fYear').value || document.getElementById('fYear2').value;
+        let list = data.filter(t => {
+          if (kw && !(t.title.toLowerCase().includes(kw) || t.inst.toLowerCase().includes(kw))) return false;
+          if (cat && t.category !== cat) return false;
+          if (inst && t.inst !== inst) return false;
+          if (year && String(t._year) !== String(year)) return false;
+          return true;
+        });
+        const sort = document.getElementById('fSort').value;
+        if (sort === 'amount') list.sort((a,b) => (b.amount||0) - (a.amount||0));
+        else if (sort === 'deadline') list.sort((a,b) => new Date(a._deadline||'2999-01-01') - new Date(b._deadline||'2999-01-01'));
+        else list.sort((a,b) => new Date(b._published || 0) - new Date(a._published || 0));
+        render(list);
+      }
+
+      document.getElementById('searchInput').addEventListener('input', applyFilters);
+      document.getElementById('applyFilters').addEventListener('click', applyFilters);
+      document.getElementById('fSort').addEventListener('change', applyFilters);
+      ['fCategory','fInstitution','fYear'].forEach(id => document.getElementById(id).addEventListener('change', applyFilters));
+      document.getElementById('resetFilters').addEventListener('click', () => {
+        document.querySelectorAll('#searchInput,#fKeyword').forEach(e => e.value='');
+        document.querySelectorAll('.market-toolbar select, .filters-panel select').forEach(s => s.selectedIndex = 0);
+        render(data);
+      });
+      document.querySelectorAll('.view-toggle button').forEach(b => b.addEventListener('click', () => {
+        document.querySelectorAll('.view-toggle button').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        grid.style.gridTemplateColumns = b.dataset.view === 'list' ? '1fr' : '';
+      }));
+
+      // Hydratation depuis l'API réelle : plans de passation (type=plan_passation).
+      api('/tenders?country=BJ&type=plan_passation&per_page=50').then(res => {
+        const items = (res.data || res || []);
+        if (Array.isArray(items) && items.length) {
+          const now = Date.now();
+          data = items.map(t => {
+            const pubDate = t.publication_date || t.collected_at || null;
+            const isNew = pubDate ? (now - new Date(pubDate).getTime()) < 7 * 864e5 : false;
+            const amount = (t.amount && /\d/.test(String(t.amount)))
+              ? parseInt(String(t.amount).replace(/\D/g,'')) || null
+              : ((t.estimated_amount && /\d/.test(String(t.estimated_amount))) ? parseInt(String(t.estimated_amount).replace(/\D/g,'')) || null : null);
+            return {
+              time: relTime(pubDate),
+              isNew,
+              title: t.title || 'Plan de passation',
+              inst: t.institution || 'Autorité contractante',
+              reference: t.reference || null,
+              category: deriveCategory(t.category || t.market_type),
+              amount,
+              publication: pubDate ? fmtDate(pubDate) : null,
+              url: t.source_url || null,
+              _deadline: t.deadline || null,
+              _published: pubDate,
+              _year: pubDate ? new Date(pubDate).getFullYear() : null,
+              deadline: fmtDate(t.deadline),
+            };
+          });
+          const rInsts = [...new Set(data.map(t => t.inst))].filter(Boolean).sort();
+          ['fInstitution','fInstitution2'].forEach(id => { const s=document.getElementById(id); s.length=1; rInsts.forEach(i=>{const o=document.createElement('option');o.textContent=i;s.appendChild(o);}); });
+          render(data);
+          const showEl = document.querySelector('.market-showing');
+          if (showEl) showEl.textContent = `Affichage de ${data.length} plans de passation du Bénin`;
+          document.getElementById('updatedAt').textContent = "Mis à jour à l'instant";
+        } else {
+          render([]);
+          document.querySelector('.market-showing').textContent = '';
+          document.getElementById('updatedAt').textContent = '';
+        }
+      }).catch(() => {
+        grid.innerHTML = '<div class="card" style="grid-column:1/-1;">Le flux sera alimenté dès la mise en service. <a href="inscription.html">Inscrivez-vous</a> pour être alerté en priorité.</div>';
+        document.getElementById('countNum').textContent = '0';
+        document.querySelector('.market-showing').textContent = '';
+        document.getElementById('updatedAt').textContent = '';
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', initPage);
+  </script>
+</body>
+</html>

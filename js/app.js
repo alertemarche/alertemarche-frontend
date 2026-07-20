@@ -53,14 +53,22 @@ async function api(path, { method = 'GET', body = null, auth = false } = {}) {
 /* -------- Header -------- */
 function renderNav() {
     const path = location.pathname.split('/').pop() || 'index.html';
-    const links = [
-        ['index.html', 'Accueil'],
-        ['appels-offres-publics.html', "Appels d'offres publics"],
-        ['appels-offres-prives.html', "Appels d'offres privés"],
-        ['artisans.html', 'Artisans & Prestataires'],
-        ['tarifs.html', 'Tarifs'],
-        ['ressources.html', 'Ressources'],
+    const isActive = (h) => h === path ? 'active' : '';
+
+    // Groupes de navigation : liens simples et menus déroulants.
+    const marchesPublics = [
+        ['appels-offres-publics.html', "Appels d'offres publics", 'var(--green)'],
+        ['appels-offres-prives.html', "Appels d'offres privés", 'var(--purple)'],
     ];
+    const avisPlans = [
+        ['appels-concurrence.html', "Avis d'Appel à Concurrence", 'var(--green)'],
+        ['avis-generaux.html', 'Avis Généraux', 'var(--orange)'],
+        ['plan-passation.html', 'Plans de Passation', 'var(--indigo)'],
+    ];
+    const ddItems = (items) => items.map(([h, t, c]) =>
+        `<a href="${h}" class="${isActive(h)}"><span class="dot" style="background:${c}"></span>${t}</a>`).join('');
+    const groupActive = (items) => items.some(([h]) => h === path) ? 'has-active' : '';
+
     const header = document.createElement('header');
     header.className = 'site-header';
     header.innerHTML = `
@@ -74,7 +82,18 @@ function renderNav() {
         </a>
         <span class="country-badge" title="Bénin">BÉNIN <span class="flag">🇧🇯</span> <span class="caret">▼</span></span>
         <nav class="main-nav" id="mainNav">
-          ${links.map(([h, t]) => `<a href="${h}" class="${h === path ? 'active' : ''}">${t}</a>`).join('')}
+          <a href="index.html" class="${isActive('index.html')}">Accueil</a>
+          <div class="nav-dropdown ${groupActive(marchesPublics)}">
+            <button type="button" class="nav-dd-toggle">Marchés Publics <span class="caret">▾</span></button>
+            <div class="nav-dd-menu">${ddItems(marchesPublics)}</div>
+          </div>
+          <div class="nav-dropdown ${groupActive(avisPlans)}">
+            <button type="button" class="nav-dd-toggle">Avis &amp; Plans <span class="caret">▾</span></button>
+            <div class="nav-dd-menu">${ddItems(avisPlans)}</div>
+          </div>
+          <a href="artisans.html" class="${isActive('artisans.html')}">Artisans &amp; Prestataires</a>
+          <a href="tarifs.html" class="${isActive('tarifs.html')}">Tarifs</a>
+          <a href="ressources.html" class="${isActive('ressources.html')}">Ressources</a>
         </nav>
         <div class="header-actions">
           <a href="connexion.html" class="btn btn-outline btn-sm">${IC.user}<span>Se connecter</span></a>
@@ -84,6 +103,17 @@ function renderNav() {
       </div>`;
     document.body.prepend(header);
     $('#navToggle')?.addEventListener('click', () => $('#mainNav').classList.toggle('open'));
+    // Ouverture/fermeture des menus déroulants au clic (utile sur mobile / tactile).
+    $$('.nav-dropdown .nav-dd-toggle').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const dd = btn.closest('.nav-dropdown');
+            const wasOpen = dd.classList.contains('open');
+            $$('.nav-dropdown').forEach((d) => d.classList.remove('open'));
+            if (!wasOpen) dd.classList.add('open');
+        });
+    });
+    document.addEventListener('click', () => $$('.nav-dropdown').forEach((d) => d.classList.remove('open')));
 }
 
 /* -------- Footer -------- */
@@ -102,6 +132,9 @@ function renderFooter() {
             <h4>Plateforme</h4>
             <a href="appels-offres-publics.html">Appels d'offres publics</a>
             <a href="appels-offres-prives.html">Appels d'offres privés</a>
+            <a href="appels-concurrence.html">Avis d'Appel à Concurrence</a>
+            <a href="avis-generaux.html">Avis Généraux</a>
+            <a href="plan-passation.html">Plans de Passation</a>
             <a href="artisans.html">Artisans & Prestataires</a>
             <a href="tarifs.html">Tarifs</a>
           </div>
