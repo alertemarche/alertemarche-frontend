@@ -136,17 +136,18 @@ p { color: var(--text); }
 .nav-toggle { display: none; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--ink); }
 
 /* ---- Menus déroulants navigation ---- */
-.nav-dropdown { position: relative; }
-.nav-dropdown > .nav-dd-toggle {
-  font-size: .92rem; font-weight: 600; color: #374151; padding: 6px 0;
-  background: none; border: none; cursor: pointer; font-family: var(--font);
-  display: inline-flex; align-items: center; gap: 5px; transition: color .15s;
+.nav-dropdown { position: relative; display: inline-flex; align-items: center; gap: 2px; }
+.nav-dropdown > .nav-dd-link { padding: 6px 0; }
+.nav-dropdown > .nav-dd-caret {
+  background: none; border: none; cursor: pointer; color: #374151; padding: 6px 2px;
+  display: inline-flex; align-items: center; font-family: var(--font); transition: color .15s;
 }
-.nav-dropdown > .nav-dd-toggle .caret { font-size: .6rem; opacity: .7; transition: transform .18s; }
-.nav-dropdown:hover > .nav-dd-toggle,
-.nav-dropdown.open > .nav-dd-toggle { color: var(--green); }
-.nav-dropdown.open > .nav-dd-toggle .caret { transform: rotate(180deg); }
-.nav-dropdown.has-active > .nav-dd-toggle { color: var(--green); font-weight: 700; }
+.nav-dropdown > .nav-dd-caret .caret { font-size: .6rem; opacity: .7; transition: transform .18s; }
+.nav-dropdown:hover > .nav-dd-caret,
+.nav-dropdown:hover > .nav-dd-link,
+.nav-dropdown.open > .nav-dd-caret { color: var(--green); }
+.nav-dropdown.open > .nav-dd-caret .caret { transform: rotate(180deg); }
+.nav-dropdown.has-active > .nav-dd-link { color: var(--green); font-weight: 700; }
 .nav-dd-menu {
   position: absolute; top: calc(100% + 12px); left: 50%; transform: translateX(-50%) translateY(6px);
   background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow);
@@ -537,10 +538,11 @@ p { color: var(--text); }
   .main-nav a { padding: 10px 0; border-bottom: 1px solid var(--line); }
   .nav-toggle { display: block; }
   /* Dropdowns : affichés à plat (accordéon statique) sur mobile */
-  .nav-dropdown { width: 100%; }
-  .nav-dropdown > .nav-dd-toggle { width: 100%; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .nav-dropdown { width: 100%; flex-wrap: wrap; }
+  .nav-dropdown > .nav-dd-link { flex: 1; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .nav-dropdown > .nav-dd-caret { padding: 10px 0; border-bottom: 1px solid var(--line); }
   .nav-dd-menu {
-    position: static; transform: none; opacity: 1; visibility: visible; box-shadow: none;
+    flex-basis: 100%; position: static; transform: none; opacity: 1; visibility: visible; box-shadow: none;
     border: none; padding: 0 0 6px 12px; min-width: 0; background: transparent;
   }
   .nav-dd-menu a { padding: 8px 0; border-bottom: none; }

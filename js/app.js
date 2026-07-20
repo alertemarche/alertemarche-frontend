@@ -55,12 +55,12 @@ function renderNav() {
     const path = location.pathname.split('/').pop() || 'index.html';
     const isActive = (h) => h === path ? 'active' : '';
 
-    // Groupes de navigation : liens simples et menus déroulants.
-    const marchesPublics = [
+    // Header conservé à l'identique : « Appels d'offres publics » et « Appels d'offres
+    // privés » restent des liens directs visibles. Les nouvelles rubriques sont proposées
+    // en sous-catégories de « Appels d'offres publics » (menu déroulant), afin de laisser
+    // le choix à l'utilisateur sans modifier la structure du header.
+    const publicSub = [
         ['appels-offres-publics.html', "Appels d'offres publics", 'var(--green)'],
-        ['appels-offres-prives.html', "Appels d'offres privés", 'var(--purple)'],
-    ];
-    const avisPlans = [
         ['appels-concurrence.html', "Avis d'Appel à Concurrence", 'var(--green)'],
         ['avis-generaux.html', 'Avis Généraux', 'var(--orange)'],
         ['plan-passation.html', 'Plans de Passation', 'var(--indigo)'],
@@ -83,14 +83,12 @@ function renderNav() {
         <span class="country-badge" title="Bénin">BÉNIN <span class="flag">🇧🇯</span> <span class="caret">▼</span></span>
         <nav class="main-nav" id="mainNav">
           <a href="index.html" class="${isActive('index.html')}">Accueil</a>
-          <div class="nav-dropdown ${groupActive(marchesPublics)}">
-            <button type="button" class="nav-dd-toggle">Marchés Publics <span class="caret">▾</span></button>
-            <div class="nav-dd-menu">${ddItems(marchesPublics)}</div>
+          <div class="nav-dropdown ${groupActive(publicSub)}">
+            <a href="appels-offres-publics.html" class="nav-dd-link ${isActive('appels-offres-publics.html')}">Appels d'offres publics</a>
+            <button type="button" class="nav-dd-caret" aria-label="Sous-catégories des appels d'offres publics"><span class="caret">▾</span></button>
+            <div class="nav-dd-menu">${ddItems(publicSub)}</div>
           </div>
-          <div class="nav-dropdown ${groupActive(avisPlans)}">
-            <button type="button" class="nav-dd-toggle">Avis &amp; Plans <span class="caret">▾</span></button>
-            <div class="nav-dd-menu">${ddItems(avisPlans)}</div>
-          </div>
+          <a href="appels-offres-prives.html" class="${isActive('appels-offres-prives.html')}">Appels d'offres privés</a>
           <a href="artisans.html" class="${isActive('artisans.html')}">Artisans &amp; Prestataires</a>
           <a href="tarifs.html" class="${isActive('tarifs.html')}">Tarifs</a>
           <a href="ressources.html" class="${isActive('ressources.html')}">Ressources</a>
@@ -103,9 +101,12 @@ function renderNav() {
       </div>`;
     document.body.prepend(header);
     $('#navToggle')?.addEventListener('click', () => $('#mainNav').classList.toggle('open'));
-    // Ouverture/fermeture des menus déroulants au clic (utile sur mobile / tactile).
-    $$('.nav-dropdown .nav-dd-toggle').forEach((btn) => {
+    // Ouverture/fermeture du sous-menu au clic sur le chevron (utile sur mobile / tactile).
+    // Le libellé « Appels d'offres publics » reste un lien direct ; seul le chevron ouvre
+    // la liste des sous-catégories.
+    $$('.nav-dropdown .nav-dd-caret').forEach((btn) => {
         btn.addEventListener('click', (e) => {
+            e.preventDefault();
             e.stopPropagation();
             const dd = btn.closest('.nav-dropdown');
             const wasOpen = dd.classList.contains('open');
