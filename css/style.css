@@ -170,7 +170,7 @@ p { color: var(--text); }
 .channel-card b { display: block; font-size: .95rem; color: var(--ink); }
 .channel-card span { font-size: .8rem; color: var(--muted); }
 
-.hero-mini { display: flex; gap: 26px; flex-wrap: wrap; margin-top: 6px; }
+.hero-mini { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 6px; max-width: 560px; }
 .hero-mini div { display: flex; align-items: center; gap: 9px; font-size: .86rem; }
 .hero-mini .mi { width: 30px; height: 30px; border-radius: 8px; background: var(--green-050); color: var(--green); display: grid; place-items: center; flex: none; }
 .hero-mini .mi svg { width: 16px; height: 16px; }
