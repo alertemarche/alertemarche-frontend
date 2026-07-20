@@ -118,10 +118,10 @@
         : `<span class="tc-budget na">Budget : Non communiqué</span>`;
       const ref = t.reference ? `<div class="m">${svg.inst}<span>Référence : <b>${esc(t.reference)}</b></span></div>` : '';
       const lots = (t.nbLots && t.nbLots > 1) ? `<span class="tag">${t.nbLots} lots</span>` : '';
-      // Lien officiel : DAO si disponible, sinon page source. Ouverture nouvel onglet.
-      const officialUrl = t.daoUrl || t.url || '';
+      // Redirection vers la page officielle de l'appel d'offres (pas de téléchargement DAO).
+      const officialUrl = t.url || '';
       const officialBtn = officialUrl
-        ? `<a href="${esc(officialUrl)}" target="_blank" rel="noopener" class="btn btn-primary">${t.daoUrl ? 'Télécharger le DAO' : 'Voir sur le site officiel'} ${svg.ext}</a>`
+        ? `<a href="${esc(officialUrl)}" target="_blank" rel="noopener" class="btn btn-primary">Voir sur le site officiel ${svg.ext}</a>`
         : `<a href="inscription.html" class="btn btn-primary">Voir sur le site officiel ${svg.ext}</a>`;
       return `<article class="tender-card">
         <div class="tc-top">
@@ -231,7 +231,6 @@
               loc: t.location || 'Bénin',
               reference: t.reference || null,
               nbLots: t.nb_lots || null,
-              daoUrl: t.dao_url || null,
               url: t.source_url || null,
               _deadline: t.deadline || null,
               budget: (t.estimated_amount && /\d/.test(String(t.estimated_amount))) ? parseInt(String(t.estimated_amount).replace(/\D/g,'')) || null : null,

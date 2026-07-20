@@ -124,11 +124,11 @@
     function tenderCard(t) {
       const c = COUNTRIES[t.country] || { flag: '🌍', name: t.country || '' };
       const ref = t.reference ? `<div class="m">${svg.ref}<span>Référence : <b>${esc(t.reference)}</b></span></div>` : '';
-      // Lien vers la fiche officielle (documents de consultation) — nouvel onglet.
-      const url = t.daoUrl || t.url || '';
+      // Redirection vers la page officielle de la consultation (pas de téléchargement DAO).
+      const url = t.url || '';
       const btn = url
-        ? `<a href="${esc(url)}" target="_blank" rel="noopener" class="btn btn-purple">Voir la consultation ${svg.ext}</a>`
-        : `<a href="inscription.html" class="btn btn-purple">Voir la consultation ${svg.ext}</a>`;
+        ? `<a href="${esc(url)}" target="_blank" rel="noopener" class="btn btn-purple">Voir sur le site officiel ${svg.ext}</a>`
+        : `<a href="inscription.html" class="btn btn-purple">Voir sur le site officiel ${svg.ext}</a>`;
       return `<article class="tender-card">
         <div class="tc-top">
           <span class="sector-badge" style="background:var(--purple-050);color:var(--purple);">🤝 Privé</span>
@@ -208,7 +208,6 @@
               inst: t.institution || 'Organisme international',
               loc: t.location || 'Bénin',
               reference: t.reference || null,
-              daoUrl: t.dao_url || null,
               url: t.source_url || null,
               _deadline: t.deadline || null,
               _published: t.publication_date || t.collected_at || null,
