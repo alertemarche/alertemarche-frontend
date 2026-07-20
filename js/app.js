@@ -55,7 +55,7 @@ function renderNav() {
     const path = location.pathname.split('/').pop() || 'index.html';
     const links = [
         ['index.html', 'Accueil'],
-        ['appels-offres-publics.html', 'Marchés publics'],
+        ['appels-offres-publics.html', "Appels d'offres publics"],
         ['appels-offres-prives.html', "Appels d'offres privés"],
         ['artisans.html', 'Artisans & Prestataires'],
         ['tarifs.html', 'Tarifs'],
@@ -100,7 +100,7 @@ function renderFooter() {
           </div>
           <div class="footer-col">
             <h4>Plateforme</h4>
-            <a href="appels-offres-publics.html">Marchés publics</a>
+            <a href="appels-offres-publics.html">Appels d'offres publics</a>
             <a href="appels-offres-prives.html">Appels d'offres privés</a>
             <a href="artisans.html">Artisans & Prestataires</a>
             <a href="tarifs.html">Tarifs</a>
@@ -113,16 +113,16 @@ function renderFooter() {
             <a href="connexion.html">Se connecter</a>
           </div>
           <div class="footer-col">
-            <h4>PRO BENIN SARL</h4>
-            <a href="#">Mentions légales</a>
-            <a href="#">Confidentialité</a>
-            <a href="#">CGU</a>
+            <h4>Informations</h4>
+            <a href="mentions-legales.html">Mentions légales</a>
+            <a href="confidentialite.html">Confidentialité</a>
+            <a href="cgu.html">CGU</a>
             <a href="mailto:info@alertemarche.com">info@alertemarche.com</a>
           </div>
         </div>
         <div class="footer-bottom">
-          <span>© 2026 AlerteMarché — PRO BENIN SARL. Tous droits réservés.</span>
-          <span>Édité au Bénin • alertemarche.com</span>
+          <span>© 2026 AlerteMarché. Tous droits réservés.</span>
+          <span>alertemarche.com</span>
         </div>
       </div>`;
     document.body.appendChild(f);

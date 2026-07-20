@@ -214,8 +214,10 @@
         return new Date(d).toLocaleDateString('fr-FR');
       }
 
-      // Hydratation depuis l'API réelle. Les vrais avis du Bénin remplacent l'exemple.
-      api('/tenders?country=BJ&per_page=50').then(res => {
+      // Hydratation depuis l'API réelle. UNIQUEMENT les marchés PUBLICS (institutions
+      // publiques/officielles) — les ONG et organismes internationaux relèvent de la
+      // page « Appels d'offres privés » (type=prive).
+      api('/tenders?country=BJ&type=public&per_page=50').then(res => {
         const items = (res.data || res || []);
         if (Array.isArray(items) && items.length) {
           const now = Date.now();
