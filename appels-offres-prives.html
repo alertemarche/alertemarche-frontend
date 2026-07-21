@@ -7,7 +7,7 @@
   <meta name="description" content="Consultations des ONG, agences des Nations Unies et organismes internationaux au Bénin : recevez les appels d'offres privés en temps réel par WhatsApp et Email.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=202607211330">
+  <link rel="stylesheet" href="css/style.css?v=202607211400">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RRXKSCN05J"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RRXKSCN05J');</script>
 </head>
@@ -89,7 +89,7 @@
     </div>
   </section>
 
-  <script src="js/app.js?v=202607211330"></script>
+  <script src="js/app.js?v=202607211400"></script>
   <script>
     const COUNTRIES = {
       BJ: { flag: '🇧🇯', name: 'Bénin' },
@@ -194,7 +194,7 @@
 
       // Hydratation depuis l'API réelle : UNIQUEMENT les appels d'offres PRIVÉS
       // (ONG, agences des Nations Unies, organismes internationaux — type=prive).
-      api('/tenders?country=BJ&type=prive&per_page=50').then(res => {
+      api('/tenders?country=BJ&type=prive&per_page=200').then(res => {
         const items = (res.data || res || []);
         if (Array.isArray(items) && items.length) {
           const now = Date.now();

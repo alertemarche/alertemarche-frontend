@@ -7,7 +7,7 @@
   <meta name="description" content="Trouvez les meilleures opportunités de marchés publics au Bénin en temps réel. Sources officielles du gouvernement, résumés IA, alertes WhatsApp et Email.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=202607211330">
+  <link rel="stylesheet" href="css/style.css?v=202607211400">
 </head>
 <body>
 
@@ -90,7 +90,7 @@
     </div>
   </section>
 
-  <script src="js/app.js?v=202607211330"></script>
+  <script src="js/app.js?v=202607211400"></script>
   <script>
     const SAMPLE_TENDERS = [
       { sector:'Travaux', badge:'travaux', time:'Il y a 2 heures', isNew:true, title:"Construction d'un bâtiment scolaire (6 salles de classe) à Adjohoun", inst:"Ministère des Enseignements Maternel et Primaire", loc:"Adjohoun, Ouémé", budget:null, deadline:"12 Août 2024", tags:["Bâtiment","Éducation"] },
@@ -217,7 +217,7 @@
       // Hydratation depuis l'API réelle. UNIQUEMENT les marchés PUBLICS (institutions
       // publiques/officielles) — les ONG et organismes internationaux relèvent de la
       // page « Appels d'offres privés » (type=prive).
-      api('/tenders?country=BJ&type=public&per_page=50').then(res => {
+      api('/tenders?country=BJ&type=public&per_page=200').then(res => {
         const items = (res.data || res || []);
         if (Array.isArray(items) && items.length) {
           const now = Date.now();
