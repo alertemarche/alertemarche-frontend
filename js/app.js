@@ -92,6 +92,8 @@ function renderNav() {
           <a href="artisans.html" class="${isActive('artisans.html')}">Artisans &amp; Prestataires</a>
           <a href="tarifs.html" class="${isActive('tarifs.html')}">Tarifs</a>
           <a href="ressources.html" class="${isActive('ressources.html')}">Ressources</a>
+          <a href="inscription.html" class="nav-auth-mobile ${isActive('inscription.html')}">Créer un compte gratuit</a>
+          <a href="connexion.html" class="nav-auth-mobile ${isActive('connexion.html')}">Se connecter</a>
         </nav>
         <div class="header-actions">
           <a href="connexion.html" class="btn btn-outline btn-sm">${IC.user}<span>Se connecter</span></a>

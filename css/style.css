@@ -121,6 +121,7 @@ p { color: var(--text); }
 .country-badge .caret { font-size: .6rem; opacity: .7; }
 
 .main-nav { display: flex; align-items: center; gap: 26px; margin: 0 auto; }
+.nav-auth-mobile { display: none; } /* liens auth réservés au menu hamburger mobile */
 .main-nav a {
   font-size: .92rem; font-weight: 600; color: #374151; padding: 6px 0;
   position: relative; transition: color .15s;
@@ -542,11 +543,17 @@ p { color: var(--text); }
   .main-nav { display: none; position: absolute; top: 76px; left: 0; right: 0; background: #fff; flex-direction: column; padding: 16px 24px; box-shadow: var(--shadow); gap: 4px; align-items: stretch; z-index: 100; }
   .main-nav.open { display: flex; }
   .main-nav a { padding: 14px 8px; border-bottom: 1px solid var(--line); font-size: 1rem; }
+  /* Liens d'authentification affichés dans le menu hamburger sur mobile */
+  .main-nav .nav-auth-mobile { display: block; }
+  .main-nav .nav-auth-mobile:first-of-type { margin-top: 8px; color: var(--green); font-weight: 700; }
   .nav-toggle { 
     display: flex; /* visible sur mobile */
     padding: 8px; min-width: 44px; min-height: 44px; /* zone tactile optimale 44×44px (Apple/Google HIG) */
     align-items: center; justify-content: center;
+    flex-shrink: 0; /* le hamburger ne doit jamais être compressé ni poussé hors écran */
   }
+  .header-inner { flex-wrap: nowrap; } /* garder logo | actions | hamburger sur une seule ligne */
+  .header-actions { flex-shrink: 1; min-width: 0; } /* les CTA cèdent la place au hamburger */
   /* Dropdowns : accordéon mobile avec toggle (caché par défaut, ouvert au clic) */
   .nav-dropdown { width: 100%; flex-wrap: wrap; }
   .nav-dropdown > .nav-dd-link { flex: 1; padding: 14px 8px; border-bottom: 1px solid var(--line); font-size: 1rem; }
@@ -575,4 +582,8 @@ p { color: var(--text); }
   .feature-grid, .profiles-grid, .stats-grid, .trust-grid, .form-grid, .form-grid.two { grid-template-columns: 1fr; }
   .brand-tag { display: none; }
   .section { padding: 48px 0; }
+  /* Sous 560px, masquer le CTA "S'inscrire" du header : il déborde et pousse le hamburger hors écran.
+     L'inscription reste accessible via le menu (hamburger) et les CTA des sections. */
+  .header-actions .btn-primary { display: none; }
+  .header-actions { gap: 0; }
 }
