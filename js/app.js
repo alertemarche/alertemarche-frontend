@@ -53,21 +53,33 @@ async function api(path, { method = 'GET', body = null, auth = false } = {}) {
 /* -------- Header -------- */
 function renderNav() {
     const path = location.pathname.split('/').pop() || 'index.html';
-    const isActive = (h) => h === path ? 'active' : '';
+    // Repère la page courante en tenant compte du paramètre de procédure
+    // (procedures.html?p=…) afin de surligner la bonne sous-catégorie.
+    const params = new URLSearchParams(location.search);
+    const current = path + (path === 'procedures.html' && params.get('p') ? '?p=' + params.get('p') : '');
+    const isActive = (h) => (h === current || h === path) ? 'active' : '';
 
     // Header conservé à l'identique : « Appels d'offres publics » et « Appels d'offres
     // privés » restent des liens directs visibles. Les nouvelles rubriques sont proposées
     // en sous-catégories de « Appels d'offres publics » (menu déroulant), afin de laisser
     // le choix à l'utilisateur sans modifier la structure du header.
+    // Les 5 procédures de passation (cotation, DRP, AAON, AAOI, AMI) couvrent
+    // l'ensemble des marchés publics en cours ET planifiés (plans de passation),
+    // ce qui élargit fortement le nombre de marchés remontés.
     const publicSub = [
         ['appels-offres-publics.html', "Appels d'offres publics", 'var(--green)'],
+        ['procedures.html?p=cotation', 'Demande de cotation', 'var(--green)'],
+        ['procedures.html?p=drp', 'Demande de renseignement et de prix (DRP)', 'var(--green)'],
+        ['procedures.html?p=aaon', "Avis d'appel d'offres national (AAON)", 'var(--green)'],
+        ['procedures.html?p=aaoi', "Avis d'appel d'offres international (AAOI)", 'var(--green)'],
+        ['procedures.html?p=ami', 'Avis à manifestation d\'intérêt (AMI)', 'var(--green)'],
         ['appels-concurrence.html', "Avis d'Appel à Concurrence", 'var(--green)'],
         ['avis-generaux.html', 'Avis Généraux', 'var(--orange)'],
         ['plan-passation.html', 'Plans de Passation', 'var(--indigo)'],
     ];
     const ddItems = (items) => items.map(([h, t, c]) =>
         `<a href="${h}" class="${isActive(h)}"><span class="dot" style="background:${c}"></span>${t}</a>`).join('');
-    const groupActive = (items) => items.some(([h]) => h === path) ? 'has-active' : '';
+    const groupActive = (items) => items.some(([h]) => h.split('?')[0] === path) ? 'has-active' : '';
 
     const header = document.createElement('header');
     header.className = 'site-header';

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Procédures de passation — AlerteMarché</title>
+  <meta name="description" content="Marchés publics au Bénin par type de procédure de passation : demande de cotation, DRP, appel d'offres national et international, manifestation d'intérêt. Marchés en cours et planifiés, sources officielles.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=202607221200">
+</head>
+<body>
+
+  <!-- Titre + breadcrumb -->
+  <section class="page-head">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Accueil</a><span class="sep">›</span><a href="appels-offres-publics.html">Appels d'offres publics</a><span class="sep">›</span><span id="crumb">Procédure</span></div>
+      <div class="page-title">
+        <div>
+          <h1 id="pageTitle">Procédure de passation</h1>
+          <p id="pageDesc">Marchés publics en cours et planifiés au Bénin</p>
+        </div>
+        <div class="official-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+          Opportunités issues des sources officielles du gouvernement (DNCMP) — avis en cours et opérations planifiées (plans de passation).
+        </div>
+      </div>
+
+      <!-- Barre de recherche + filtres -->
+      <div class="market-toolbar">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="searchInput" placeholder="Rechercher un marché, une institution, un mot clé…">
+        </div>
+        <div class="filter-select"><select id="fSector"><option value="">Catégorie / Secteur</option><option>Travaux</option><option>Fournitures</option><option>Services</option></select></div>
+        <div class="filter-select"><select id="fInstitution"><option value="">Institution</option></select></div>
+        <div class="filter-select"><select id="fStatut"><option value="">Statut</option><option value="encours">En cours</option><option value="avenir">À venir</option></select></div>
+        <div class="filter-select"><select id="fSort"><option value="recent">Trier par : Plus récents</option><option value="deadline">Date limite</option><option value="budget">Budget</option></select></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container">
+    <div class="market-main">
+      <div class="market-count">
+        <div class="cc"><b id="countNum">…</b> marchés trouvés <span id="updatedAt">Chargement…</span></div>
+        <div class="view-toggle">
+          <button class="active" data-view="grid"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Vue grille</button>
+          <button data-view="list"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Vue liste</button>
+        </div>
+      </div>
+
+      <div class="tenders-grid" id="tendersGrid"></div>
+
+      <div class="market-showing" id="marketShowing">Chargement des opportunités officielles du Bénin…</div>
+    </div>
+  </section>
+
+  <script src="js/app.js?v=202607221200"></script>
+  <script>
+    // Métadonnées d'affichage par procédure (paramètre ?p=).
+    const PROC = {
+      cotation: { title: 'Demande de cotation', desc: "Marchés passés par demande de cotation (petits montants) — en cours et planifiés." },
+      drp:      { title: 'Demande de renseignement et de prix (DRP)', desc: "Marchés passés par demande de renseignement et de prix — en cours et planifiés." },
+      aaon:     { title: "Avis d'appel d'offres national (AAON)", desc: "Appels d'offres nationaux (ouverts et restreints) — en cours et planifiés." },
+      aaoi:     { title: "Avis d'appel d'offres international (AAOI)", desc: "Appels d'offres internationaux (y compris avec pré-qualification) — en cours et planifiés." },
+      ami:      { title: "Avis à manifestation d'intérêt (AMI)", desc: "Avis à manifestation d'intérêt (national et international) — en cours et planifiés." },
+    };
+
+    const svg = {
+      inst:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11"/></svg>',
+      pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>',
+      cal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+      ext:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>',
+    };
+
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+    function tenderCard(t) {
+      const budget = t.budget
+        ? `<span class="tc-budget">Budget estimatif : ${new Intl.NumberFormat('fr-FR').format(t.budget)} FCFA</span>`
+        : `<span class="tc-budget na" title="Le budget estimatif n'est pas publié pour cette opportunité. Consultez la source officielle pour les détails.">Budget : Non publié <span style="cursor:help; opacity:.7">ⓘ</span></span>`;
+      const ref = t.reference ? `<div class="m">${svg.inst}<span>Référence : <b>${esc(t.reference)}</b></span></div>` : '';
+      const statut = t.statut === 'avenir'
+        ? '<span class="tc-new" style="background:#6366f1">À venir</span>'
+        : (t.statut === 'encours' ? '<span class="tc-new" style="background:#16a34a">En cours</span>' : '');
+      const officialUrl = t.url || '';
+      const officialBtn = officialUrl
+        ? `<a href="${esc(officialUrl)}" target="_blank" rel="noopener" class="btn btn-primary">Voir sur le site officiel ${svg.ext}</a>`
+        : `<a href="inscription.html" class="btn btn-primary">Voir sur le site officiel ${svg.ext}</a>`;
+      return `<article class="tender-card">
+        <div class="tc-top">
+          <span class="sector-badge ${t.badge}">${esc(t.sector)}</span>
+          <span class="tc-time">${esc(t.time)}${statut}</span>
+        </div>
+        <h3>${esc(t.title)}</h3>
+        <div class="tc-meta">
+          <div class="m">${svg.inst}<span>${esc(t.inst)}</span></div>
+          ${ref}
+          <div class="m">${svg.pin}<span>${esc(t.loc)}</span></div>
+          <div class="m">${budget}</div>
+          <div class="m">${svg.cal}<span>Date limite : ${esc(t.deadline)}</span></div>
+        </div>
+        <div class="tc-tags">${t.tags.map(x => `<span class="tag">${esc(x)}</span>`).join('')}</div>
+        <div class="tc-actions">
+          <a href="inscription.html" class="btn btn-ghost">Voir les détails</a>
+          ${officialBtn}
+        </div>
+      </article>`;
+    }
+
+    function deriveSector(mt) {
+      const s = (mt || '').toLowerCase();
+      if (s.includes('travaux')) return { sector: 'Travaux', badge: 'travaux' };
+      if (s.includes('fourn') || s.includes('bien')) return { sector: 'Fournitures', badge: 'fournitures' };
+      if (s.includes('service') || s.includes('prestation') || s.includes('intellect')) return { sector: 'Services', badge: 'services' };
+      return { sector: 'Marché public', badge: 'travaux' };
+    }
+    function relTime(d) {
+      if (!d) return 'Récent';
+      const diff = Date.now() - new Date(d).getTime();
+      if (isNaN(diff)) return 'Récent';
+      const h = Math.floor(diff / 3.6e6), j = Math.floor(h / 24);
+      if (h < 1) return "À l'instant";
+      if (h < 24) return `Il y a ${h} heure${h > 1 ? 's' : ''}`;
+      if (j < 30) return `Il y a ${j} jour${j > 1 ? 's' : ''}`;
+      return new Date(d).toLocaleDateString('fr-FR');
+    }
+
+    function initPage() {
+      const params = new URLSearchParams(location.search);
+      const p = (params.get('p') || 'cotation').toLowerCase();
+      const meta = PROC[p] || PROC.cotation;
+      document.getElementById('pageTitle').textContent = meta.title;
+      document.getElementById('pageDesc').textContent = meta.desc;
+      document.getElementById('crumb').textContent = meta.title;
+      document.title = meta.title + ' — AlerteMarché';
+
+      const grid = document.getElementById('tendersGrid');
+      let data = [];
+      const today = new Date().toISOString().slice(0, 10);
+
+      function render(list) {
+        grid.innerHTML = list.length
+          ? list.map(tenderCard).join('')
+          : '<p class="muted" style="grid-column:1/-1;padding:30px;text-align:center;">Aucun marché ne correspond à votre recherche pour cette procédure.</p>';
+        document.getElementById('countNum').textContent = new Intl.NumberFormat('fr-FR').format(list.length);
+      }
+
+      function applyFilters() {
+        const kw = (document.getElementById('searchInput').value || '').toLowerCase();
+        const sec = document.getElementById('fSector').value;
+        const inst = document.getElementById('fInstitution').value;
+        const statut = document.getElementById('fStatut').value;
+        let list = data.filter(t => {
+          if (kw && !(t.title.toLowerCase().includes(kw) || t.inst.toLowerCase().includes(kw) || t.tags.join(' ').toLowerCase().includes(kw))) return false;
+          if (sec && t.sector !== sec) return false;
+          if (inst && t.inst !== inst) return false;
+          if (statut && t.statut !== statut) return false;
+          return true;
+        });
+        const sort = document.getElementById('fSort').value;
+        if (sort === 'budget') list.sort((a,b) => (b.budget||0) - (a.budget||0));
+        else if (sort === 'deadline') list.sort((a,b) => new Date(a._deadline||'2999-01-01') - new Date(b._deadline||'2999-01-01'));
+        render(list);
+      }
+
+      document.getElementById('searchInput').addEventListener('input', applyFilters);
+      document.getElementById('fSort').addEventListener('change', applyFilters);
+      ['fSector','fInstitution','fStatut'].forEach(id => document.getElementById(id).addEventListener('change', applyFilters));
+      document.querySelectorAll('.view-toggle button').forEach(b => b.addEventListener('click', () => {
+        document.querySelectorAll('.view-toggle button').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        grid.style.gridTemplateColumns = b.dataset.view === 'list' ? '1fr' : '';
+      }));
+
+      // Hydratation depuis l'API réelle, filtrée par type de procédure.
+      api('/tenders?country=BJ&procedure_type=' + encodeURIComponent(p) + '&per_page=500').then(res => {
+        const items = (res.data || res || []);
+        if (Array.isArray(items)) {
+          const now = Date.now();
+          data = items.map(t => {
+            const ds = deriveSector(t.market_type);
+            const dl = t._deadline || t.deadline || null;
+            // Statut : à venir si le lancement est postérieur à aujourd'hui, sinon en cours.
+            const statut = (t.publication_date && t.publication_date > today) ? 'avenir' : 'encours';
+            return {
+              sector: ds.sector, badge: ds.badge,
+              time: relTime(t.publication_date), statut,
+              title: t.title, inst: t.institution || 'Institution publique',
+              loc: t.location || 'Bénin',
+              reference: t.reference || null,
+              url: t.source_url || null,
+              _deadline: t.deadline || null,
+              budget: (t.estimated_amount && /\d/.test(String(t.estimated_amount))) ? parseInt(String(t.estimated_amount).replace(/\D/g,'')) || null : null,
+              deadline: t.deadline ? new Date(t.deadline).toLocaleDateString('fr-FR') : 'À confirmer',
+              tags: [t.market_type].filter(Boolean),
+            };
+          });
+          const rInsts = [...new Set(data.map(t => t.inst))].filter(Boolean).sort();
+          const s = document.getElementById('fInstitution');
+          rInsts.forEach(i => { const o = document.createElement('option'); o.textContent = i; s.appendChild(o); });
+          render(data);
+          const showEl = document.getElementById('marketShowing');
+          if (showEl) showEl.textContent = data.length ? `Affichage de ${data.length} opportunités (${meta.title})` : 'Aucune opportunité disponible pour cette procédure pour le moment.';
+          document.getElementById('updatedAt').textContent = 'Mis à jour à l\'instant';
+        }
+      }).catch(() => {
+        document.getElementById('marketShowing').textContent = 'Impossible de charger les opportunités pour le moment.';
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', initPage);
+  </script>
+</body>
+</html>
