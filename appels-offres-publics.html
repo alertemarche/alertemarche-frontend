@@ -7,7 +7,7 @@
   <meta name="description" content="Trouvez les meilleures opportunités de marchés publics au Bénin en temps réel. Sources officielles du gouvernement, résumés IA, alertes WhatsApp et Email.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=202607211230">
+  <link rel="stylesheet" href="css/style.css?v=202607211300">
 </head>
 <body>
 
@@ -90,7 +90,7 @@
     </div>
   </section>
 
-  <script src="js/app.js?v=202607211230"></script>
+  <script src="js/app.js?v=202607211300"></script>
   <script>
     const SAMPLE_TENDERS = [
       { sector:'Travaux', badge:'travaux', time:'Il y a 2 heures', isNew:true, title:"Construction d'un bâtiment scolaire (6 salles de classe) à Adjohoun", inst:"Ministère des Enseignements Maternel et Primaire", loc:"Adjohoun, Ouémé", budget:null, deadline:"12 Août 2024", tags:["Bâtiment","Éducation"] },
@@ -115,7 +115,7 @@
     function tenderCard(t) {
       const budget = t.budget
         ? `<span class="tc-budget">Budget : ${new Intl.NumberFormat('fr-FR').format(t.budget)} FCFA</span>`
-        : `<span class="tc-budget na">Budget : Non communiqué</span>`;
+        : `<span class="tc-budget na" title="Le budget estimatif n'est pas publié par la source officielle pour les appels d'offres ouverts. Consultez le Dossier d'Appel d'Offres (DAO) sur le site officiel pour les détails.">Budget : Non publié par la source <span style="cursor:help; opacity:.7">ⓘ</span></span>`;
       const ref = t.reference ? `<div class="m">${svg.inst}<span>Référence : <b>${esc(t.reference)}</b></span></div>` : '';
       const lots = (t.nbLots && t.nbLots > 1) ? `<span class="tag">${t.nbLots} lots</span>` : '';
       // Redirection vers la page officielle de l'appel d'offres (pas de téléchargement DAO).
