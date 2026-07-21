@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mon espace — AlerteMarché</title>
-  <meta name="description" content="Tableau de bord AlerteMarché : vos alertes, abonnements et paramètres.">
+  <meta name="description" content="Tableau de bord AlerteMarché : vos alertes, centres d'intérêt, abonnements et paramètres.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=202607221200">
+  <link rel="stylesheet" href="css/style.css?v=202607221900">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RRXKSCN05J"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RRXKSCN05J');</script>
 </head>
@@ -26,91 +26,314 @@
   <div class="dash">
     <aside class="dash__side">
       <a href="#" class="active" data-tab="overview">📊 Vue d'ensemble</a>
+      <a href="#" data-tab="interests">🎯 Centres d'intérêt</a>
       <a href="#" data-tab="alerts">🔔 Mes alertes</a>
-      <a href="#" data-tab="subs">💳 Abonnements</a>
-      <a href="#" data-tab="settings">⚙️ Paramètres</a>
+      <a href="#" data-tab="subs">💳 Mon abonnement</a>
+      <a href="#" data-tab="profile">👤 Mon profil</a>
       <a href="tarifs.html">⬆️ Améliorer mon offre</a>
     </aside>
 
     <main class="dash__main">
+
+      <!-- Bandeau vérification e-mail -->
+      <div id="verifyBanner" class="hidden" style="background:#fef3c7;border:1px solid #fcd34d;border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+        <span style="font-size:1.4rem;">✉️</span>
+        <div style="flex:1;min-width:200px;">
+          <b style="color:#92400e;">Confirmez votre adresse e-mail</b>
+          <div style="font-size:.88rem;color:#78350f;">Vérifiez votre boîte mail pour activer toutes les fonctionnalités. Vous n'avez pas reçu le code ?</div>
+        </div>
+        <button class="btn btn--sm btn--primary" id="goVerify">Vérifier maintenant</button>
+      </div>
+
       <!-- Vue d'ensemble -->
       <section data-panel="overview">
         <h2 class="mb-2">Bonjour <span id="uHello"></span> 👋</h2>
+        <p class="muted mb-2">Bienvenue dans votre espace personnel. Gérez vos centres d'intérêt pour recevoir en temps réel les marchés qui vous concernent.</p>
         <div class="kpi-grid">
           <div class="kpi"><b id="kAlerts">—</b><span>Alertes reçues</span></div>
           <div class="kpi"><b id="kFree">—</b><span>Statut d'abonnement</span></div>
           <div class="kpi"><b id="kPlan">—</b><span>Formule actuelle</span></div>
-          <div class="kpi"><b id="kCountry">—</b><span>Pays principal</span></div>
+          <div class="kpi"><b id="kSectors">—</b><span>Secteurs suivis</span></div>
         </div>
         <div class="card">
           <h3 class="mb-2">Statut de votre compte</h3>
           <div id="statusBox"><p class="muted">Chargement…</p></div>
         </div>
+        <div class="card mt-2">
+          <h3 class="mb-2">Actions rapides</h3>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <button class="btn btn--ghost" data-goto="interests">🎯 Modifier mes centres d'intérêt</button>
+            <button class="btn btn--ghost" data-goto="alerts">🔔 Voir mes alertes</button>
+            <a class="btn btn--ghost" href="appels-offres-publics.html">📄 Explorer les appels d'offres</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Centres d'intérêt -->
+      <section data-panel="interests" class="hidden">
+        <h2 class="mb-1">🎯 Centres d'intérêt</h2>
+        <p class="muted mb-2">Sélectionnez vos secteurs et vos mots-clés. Vous ne recevrez <b>que</b> les marchés qui correspondent à votre activité — en temps réel, dès leur publication.</p>
+
+        <div id="intMsg"></div>
+
+        <div class="card">
+          <div class="form-section-title" style="display:flex;align-items:center;gap:8px;font-weight:700;margin-bottom:6px;">
+            <span style="color:var(--green);">🏷️</span> Vos secteurs d'activité
+          </div>
+          <p class="muted" style="font-size:.88rem;margin-bottom:12px;">Cliquez pour activer/désactiver un secteur.</p>
+          <div class="chip-grid" id="sectorGrid"><div class="chip-hint">Chargement des secteurs…</div></div>
+        </div>
+
+        <div class="card mt-2">
+          <div class="form-section-title" style="display:flex;align-items:center;gap:8px;font-weight:700;margin-bottom:6px;">
+            <span style="color:var(--green);">🔍</span> Mots-clés personnalisés
+          </div>
+          <p class="muted" style="font-size:.88rem;margin-bottom:12px;">Ajoutez des termes précis (produit, service, technologie). Un marché contenant l'un de vos mots-clés vous sera notifié, même hors de vos secteurs.</p>
+          <div class="kw-box" id="kwBox">
+            <input type="text" id="kwInput" placeholder="Ex: forage, panneaux solaires… (Entrée pour ajouter)">
+          </div>
+          <div class="kw-suggest" id="kwSuggest" style="margin-top:10px;"></div>
+        </div>
+
+        <div class="card mt-2">
+          <div class="form-section-title" style="display:flex;align-items:center;gap:8px;font-weight:700;margin-bottom:12px;">
+            <span style="color:var(--green);">🔔</span> Canaux de notification
+          </div>
+          <label style="display:flex;gap:10px;align-items:center;font-weight:500;margin-bottom:10px;"><input type="checkbox" id="iEmail"> Recevoir mes alertes par <b>e-mail</b></label>
+          <label style="display:flex;gap:10px;align-items:center;font-weight:500;"><input type="checkbox" id="iWhatsapp"> Recevoir mes alertes par <b>WhatsApp</b> <span class="chip" style="background:#fef3c7;color:#92400e;">Premium</span></label>
+          <p class="muted" style="font-size:.82rem;margin-top:8px;" id="waHint">WhatsApp nécessite un abonnement payant actif.</p>
+        </div>
+
+        <div class="mt-2" style="display:flex;gap:12px;align-items:center;">
+          <button class="btn btn--primary btn--lg" id="saveInterests">💾 Enregistrer mes préférences</button>
+          <span id="intSaveState" class="muted" style="font-size:.9rem;"></span>
+        </div>
       </section>
 
       <!-- Alertes -->
       <section data-panel="alerts" class="hidden">
-        <h2 class="mb-2">Mes alertes</h2>
+        <h2 class="mb-2">🔔 Mes alertes</h2>
+        <p class="muted mb-2">Retrouvez ici toutes les opportunités qui correspondent à vos centres d'intérêt.</p>
         <div id="alertsList"><p class="muted">Chargement…</p></div>
       </section>
 
-      <!-- Abonnements -->
+      <!-- Abonnement -->
       <section data-panel="subs" class="hidden">
-        <h2 class="mb-2">Mes abonnements</h2>
+        <h2 class="mb-2">💳 Mon abonnement</h2>
         <div id="subsList"><p class="muted">Chargement…</p></div>
-        <div class="notice mt-2">Pour ajouter un pays ou changer de formule, rendez-vous sur la page <a href="tarifs.html"><b>Tarifs</b></a>.</div>
+        <div class="notice mt-2">Pour activer ou changer de formule, rendez-vous sur la page <a href="tarifs.html"><b>Abonnement</b></a>.</div>
       </section>
 
-      <!-- Paramètres -->
-      <section data-panel="settings" class="hidden">
-        <h2 class="mb-2">Paramètres</h2>
-        <div class="config-box" style="max-width:560px;">
+      <!-- Mon profil -->
+      <section data-panel="profile" class="hidden">
+        <h2 class="mb-2">👤 Mon profil</h2>
+        <div class="config-box" style="max-width:600px;">
           <div id="setMsg"></div>
-          <div class="field"><label>Nom / Structure</label><input class="input" id="sName"></div>
-          <div class="field"><label>Canaux d'alerte</label>
-            <label style="display:flex;gap:10px;align-items:center;font-weight:500;margin-bottom:8px;"><input type="checkbox" id="sEmail"> E-mail</label>
-            <label style="display:flex;gap:10px;align-items:center;font-weight:500;"><input type="checkbox" id="sWhatsapp"> WhatsApp <span class="muted" style="font-size:.82rem;">(abonnement payant)</span></label>
+          <div class="field"><label>Nom complet</label><input class="input" id="sName" placeholder="Votre nom"></div>
+          <div class="field"><label>Structure / Organisation</label><input class="input" id="sOrg" placeholder="Nom de votre structure"></div>
+          <div class="grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <div class="field"><label>Adresse e-mail</label><input class="input" id="sEmail" type="email" disabled style="background:#f9fafb;color:#6b7280;"></div>
+            <div class="field"><label>Téléphone / WhatsApp</label><input class="input" id="sPhone" placeholder="+229…"></div>
           </div>
-          <button class="btn btn--primary" id="saveSettings">Enregistrer</button>
+          <div class="field"><label>Type de compte</label><input class="input" id="sProfile" disabled style="background:#f9fafb;color:#6b7280;"></div>
+          <button class="btn btn--primary" id="saveProfile">💾 Enregistrer mon profil</button>
+        </div>
+
+        <div class="card mt-2" style="max-width:600px;">
+          <h3 class="mb-2">🔒 Sécurité & assistance</h3>
+          <p class="muted" style="font-size:.9rem;margin-bottom:12px;">Besoin d'aide ou de modifier votre mot de passe ? Notre équipe est disponible.</p>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <a class="btn btn--ghost btn--sm" href="mailto:info@alertemarche.com?subject=Assistance%20AlerteMarché">✉️ Contacter le support</a>
+            <a class="btn btn--ghost btn--sm" href="https://wa.me/2290198524949" target="_blank" rel="noopener">💬 WhatsApp support</a>
+          </div>
+        </div>
+
+        <div class="card mt-2" style="max-width:600px;border-color:#fecaca;">
+          <h3 class="mb-2" style="color:var(--danger);">Zone sensible</h3>
+          <p class="muted" style="font-size:.88rem;margin-bottom:12px;">La déconnexion mettra fin à votre session sur cet appareil.</p>
+          <button class="btn btn--ghost btn--sm" id="logoutBtn2">Se déconnecter</button>
         </div>
       </section>
+
     </main>
   </div>
 
-  <script src="js/app.js?v=202607221200"></script>
+  <script src="js/app.js?v=202607221900"></script>
   <script>
     if (!token()) location.href = 'connexion.html';
+
+    // Références locales (Bénin) — évite toute dépendance à des globaux non définis
+    const COUNTRIES = { BJ: { flag: '🇧🇯', name: 'Bénin' } };
+    const PROFILES = {
+      prestataire:  { label: 'Entreprise / Prestataire' },
+      admin_public: { label: 'Administration publique' },
+      ong:          { label: 'ONG / Association' },
+      artisan:      { label: 'Artisan' },
+    };
+    const KW_SUGGESTIONS = ['forage','panneaux solaires','groupe électrogène','mobilier de bureau','matériel informatique','construction de bâtiment','réhabilitation','fourniture de carburant','consultant','étude de faisabilité','nettoyage','gardiennage','transport','médicaments','semences'];
+
     let ME = null;
+    let SUB = null;
+    let SECTORS = [];
+    let selectedSectors = new Set();
+    let keywords = [];
+    let interestsReady = false;
 
     function switchTab(tab) {
       $$('.dash__side a[data-tab]').forEach(a => a.classList.toggle('active', a.dataset.tab === tab));
       $$('[data-panel]').forEach(p => p.classList.toggle('hidden', p.dataset.panel !== tab));
       if (tab === 'alerts') loadAlerts();
       if (tab === 'subs') loadSubs();
+      if (tab === 'interests' && !interestsReady) loadInterests();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     async function loadMe() {
       try {
         const d = await api('/auth/me', { auth: true });
         ME = d.user;
-        const sub = d.subscription;
-        document.getElementById('uName').textContent = ME.name || ME.email || ME.phone;
-        document.getElementById('uHello').textContent = (ME.name || '').split(' ')[0] || '';
-        document.getElementById('kFree').textContent = (sub && sub.status === 'active') ? 'Actif' : 'Inactif';
-        document.getElementById('kPlan').textContent = (sub && sub.plan) ? (sub.plan.charAt(0).toUpperCase() + sub.plan.slice(1)) : 'Aucune';
-        document.getElementById('kCountry').textContent = (COUNTRIES[ME.primary_country]?.flag || '') + ' ' + (COUNTRIES[ME.primary_country]?.name || ME.primary_country || '—');
+        SUB = d.subscription;
+        const active = SUB && SUB.status === 'active';
+
+        document.getElementById('uName').textContent = ME.name || ME.email || ME.phone || 'Mon compte';
+        document.getElementById('uHello').textContent = (ME.name || '').split(' ')[0] || 'à vous';
+        document.getElementById('kFree').textContent = active ? 'Actif' : 'Inactif';
+        document.getElementById('kPlan').textContent = (SUB && SUB.plan) ? cap(SUB.plan) : 'Aucune';
+        document.getElementById('kSectors').textContent = (ME.sectors && ME.sectors.length) ? ME.sectors.length : 0;
+
+        // Profil
         document.getElementById('sName').value = ME.name || '';
-        document.getElementById('sEmail').checked = !!ME.notify_email;
-        document.getElementById('sWhatsapp').checked = !!ME.notify_whatsapp;
-        const box = document.getElementById('statusBox');
-        if (sub && sub.status === 'active') {
-          const planLabel = sub.plan ? (sub.plan.charAt(0).toUpperCase() + sub.plan.slice(1)) : 'Abonnement';
-          box.innerHTML = `<p>✅ Abonnement <b>${planLabel}</b> actif jusqu'au <b>${sub.expires_at ? new Date(sub.expires_at).toLocaleDateString('fr-FR') : (sub.ends_at || '—')}</b>.</p>`;
-        } else {
-          box.innerHTML = `<p>🔒 Vous n'avez pas d'abonnement actif. Un abonnement est nécessaire pour recevoir des alertes (la consultation du site reste libre).</p>
-            <div class="mt-2"><a href="tarifs.html" class="btn btn-primary">Choisir un abonnement</a></div>`;
+        document.getElementById('sOrg').value = ME.organization || '';
+        document.getElementById('sEmail').value = ME.email || '';
+        document.getElementById('sPhone').value = ME.phone || '';
+        document.getElementById('sProfile').value = (PROFILES[ME.profile_type] || {}).label || ME.profile_type || '—';
+
+        // Bandeau vérification e-mail
+        if (ME.email && !ME.email_verified_at) {
+          document.getElementById('verifyBanner').classList.remove('hidden');
         }
-      } catch (e) { localStorage.removeItem('am_token'); location.href = 'connexion.html'; }
+
+        // Statut
+        const box = document.getElementById('statusBox');
+        if (active) {
+          const planLabel = SUB.plan ? cap(SUB.plan) : 'Abonnement';
+          const exp = SUB.expires_at ? new Date(SUB.expires_at).toLocaleDateString('fr-FR') : (SUB.ends_at || '—');
+          box.innerHTML = `<p>✅ Abonnement <b>${planLabel}</b> actif jusqu'au <b>${exp}</b>. Vous recevez vos alertes en temps réel.</p>`;
+        } else {
+          box.innerHTML = `<p>🔒 Vous n'avez pas d'abonnement actif. Un abonnement est nécessaire pour <b>recevoir</b> les alertes (la consultation du site reste libre). Vos centres d'intérêt sont enregistrés et prêts.</p>
+            <div class="mt-2"><a href="tarifs.html" class="btn btn--primary">Choisir un abonnement</a></div>`;
+        }
+
+        // Canaux WhatsApp : disponible seulement si abonnement actif
+        const wa = document.getElementById('iWhatsapp');
+        const waHint = document.getElementById('waHint');
+        if (!active) { wa.disabled = true; }
+        else { waHint.textContent = 'WhatsApp est disponible avec votre abonnement actif.'; }
+      } catch (e) {
+        console.error('Erreur chargement compte:', e);
+        localStorage.removeItem('am_token');
+        location.href = 'connexion.html';
+      }
+    }
+
+    async function loadInterests() {
+      const grid = document.getElementById('sectorGrid');
+      try {
+        const res = await api('/sectors');
+        SECTORS = Array.isArray(res) ? res : (res.data || res.sectors || []);
+      } catch (_) { SECTORS = []; }
+
+      selectedSectors = new Set(ME && ME.sectors ? ME.sectors : []);
+      keywords = (ME && ME.keywords) ? ME.keywords.slice() : [];
+
+      if (!SECTORS.length) {
+        grid.innerHTML = '<div class="chip-hint" style="color:#ef4444;">Impossible de charger les secteurs. Rechargez la page.</div>';
+      } else {
+        grid.innerHTML = '';
+        SECTORS.forEach(s => {
+          const chip = document.createElement('button');
+          chip.type = 'button';
+          chip.className = 'chip' + (selectedSectors.has(s.name) ? ' selected' : '');
+          chip.dataset.name = s.name;
+          chip.innerHTML = '<span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>' + s.name;
+          chip.addEventListener('click', () => {
+            if (selectedSectors.has(s.name)) { selectedSectors.delete(s.name); chip.classList.remove('selected'); }
+            else { selectedSectors.add(s.name); chip.classList.add('selected'); }
+          });
+          grid.appendChild(chip);
+        });
+      }
+
+      // Mots-clés existants
+      const box = document.getElementById('kwBox');
+      const input = document.getElementById('kwInput');
+      keywords.forEach(k => renderKwTag(k, box, input));
+
+      // Suggestions
+      const sug = document.getElementById('kwSuggest');
+      sug.innerHTML = '';
+      KW_SUGGESTIONS.forEach(k => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.textContent = '+ ' + k;
+        if (keywords.includes(k.toLowerCase())) { b.disabled = true; b.style.opacity = '.4'; }
+        b.addEventListener('click', () => { addKeyword(k); b.disabled = true; b.style.opacity = '.4'; });
+        sug.appendChild(b);
+      });
+
+      input.onkeydown = (e) => {
+        if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addKeyword(input.value); input.value = ''; }
+      };
+
+      // Canaux
+      document.getElementById('iEmail').checked = ME ? !!ME.notify_email : true;
+      document.getElementById('iWhatsapp').checked = ME ? !!ME.notify_whatsapp : false;
+
+      interestsReady = true;
+    }
+
+    function renderKwTag(k, box, input) {
+      const tag = document.createElement('span');
+      tag.className = 'kw-tag';
+      tag.textContent = k;
+      const x = document.createElement('button');
+      x.type = 'button'; x.textContent = '×';
+      x.addEventListener('click', () => { keywords = keywords.filter(w => w !== k.toLowerCase()); tag.remove(); });
+      tag.appendChild(x);
+      box.insertBefore(tag, input);
+    }
+
+    function addKeyword(raw) {
+      const k = (raw || '').trim().replace(/\s+/g, ' ');
+      if (!k || keywords.includes(k.toLowerCase())) return;
+      if (keywords.length >= 20) return;
+      keywords.push(k.toLowerCase());
+      renderKwTag(k, document.getElementById('kwBox'), document.getElementById('kwInput'));
+    }
+
+    async function saveInterests() {
+      const msg = document.getElementById('intMsg');
+      const state = document.getElementById('intSaveState');
+      if (selectedSectors.size === 0 && keywords.length === 0) {
+        msg.innerHTML = '<div class="notice" style="border-color:var(--danger);color:var(--danger);">Sélectionnez au moins un secteur ou ajoutez un mot-clé.</div>';
+        return;
+      }
+      state.textContent = 'Enregistrement…';
+      try {
+        const d = await api('/profile', { method: 'PUT', auth: true, body: {
+          sectors: Array.from(selectedSectors),
+          keywords: keywords,
+          notify_email: document.getElementById('iEmail').checked,
+          notify_whatsapp: document.getElementById('iWhatsapp').checked,
+        }});
+        if (d.user) { ME = d.user; }
+        document.getElementById('kSectors').textContent = selectedSectors.size;
+        msg.innerHTML = '<div class="notice">✅ Vos centres d\'intérêt ont été enregistrés. Vous recevrez les nouveaux marchés correspondants.</div>';
+        state.textContent = '';
+        gtag('event', 'update_interests');
+      } catch (e) {
+        msg.innerHTML = '<div class="notice" style="border-color:var(--danger);color:var(--danger);">Échec de l\'enregistrement. Réessayez.</div>';
+        state.textContent = '';
+      }
     }
 
     async function loadAlerts() {
@@ -119,7 +342,7 @@
         const d = await api('/alerts', { auth: true });
         const items = d.data || d.alerts || [];
         document.getElementById('kAlerts').textContent = d.total ?? items.length;
-        if (!items.length) { el.innerHTML = '<div class="card">Aucune alerte pour le moment. Dès qu\'une opportunité correspond à votre profil, elle apparaîtra ici.</div>'; return; }
+        if (!items.length) { el.innerHTML = '<div class="card">Aucune alerte pour le moment. Dès qu\'une opportunité correspond à vos centres d\'intérêt, elle apparaîtra ici.</div>'; return; }
         el.innerHTML = items.map(a => `<div class="tender">
           <div class="tender__top"><h3>${a.title || a.tender?.title || 'Alerte'}</h3><span class="chip">${a.channel || 'e-mail'}</span></div>
           <p class="muted mt-1">${a.summary || a.tender?.summary || ''}</p>
@@ -135,33 +358,44 @@
         const items = d.data || d.subscriptions || [];
         if (!items.length) { el.innerHTML = '<div class="card">Aucun abonnement actif. <a href="tarifs.html">Découvrez nos offres</a>.</div>'; return; }
         el.innerHTML = items.map(s => `<div class="tender">
-          <div class="tender__top"><h3>${PROFILES[s.profile_type]?.label || s.profile_type}</h3><span class="chip">${s.status}</span></div>
-          <div class="tender__meta"><span>Pays : <b>${(s.countries||[]).join(', ')}</b></span><span>Montant : <b>${fmt(s.amount||0)}</b></span><span>Échéance : <b>${s.ends_at||'—'}</b></span></div>
+          <div class="tender__top"><h3>${s.plan ? cap(s.plan) : (PROFILES[s.profile_type]?.label || s.profile_type || 'Abonnement')}</h3><span class="chip">${s.status}</span></div>
+          <div class="tender__meta"><span>Montant : <b>${fmt(s.amount||0)}</b></span><span>Échéance : <b>${s.expires_at ? new Date(s.expires_at).toLocaleDateString('fr-FR') : (s.ends_at||'—')}</b></span></div>
         </div>`).join('');
       } catch { el.innerHTML = '<div class="card">Impossible de charger les abonnements.</div>'; }
     }
 
-    async function saveSettings() {
+    async function saveProfile() {
       const msg = document.getElementById('setMsg');
       msg.innerHTML = '<div class="notice">Enregistrement…</div>';
       try {
         await api('/profile', { method: 'PUT', auth: true, body: {
           name: document.getElementById('sName').value.trim(),
-          notify_email: document.getElementById('sEmail').checked,
-          notify_whatsapp: document.getElementById('sWhatsapp').checked,
         }});
-        msg.innerHTML = '<div class="notice">✅ Paramètres enregistrés.</div>';
+        msg.innerHTML = '<div class="notice">✅ Profil enregistré.</div>';
       } catch { msg.innerHTML = '<div class="notice" style="border-color:var(--danger);color:var(--danger);">Échec de l\'enregistrement.</div>'; }
+    }
+
+    function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+
+    async function doLogout() {
+      try { await api('/auth/logout', { method: 'POST', auth: true }); } catch {}
+      localStorage.removeItem('am_token'); location.href = 'index.html';
     }
 
     document.addEventListener('DOMContentLoaded', () => {
       $$('.dash__side a[data-tab]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); switchTab(a.dataset.tab); }));
-      document.getElementById('logoutBtn').addEventListener('click', async () => {
-        try { await api('/auth/logout', { method: 'POST', auth: true }); } catch {}
-        localStorage.removeItem('am_token'); location.href = 'index.html';
+      $$('[data-goto]').forEach(b => b.addEventListener('click', () => switchTab(b.dataset.goto)));
+      document.getElementById('logoutBtn').addEventListener('click', doLogout);
+      document.getElementById('logoutBtn2').addEventListener('click', doLogout);
+      document.getElementById('saveInterests').addEventListener('click', saveInterests);
+      document.getElementById('saveProfile').addEventListener('click', saveProfile);
+      document.getElementById('goVerify').addEventListener('click', () => {
+        if (ME) sessionStorage.setItem('am_identifier', ME.email || ME.phone || '');
+        location.href = 'verification.html';
       });
-      document.getElementById('saveSettings').addEventListener('click', saveSettings);
-      loadMe();
+      // Ouverture directe d'un onglet via #hash (ex: dashboard.html#interests)
+      const hash = (location.hash || '').replace('#','');
+      loadMe().then(() => { if (hash && document.querySelector('[data-panel="'+hash+'"]')) switchTab(hash); });
     });
   </script>
 </body>
