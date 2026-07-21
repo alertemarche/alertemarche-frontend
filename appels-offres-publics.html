@@ -32,10 +32,15 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <input type="text" id="searchInput" placeholder="Rechercher un marché, une institution, un mot clé…">
         </div>
-        <div class="filter-select"><select id="fSector"><option value="">Catégorie / Secteur</option><option>Travaux</option><option>Fournitures</option><option>Services</option></select></div>
+        <div class="filter-select"><select id="fCategory">
+          <option value="">Toutes les catégories</option>
+          <option value="public,aac">Appels d'offres publics</option>
+          <option value="avis_general">Avis généraux</option>
+          <option value="plan_passation">Plans de passation</option>
+        </select></div>
+        <div class="filter-select"><select id="fSector"><option value="">Type de marché</option><option>Travaux</option><option>Fournitures</option><option>Services</option></select></div>
         <div class="filter-select"><select id="fInstitution"><option value="">Institution</option></select></div>
         <div class="filter-select"><select id="fLocation"><option value="">Localisation</option></select></div>
-        <div class="filter-select"><select id="fBudget"><option value="">Budget</option><option value="0-20">< 20M FCFA</option><option value="20-50">20–50M FCFA</option><option value="50-999">> 50M FCFA</option></select></div>
         <div class="filter-select"><select id="fSort"><option value="recent">Trier par : Plus récents</option><option value="deadline">Date limite</option><option value="budget">Budget</option></select></div>
       </div>
     </div>
@@ -73,7 +78,10 @@
 
         <div class="tenders-grid" id="tendersGrid"></div>
 
-        <div class="market-showing">Chargement des avis officiels du Bénin…</div>
+        <div class="market-showing" id="marketShowing">Chargement des avis officiels du Bénin…</div>
+        <div style="text-align:center;margin:18px 0 40px;">
+          <button class="btn btn-primary btn-lg" id="loadMoreBtn" style="display:none;">Voir plus d'avis</button>
+        </div>
       </div>
     </div>
   </section>
@@ -164,53 +172,14 @@
 
     function initPage() {
       const grid = document.getElementById('tendersGrid');
-      let data = SAMPLE_TENDERS.slice();
-
-      // Remplir les listes déroulantes institution / localisation
-      const insts = [...new Set(SAMPLE_TENDERS.map(t => t.inst))];
-      const locs = [...new Set(SAMPLE_TENDERS.map(t => t.loc))];
-      ['fInstitution','fInstitution2'].forEach(id => { const s=document.getElementById(id); insts.forEach(i=>{const o=document.createElement('option');o.textContent=i;s.appendChild(o);}); });
-      ['fLocation','fLocation2'].forEach(id => { const s=document.getElementById(id); locs.forEach(i=>{const o=document.createElement('option');o.textContent=i;s.appendChild(o);}); });
-
-      function render(list) {
-        grid.innerHTML = list.length ? list.map(tenderCard).join('') : '<p class="muted" style="grid-column:1/-1;padding:30px;text-align:center;">Aucun marché ne correspond à votre recherche.</p>';
-        document.getElementById('countNum').textContent = new Intl.NumberFormat('fr-FR').format(list.length);
-      }
-
-      function applyFilters() {
-        const kw = (document.getElementById('searchInput').value || document.getElementById('fKeyword').value || '').toLowerCase();
-        const sec = document.getElementById('fSector').value || document.getElementById('fSector2').value;
-        const inst = document.getElementById('fInstitution').value || document.getElementById('fInstitution2').value;
-        const loc = document.getElementById('fLocation').value || document.getElementById('fLocation2').value;
-        let list = data.filter(t => {
-          if (kw && !(t.title.toLowerCase().includes(kw) || t.inst.toLowerCase().includes(kw) || t.tags.join(' ').toLowerCase().includes(kw))) return false;
-          if (sec && t.sector !== sec) return false;
-          if (inst && t.inst !== inst) return false;
-          if (loc && t.loc !== loc) return false;
-          return true;
-        });
-        const sort = document.getElementById('fSort').value;
-        if (sort === 'budget') list.sort((a,b) => (b.budget||0) - (a.budget||0));
-        else if (sort === 'deadline') list.sort((a,b) => new Date(a._deadline||'2999-01-01') - new Date(b._deadline||'2999-01-01'));
-        render(list);
-      }
-
-      document.getElementById('searchInput').addEventListener('input', applyFilters);
-      document.getElementById('applyFilters').addEventListener('click', applyFilters);
-      document.getElementById('fSort').addEventListener('change', applyFilters);
-      ['fSector','fInstitution','fLocation'].forEach(id => document.getElementById(id).addEventListener('change', applyFilters));
-      document.getElementById('resetFilters').addEventListener('click', () => {
-        document.querySelectorAll('#searchInput,#fKeyword,#fMin,#fMax,#fFrom,#fTo').forEach(e => e.value='');
-        document.querySelectorAll('.market-toolbar select, .filters-panel select').forEach(s => s.selectedIndex = 0);
-        render(data);
-      });
-      document.querySelectorAll('.view-toggle button').forEach(b => b.addEventListener('click', () => {
-        document.querySelectorAll('.view-toggle button').forEach(x => x.classList.remove('active'));
-        b.classList.add('active');
-        grid.style.gridTemplateColumns = b.dataset.view === 'list' ? '1fr' : '';
-      }));
-
-      render(data);
+      const showEl = document.getElementById('marketShowing');
+      const moreBtn = document.getElementById('loadMoreBtn');
+      const countEl = document.getElementById('countNum');
+      // Catégories regroupées sous « Marchés publics ». Par défaut : tout
+      // (appels d'offres publics + avis d'appel à concurrence + avis généraux
+      // + plans de passation). Le paramètre active=1 exclut les avis expirés.
+      const DEFAULT_TYPES = 'public,aac,avis_general,plan_passation';
+      const state = { q: '', types: DEFAULT_TYPES, page: 1, perPage: 24, total: 0, lastPage: 1, loading: false, all: [] };
 
       // Déduit le secteur/badge à partir du type de marché officiel.
       function deriveSector(mt) {
@@ -231,8 +200,7 @@
         if (j < 30) return `Il y a ${j} jour${j > 1 ? 's' : ''}`;
         return new Date(d).toLocaleDateString('fr-FR');
       }
-
-      // Libellé lisible de la sous-catégorie (type de marché public).
+      // Libellé lisible de la catégorie (type de marché public).
       function typeLabel(type) {
         return ({
           public: "Appel d'offres public",
@@ -242,53 +210,131 @@
         })[type] || 'Marché public';
       }
 
-      // FUSION DE TOUTES LES SOUS-CATÉGORIES DES MARCHÉS PUBLICS.
-      // On agrège en une seule liste : appels d'offres publics (toutes procédures :
-      // cotation, DRP, AAON, AAOI, AMI), avis d'appel à concurrence, avis généraux et
-      // plans de passation. L'utilisateur peut ainsi faire UNE recherche par mot-clé
-      // sur l'ensemble, avant de préciser via une sous-catégorie ci-dessous.
-      const PUBLIC_TYPES = ['public', 'aac', 'avis_general', 'plan_passation'];
-      Promise.all(PUBLIC_TYPES.map(tp =>
-        api(`/tenders?country=BJ&type=${tp}&per_page=200`).then(r => ({ tp, items: (r.data || r || []) })).catch(() => ({ tp, items: [] }))
-      )).then(results => {
-        const now = Date.now();
-        const mapped = [];
-        results.forEach(({ tp, items }) => {
-          if (!Array.isArray(items)) return;
-          items.forEach(t => {
-            const ds = deriveSector(t.market_type);
-            const isNew = t.publication_date ? (now - new Date(t.publication_date).getTime()) < 2 * 864e5 : false;
-            mapped.push({
-              sector: ds.sector, badge: ds.badge,
-              type: tp, typeLabel: typeLabel(tp),
-              time: relTime(t.publication_date), isNew,
-              title: t.title, inst: t.institution || 'Institution publique',
-              loc: t.location || 'Bénin',
-              reference: t.reference || null,
-              nbLots: t.nb_lots || null,
-              url: t.source_url || null,
-              _deadline: t.deadline || null,
-              _pub: t.publication_date || null,
-              budget: (t.estimated_amount && /\d/.test(String(t.estimated_amount))) ? parseInt(String(t.estimated_amount).replace(/\D/g,'')) || null : null,
-              deadline: t.deadline ? new Date(t.deadline).toLocaleDateString('fr-FR') : 'À confirmer',
-              tags: [typeLabel(tp), t.market_type].filter(Boolean),
-            });
-          });
+      function mapTender(t) {
+        const tp = t.type || 'public';
+        const ds = deriveSector(t.market_type);
+        const isNew = t.publication_date ? (Date.now() - new Date(t.publication_date).getTime()) < 2 * 864e5 : false;
+        return {
+          sector: ds.sector, badge: ds.badge, type: tp,
+          time: relTime(t.publication_date), isNew,
+          title: t.title, inst: t.institution || 'Institution publique', loc: t.location || 'Bénin',
+          reference: t.reference || null, nbLots: t.nb_lots || null, url: t.source_url || null,
+          _deadline: t.deadline || null, _pub: t.publication_date || null,
+          budget: (t.estimated_amount && /\d/.test(String(t.estimated_amount))) ? (parseInt(String(t.estimated_amount).replace(/\D/g, '')) || null) : null,
+          deadline: t.deadline ? new Date(t.deadline).toLocaleDateString('fr-FR') : 'À confirmer',
+          tags: [typeLabel(tp), t.market_type].filter(Boolean),
+        };
+      }
+
+      function val(id) { const e = document.getElementById(id); return e ? e.value : ''; }
+
+      // Alimente les listes institution / localisation à partir des avis chargés.
+      function fillSelect(id, values) {
+        const s = document.getElementById(id); if (!s) return;
+        const cur = s.value; s.length = 1;
+        values.forEach(v => { const o = document.createElement('option'); o.value = v; o.textContent = v; s.appendChild(o); });
+        if (values.includes(cur)) s.value = cur;
+      }
+      function refreshFacets() {
+        const insts = [...new Set(state.all.map(t => t.inst))].filter(Boolean).sort();
+        const locs = [...new Set(state.all.map(t => t.loc))].filter(Boolean).sort();
+        ['fInstitution', 'fInstitution2'].forEach(id => fillSelect(id, insts));
+        ['fLocation', 'fLocation2'].forEach(id => fillSelect(id, locs));
+      }
+
+      // Raffinement client (sur les avis déjà chargés) : type de marché,
+      // institution, localisation, budget, dates, tri.
+      function refine(items) {
+        const market = (val('fSector') || val('fSector2')).trim();
+        const inst = (val('fInstitution') || val('fInstitution2')).trim();
+        const loc = (val('fLocation') || val('fLocation2')).trim();
+        const min = parseFloat(val('fMin')) || null, max = parseFloat(val('fMax')) || null;
+        const from = val('fFrom') || null, to = val('fTo') || null;
+        let list = items.filter(t => {
+          if (market && t.sector !== market) return false;
+          if (inst && t.inst !== inst) return false;
+          if (loc && t.loc !== loc) return false;
+          if (min != null && (t.budget || 0) < min) return false;
+          if (max != null && (t.budget || 0) > max) return false;
+          if (from && t._deadline && new Date(t._deadline) < new Date(from)) return false;
+          if (to && t._deadline && new Date(t._deadline) > new Date(to)) return false;
+          return true;
         });
-        if (!mapped.length) return;
-        // Tri : plus récents d'abord.
-        mapped.sort((a, b) => new Date(b._pub || 0) - new Date(a._pub || 0));
-        data = mapped;
-        const rInsts = [...new Set(mapped.map(t => t.inst))].filter(Boolean).sort();
-        const rLocs = [...new Set(mapped.map(t => t.loc))].filter(Boolean).sort();
-        ['fInstitution','fInstitution2'].forEach(id => { const s=document.getElementById(id); s.length=1; rInsts.forEach(i=>{const o=document.createElement('option');o.textContent=i;s.appendChild(o);}); });
-        ['fLocation','fLocation2'].forEach(id => { const s=document.getElementById(id); s.length=1; rLocs.forEach(i=>{const o=document.createElement('option');o.textContent=i;s.appendChild(o);}); });
-        render(data);
-        document.getElementById('countNum').textContent = new Intl.NumberFormat('fr-FR').format(mapped.length);
-        const showEl = document.querySelector('.market-showing');
-        if (showEl) showEl.textContent = `Affichage de ${mapped.length} avis officiels du Bénin (toutes sous-catégories)`;
-        document.getElementById('updatedAt').textContent = 'Mis à jour à l\'instant';
-      }).catch(() => {});
+        const sort = val('fSort');
+        if (sort === 'budget') list.sort((a, b) => (b.budget || 0) - (a.budget || 0));
+        else if (sort === 'deadline') list.sort((a, b) => new Date(a._deadline || '2999-01-01') - new Date(b._deadline || '2999-01-01'));
+        return list;
+      }
+
+      function renderAll() {
+        const list = refine(state.all);
+        grid.innerHTML = list.length
+          ? list.map(tenderCard).join('')
+          : '<p class="muted" style="grid-column:1/-1;padding:30px;text-align:center;">Aucun marché ne correspond à votre recherche.</p>';
+        countEl.textContent = new Intl.NumberFormat('fr-FR').format(state.total);
+        showEl.textContent = state.total
+          ? `${new Intl.NumberFormat('fr-FR').format(list.length)} avis affichés sur ${new Intl.NumberFormat('fr-FR').format(state.total)} actifs au total`
+          : 'Aucun avis actif pour cette recherche.';
+        refreshFacets();
+      }
+
+      async function fetchPage(reset) {
+        if (state.loading) return;
+        state.loading = true;
+        moreBtn.textContent = 'Chargement…';
+        if (reset) { state.page = 1; state.all = []; grid.innerHTML = '<p class="muted" style="grid-column:1/-1;padding:30px;text-align:center;">Chargement…</p>'; }
+        const p = new URLSearchParams({ country: 'BJ', active: '1', type: state.types, per_page: String(state.perPage), page: String(state.page) });
+        if (state.q) p.set('q', state.q);
+        try {
+          const r = await api('/tenders?' + p.toString());
+          const items = (r.data || []).map(mapTender);
+          state.total = (typeof r.total === 'number') ? r.total : items.length;
+          state.lastPage = r.last_page || 1;
+          state.all = state.all.concat(items);
+          renderAll();
+          const up = document.getElementById('updatedAt'); if (up) up.textContent = 'Mis à jour à l\'instant';
+          moreBtn.style.display = (state.page < state.lastPage) ? 'inline-flex' : 'none';
+        } catch (e) {
+          if (reset) grid.innerHTML = '<p class="muted" style="grid-column:1/-1;padding:30px;text-align:center;">Impossible de charger les avis. Veuillez réessayer.</p>';
+        }
+        moreBtn.textContent = 'Voir plus d\'avis';
+        state.loading = false;
+      }
+
+      // --- Recherche mot-clé (serveur, anti-rebond) ---
+      let deb;
+      function onSearch() {
+        clearTimeout(deb);
+        deb = setTimeout(() => { state.q = (val('searchInput') || val('fKeyword')).trim(); fetchPage(true); }, 400);
+      }
+      document.getElementById('searchInput').addEventListener('input', onSearch);
+      const fkw = document.getElementById('fKeyword'); if (fkw) fkw.addEventListener('input', onSearch);
+
+      // --- Catégorie (serveur) ---
+      document.getElementById('fCategory').addEventListener('change', e => {
+        state.types = e.target.value || DEFAULT_TYPES; fetchPage(true);
+      });
+
+      // --- Filtres secondaires (raffinement client) ---
+      ['fSector', 'fSector2', 'fInstitution', 'fInstitution2', 'fLocation', 'fLocation2', 'fSort'].forEach(id => { const el = document.getElementById(id); if (el) el.addEventListener('change', renderAll); });
+      const applyBtn = document.getElementById('applyFilters'); if (applyBtn) applyBtn.addEventListener('click', renderAll);
+
+      document.getElementById('resetFilters').addEventListener('click', () => {
+        document.querySelectorAll('#searchInput,#fKeyword,#fMin,#fMax,#fFrom,#fTo').forEach(e => e.value = '');
+        document.querySelectorAll('.market-toolbar select, .filters-panel select').forEach(s => s.selectedIndex = 0);
+        state.q = ''; state.types = DEFAULT_TYPES; fetchPage(true);
+      });
+
+      document.querySelectorAll('.view-toggle button').forEach(b => b.addEventListener('click', () => {
+        document.querySelectorAll('.view-toggle button').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        grid.style.gridTemplateColumns = b.dataset.view === 'list' ? '1fr' : '';
+      }));
+
+      moreBtn.addEventListener('click', () => { state.page += 1; fetchPage(false); });
+
+      // Chargement initial (tous les avis actifs).
+      fetchPage(true);
     }
 
     document.addEventListener('DOMContentLoaded', initPage);
