@@ -101,14 +101,14 @@ function renderNav() {
             <div class="nav-dd-menu">${ddItems(publicSub)}</div>
           </div>
           <a href="appels-offres-prives.html" class="${isActive('appels-offres-prives.html')}">Appels d'offres privés</a>
-          <a href="tarifs.html" class="${isActive('tarifs.html')}">Tarifs</a>
+          <a href="tarifs.html" class="${isActive('tarifs.html')}">Abonnement</a>
           <a href="ressources.html" class="${isActive('ressources.html')}">Ressources</a>
-          <a href="inscription.html" class="nav-auth-mobile ${isActive('inscription.html')}">Créer un compte gratuit</a>
+          <a href="inscription.html" class="nav-auth-mobile ${isActive('inscription.html')}">Créer un compte</a>
           <a href="connexion.html" class="nav-auth-mobile ${isActive('connexion.html')}">Se connecter</a>
         </nav>
         <div class="header-actions">
           <a href="connexion.html" class="btn btn-outline btn-sm">${IC.user}<span>Se connecter</span></a>
-          <a href="inscription.html" class="btn btn-primary btn-sm">S'inscrire gratuitement</a>
+          <a href="inscription.html" class="btn btn-primary btn-sm">S'inscrire</a>
           <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
         </div>
       </div>`;
@@ -149,7 +149,7 @@ function renderFooter() {
             <a href="appels-concurrence.html">Avis d'Appel à Concurrence</a>
             <a href="avis-generaux.html">Avis Généraux</a>
             <a href="plan-passation.html">Plans de Passation</a>
-            <a href="tarifs.html">Tarifs</a>
+            <a href="tarifs.html">Abonnement</a>
           </div>
           <div class="footer-col">
             <h4>Ressources</h4>

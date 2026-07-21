@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Préférences d'alertes — Inscription AlerteMarché Bénin</title>
+  <meta name="description" content="Choisissez vos secteurs, vos mots-clés et vos canaux de notification pour ne recevoir que les marchés qui vous concernent.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=202607221200">
+</head>
+<body>
+
+  <!-- Breadcrumb étapes -->
+  <section class="container" style="padding-top:28px;">
+    <div class="progress-steps">
+      <div class="pstep done"><span class="pc"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><div class="pt"><b>Choix du profil</b><span>Profil sélectionné</span></div></div>
+      <div class="pstep-line done"></div>
+      <div class="pstep done"><span class="pc"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><div class="pt"><b>Informations personnelles</b><span>Complétées</span></div></div>
+      <div class="pstep-line done"></div>
+      <div class="pstep active"><span class="pc">3</span><div class="pt"><b>Préférences d'alertes</b><span>Ciblez vos marchés</span></div></div>
+      <div class="pstep-line"></div>
+      <div class="pstep"><span class="pc">4</span><div class="pt"><b>Vérification</b><span>Confirmez votre compte</span></div></div>
+      <div class="pstep-line"></div>
+      <div class="pstep"><span class="pc">5</span><div class="pt"><b>Compte créé</b><span>Vous êtes prêt !</span></div></div>
+    </div>
+  </section>
+
+  <section class="container">
+    <div class="form-layout">
+      <!-- Formulaire -->
+      <form class="form-card" id="prefsForm">
+        <h2>Préférences d'alertes</h2>
+        <p class="sub">Sélectionnez vos secteurs et vos mots-clés : vous ne recevrez <b>que</b> les marchés qui correspondent à votre activité. Fini les notifications inutiles.</p>
+
+        <div class="form-section">
+          <div class="form-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v4l-6 6v6l-4-2v-4L4 8z"/></svg> Vos secteurs d'activité <span class="req">*</span></div>
+          <p class="chip-hint">Cliquez pour sélectionner un ou plusieurs secteurs. Les alertes seront filtrées selon ces choix.</p>
+          <div class="chip-grid" id="sectorGrid" style="margin-top:12px;">
+            <div class="chip-hint">Chargement des secteurs…</div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg> Mots-clés personnalisés <span style="font-weight:500;color:var(--muted);font-size:.85rem;">(optionnel)</span></div>
+          <p class="chip-hint">Ajoutez des termes précis (nom d'un produit, service, technologie). Un marché contenant l'un de vos mots-clés vous sera notifié, même hors de vos secteurs.</p>
+          <div class="kw-box" id="kwBox" style="margin-top:12px;">
+            <input type="text" id="kwInput" placeholder="Ex: forage, panneaux solaires, groupe électrogène… (Entrée pour ajouter)">
+          </div>
+          <div class="kw-suggest" id="kwSuggest"></div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9z"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> Canaux de notification</div>
+          <div class="channel-grid" style="margin-top:12px;">
+            <div class="channel-card selected" id="chEmail">
+              <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="22,6 12,13 2,6"/></svg></span>
+              <div><b>E-mail</b><span>Recevez vos alertes par courriel. Inclus gratuitement.</span></div>
+              <div class="sw"></div>
+            </div>
+            <div class="channel-card" id="chWhatsapp">
+              <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>
+              <div><b>WhatsApp <span style="background:#fef3c7;color:#92400e;border-radius:5px;padding:1px 7px;font-size:.68rem;font-weight:700;vertical-align:middle;">PREMIUM</span></b><span>Alertes instantanées sur WhatsApp. Disponible avec un abonnement payant.</span></div>
+              <div class="sw"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <a href="inscription-entreprise.html" class="btn btn-ghost">← Précédent</a>
+          <button type="submit" class="btn btn-primary" id="submitBtn">Créer mon compte <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+        </div>
+        <p id="formMsg" style="margin-top:14px;font-size:.88rem;"></p>
+      </form>
+
+      <!-- Récapitulatif -->
+      <aside class="summary-card">
+        <h3>Pourquoi ces préférences ?</h3>
+        <div class="summary-block">
+          <div class="lab">Notifications ciblées</div>
+          <p style="font-size:.88rem;color:#374151;margin:6px 0 0;">Vous ne recevrez que les marchés correspondant à vos secteurs ou à vos mots-clés. Chaque chef d'entreprise reçoit uniquement ce qui le concerne.</p>
+        </div>
+        <div class="summary-block">
+          <div class="lab">Secteurs sélectionnés</div>
+          <div id="recapSectors" style="font-size:.88rem;color:#374151;margin-top:6px;">Aucun pour l'instant</div>
+        </div>
+        <div class="summary-block">
+          <div class="lab">Mots-clés</div>
+          <div id="recapKeywords" style="font-size:.88rem;color:#374151;margin-top:6px;">Aucun</div>
+        </div>
+        <div class="secure-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l7 4v6c0 5-3 8-7 10-4-2-7-5-7-10V6z"/></svg>
+          <div><b>Modifiable à tout moment</b><span>Vous pourrez ajuster vos secteurs et mots-clés depuis votre tableau de bord.</span></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <script src="js/app.js?v=202607221200"></script>
+  <script>
+    let SECTORS = [];        // [{code, name}]
+    let selectedSectors = new Set();
+    let keywords = [];
+    let notifyEmail = true;
+    let notifyWhatsapp = false;
+
+    const KW_SUGGESTIONS = ['forage', 'panneaux solaires', 'groupe électrogène', 'mobilier de bureau', 'matériel informatique', 'construction de bâtiment', 'réhabilitation', 'fourniture de carburant', 'consultant', 'étude de faisabilité', 'nettoyage', 'gardiennage', 'transport', 'médicaments', 'semences'];
+
+    async function initPage() {
+      // Vérifier que l'étape 2 a bien été complétée
+      let signup = null;
+      try { signup = JSON.parse(sessionStorage.getItem('am_signup') || 'null'); } catch (_) {}
+      if (!signup || !signup.payload || !signup.payload.email) {
+        location.href = 'inscription-entreprise.html';
+        return;
+      }
+
+      // Charger les secteurs depuis l'API
+      const grid = document.getElementById('sectorGrid');
+      try {
+        const res = await api('/sectors');
+        SECTORS = Array.isArray(res) ? res : (res.data || res.sectors || []);
+      } catch (_) { SECTORS = []; }
+
+      if (!SECTORS.length) {
+        grid.innerHTML = '<div class="chip-hint" style="color:#ef4444;">Impossible de charger les secteurs. Rechargez la page.</div>';
+      } else {
+        grid.innerHTML = '';
+        SECTORS.forEach(s => {
+          const chip = document.createElement('button');
+          chip.type = 'button';
+          chip.className = 'chip';
+          chip.dataset.name = s.name;
+          chip.innerHTML = '<span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>' + s.name;
+          chip.addEventListener('click', () => {
+            if (selectedSectors.has(s.name)) { selectedSectors.delete(s.name); chip.classList.remove('selected'); }
+            else { selectedSectors.add(s.name); chip.classList.add('selected'); }
+            renderRecap();
+          });
+          grid.appendChild(chip);
+        });
+        // Présélection depuis l'étape 2 (correspondance souple)
+        const hint = (signup.primary_sector || '').toLowerCase();
+        if (hint) {
+          const map = { 'bâtiment / btp': 'btp', 'informatique': 'informatique', 'fournitures': 'fournitures', 'santé': 'sante', 'éducation': 'education', 'énergie': 'energie', 'hydraulique': 'eau', 'transport': 'transport', 'agriculture': 'agriculture' };
+          const wantCode = map[hint];
+          const match = SECTORS.find(s => (wantCode && s.code === wantCode) || s.name.toLowerCase().includes(hint));
+          if (match) {
+            selectedSectors.add(match.name);
+            const c = grid.querySelector('[data-name="' + CSS.escape(match.name) + '"]');
+            if (c) c.classList.add('selected');
+          }
+        }
+        renderRecap();
+      }
+
+      // Suggestions de mots-clés
+      const sug = document.getElementById('kwSuggest');
+      KW_SUGGESTIONS.forEach(k => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.textContent = '+ ' + k;
+        b.addEventListener('click', () => { addKeyword(k); b.disabled = true; b.style.opacity = '.4'; });
+        sug.appendChild(b);
+      });
+
+      // Saisie de mots-clés
+      const kwInput = document.getElementById('kwInput');
+      kwInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addKeyword(kwInput.value); kwInput.value = ''; }
+      });
+
+      // Canaux
+      document.getElementById('chEmail').addEventListener('click', function () {
+        notifyEmail = !notifyEmail; this.classList.toggle('selected', notifyEmail);
+      });
+      document.getElementById('chWhatsapp').addEventListener('click', function () {
+        // Premium — reste désactivé à l'inscription
+        const msg = document.getElementById('formMsg');
+        msg.style.color = '#92400e';
+        msg.textContent = 'WhatsApp est disponible avec un abonnement payant. Vous pourrez l\'activer depuis votre tableau de bord.';
+      });
+
+      // Soumission → création du compte
+      document.getElementById('prefsForm').addEventListener('submit', (e) => { e.preventDefault(); doRegister(signup); });
+    }
+
+    function addKeyword(raw) {
+      const k = (raw || '').trim().replace(/\s+/g, ' ');
+      if (!k || keywords.includes(k.toLowerCase())) return;
+      if (keywords.length >= 20) return;
+      keywords.push(k.toLowerCase());
+      const box = document.getElementById('kwBox');
+      const tag = document.createElement('span');
+      tag.className = 'kw-tag';
+      tag.textContent = k;
+      const x = document.createElement('button');
+      x.type = 'button'; x.textContent = '×';
+      x.addEventListener('click', () => { keywords = keywords.filter(w => w !== k.toLowerCase()); tag.remove(); renderRecap(); });
+      tag.appendChild(x);
+      box.insertBefore(tag, document.getElementById('kwInput'));
+      renderRecap();
+    }
+
+    function renderRecap() {
+      const rs = document.getElementById('recapSectors');
+      const rk = document.getElementById('recapKeywords');
+      rs.textContent = selectedSectors.size ? Array.from(selectedSectors).join(', ') : 'Aucun pour l\'instant';
+      rk.textContent = keywords.length ? keywords.join(', ') : 'Aucun';
+    }
+
+    async function doRegister(signup) {
+      const msg = document.getElementById('formMsg');
+      const btn = document.getElementById('submitBtn');
+      if (selectedSectors.size === 0 && keywords.length === 0) {
+        msg.style.color = '#ef4444';
+        msg.textContent = 'Sélectionnez au moins un secteur ou ajoutez un mot-clé pour cibler vos alertes.';
+        return;
+      }
+      const payload = Object.assign({}, signup.payload, {
+        sectors: Array.from(selectedSectors),
+        keywords: keywords,
+        notify_email: notifyEmail,
+        notify_whatsapp: false,
+      });
+      btn.disabled = true;
+      msg.style.color = ''; msg.textContent = 'Création de votre compte en cours…';
+      try {
+        const res = await api('/auth/register', { method: 'POST', body: payload });
+        if (res.token) localStorage.setItem('am_token', res.token);
+        // Le backend émet l'OTP sur email ?: phone → on utilise le même ordre.
+        const identifier = signup.payload.email || signup.payload.phone;
+        sessionStorage.setItem('am_identifier', identifier);
+        sessionStorage.setItem('am_signup_done', JSON.stringify({
+          email: signup.payload.email,
+          organization: signup.payload.organization,
+          sectors: Array.from(selectedSectors),
+          keywords: keywords,
+          notify_email: notifyEmail,
+        }));
+        msg.style.color = 'var(--green)';
+        msg.textContent = '✓ Compte créé ! Un code de vérification vous a été envoyé.';
+        setTimeout(() => location.href = 'verification.html', 900);
+      } catch (err) {
+        btn.disabled = false;
+        msg.style.color = '#ef4444';
+        msg.textContent = err.data && err.data.message ? err.data.message : "Erreur lors de la création du compte. Vérifiez vos informations.";
+      }
+    }
+  </script>
+</body>
+</html>

@@ -157,37 +157,36 @@
         inp.type = inp.type === 'password' ? 'text' : 'password';
       }));
 
-      // Soumission → API register
+      // Soumission → étape 3 (préférences d'alertes). Le compte n'est PAS créé ici.
       const form = document.getElementById('signupForm');
       const msg = document.getElementById('formMsg');
-      form.addEventListener('submit', async (e) => {
+      form.addEventListener('submit', (e) => {
         e.preventDefault();
-        msg.style.color = ''; msg.textContent = 'Création du compte en cours…';
+        msg.style.color = '';
         const f = new FormData(form);
         if (f.get('password') !== f.get('password_confirmation')) {
           msg.style.color = '#ef4444'; msg.textContent = 'Les mots de passe ne correspondent pas.'; return;
         }
-        const payload = {
-          name: (f.get('first_name') + ' ' + f.get('last_name')).trim(),
-          email: f.get('email'),
-          phone: '+229' + (f.get('phone') || '').replace(/\s/g, ''),
-          password: f.get('password'),
-          password_confirmation: f.get('password_confirmation'),
+        const signup = {
           profile_type: new URLSearchParams(location.search).get('profil') || 'prestataire',
-          country: 'BJ',
-          organization: f.get('org_name'),
-          sector: f.get('sector'),
+          primary_sector: f.get('sector') || '',
+          payload: {
+            name: (f.get('first_name') + ' ' + f.get('last_name')).trim(),
+            email: f.get('email'),
+            phone: '+229' + (f.get('phone') || '').replace(/\s/g, ''),
+            password: f.get('password'),
+            password_confirmation: f.get('password_confirmation'),
+            profile_type: new URLSearchParams(location.search).get('profil') || 'prestataire',
+            primary_country: 'BJ',
+            organization: f.get('org_name'),
+            region: f.get('region') || '',
+            city: f.get('city') || '',
+          },
         };
-        try {
-          const res = await api('/auth/register', { method: 'POST', body: payload });
-          if (res.token) localStorage.setItem('am_token', res.token);
-          msg.style.color = 'var(--green)';
-          msg.textContent = '✓ Compte créé ! Un code de vérification vous a été envoyé.';
-          setTimeout(() => location.href = 'dashboard.html', 1400);
-        } catch (err) {
-          msg.style.color = '#ef4444';
-          msg.textContent = err.data && err.data.message ? err.data.message : "Erreur lors de l'inscription. Vérifiez vos informations.";
-        }
+        try { sessionStorage.setItem('am_signup', JSON.stringify(signup)); } catch (_) {}
+        msg.style.color = 'var(--green)';
+        msg.textContent = '✓ Informations enregistrées. Configuration de vos alertes…';
+        setTimeout(() => location.href = 'preferences-alertes.html', 500);
       });
     }
   </script>

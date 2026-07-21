@@ -38,7 +38,7 @@
         <h2 class="mb-2">Bonjour <span id="uHello"></span> 👋</h2>
         <div class="kpi-grid">
           <div class="kpi"><b id="kAlerts">—</b><span>Alertes reçues</span></div>
-          <div class="kpi"><b id="kFree">—</b><span>Alertes gratuites restantes</span></div>
+          <div class="kpi"><b id="kFree">—</b><span>Statut d'abonnement</span></div>
           <div class="kpi"><b id="kPlan">—</b><span>Formule actuelle</span></div>
           <div class="kpi"><b id="kCountry">—</b><span>Pays principal</span></div>
         </div>
@@ -96,18 +96,19 @@
         const sub = d.subscription;
         document.getElementById('uName').textContent = ME.name || ME.email || ME.phone;
         document.getElementById('uHello').textContent = (ME.name || '').split(' ')[0] || '';
-        document.getElementById('kFree').textContent = d.free_alerts_remaining ?? '—';
-        document.getElementById('kPlan').textContent = sub ? (PROFILES[ME.profile_type]?.label || ME.profile_type) : 'Gratuit';
+        document.getElementById('kFree').textContent = (sub && sub.status === 'active') ? 'Actif' : 'Inactif';
+        document.getElementById('kPlan').textContent = (sub && sub.plan) ? (sub.plan.charAt(0).toUpperCase() + sub.plan.slice(1)) : 'Aucune';
         document.getElementById('kCountry').textContent = (COUNTRIES[ME.primary_country]?.flag || '') + ' ' + (COUNTRIES[ME.primary_country]?.name || ME.primary_country || '—');
         document.getElementById('sName').value = ME.name || '';
         document.getElementById('sEmail').checked = !!ME.notify_email;
         document.getElementById('sWhatsapp').checked = !!ME.notify_whatsapp;
         const box = document.getElementById('statusBox');
         if (sub && sub.status === 'active') {
-          box.innerHTML = `<p>✅ Abonnement <b>${PROFILES[ME.profile_type]?.label || ME.profile_type}</b> actif jusqu'au <b>${sub.ends_at || '—'}</b>.</p>`;
+          const planLabel = sub.plan ? (sub.plan.charAt(0).toUpperCase() + sub.plan.slice(1)) : 'Abonnement';
+          box.innerHTML = `<p>✅ Abonnement <b>${planLabel}</b> actif jusqu'au <b>${sub.expires_at ? new Date(sub.expires_at).toLocaleDateString('fr-FR') : (sub.ends_at || '—')}</b>.</p>`;
         } else {
-          box.innerHTML = `<p>Vous êtes en formule <b>gratuite (freemium)</b>. Il vous reste <b>${d.free_alerts_remaining ?? 0}</b> alertes offertes.</p>
-            <div class="mt-2"><a href="tarifs.html" class="btn btn--primary">Passer à une offre complète</a></div>`;
+          box.innerHTML = `<p>🔒 Vous n'avez pas d'abonnement actif. Un abonnement est nécessaire pour recevoir des alertes (la consultation du site reste libre).</p>
+            <div class="mt-2"><a href="tarifs.html" class="btn btn-primary">Choisir un abonnement</a></div>`;
         }
       } catch (e) { localStorage.removeItem('am_token'); location.href = 'connexion.html'; }
     }

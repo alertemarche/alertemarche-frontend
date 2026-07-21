@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vérification du compte — Inscription AlerteMarché Bénin</title>
+  <meta name="description" content="Saisissez le code de vérification reçu pour confirmer votre compte AlerteMarché.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=202607221200">
+</head>
+<body>
+
+  <!-- Breadcrumb étapes -->
+  <section class="container" style="padding-top:28px;">
+    <div class="progress-steps">
+      <div class="pstep done"><span class="pc"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><div class="pt"><b>Choix du profil</b><span>Profil sélectionné</span></div></div>
+      <div class="pstep-line done"></div>
+      <div class="pstep done"><span class="pc"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><div class="pt"><b>Informations personnelles</b><span>Complétées</span></div></div>
+      <div class="pstep-line done"></div>
+      <div class="pstep done"><span class="pc"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><div class="pt"><b>Préférences d'alertes</b><span>Configurées</span></div></div>
+      <div class="pstep-line done"></div>
+      <div class="pstep active"><span class="pc">4</span><div class="pt"><b>Vérification</b><span>Confirmez votre compte</span></div></div>
+      <div class="pstep-line"></div>
+      <div class="pstep"><span class="pc">5</span><div class="pt"><b>Compte créé</b><span>Vous êtes prêt !</span></div></div>
+    </div>
+  </section>
+
+  <section class="container">
+    <div style="max-width:520px;margin:0 auto;">
+      <form class="form-card" id="otpForm">
+        <div style="text-align:center;">
+          <span style="width:64px;height:64px;border-radius:50%;background:var(--green-050);color:var(--green);display:inline-grid;place-items:center;margin-bottom:14px;">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="22,6 12,13 2,6"/></svg>
+          </span>
+          <h2>Vérifiez votre compte</h2>
+          <p class="sub" style="margin-top:6px;">Nous avons envoyé un code de vérification à 6 chiffres à <b id="destIdentifier">votre adresse</b>. Saisissez-le ci-dessous.</p>
+        </div>
+
+        <div class="otp-inputs" id="otpInputs">
+          <input type="text" inputmode="numeric" maxlength="1" autocomplete="one-time-code">
+          <input type="text" inputmode="numeric" maxlength="1">
+          <input type="text" inputmode="numeric" maxlength="1">
+          <input type="text" inputmode="numeric" maxlength="1">
+          <input type="text" inputmode="numeric" maxlength="1">
+          <input type="text" inputmode="numeric" maxlength="1">
+        </div>
+
+        <div class="form-actions" style="justify-content:center;">
+          <button type="submit" class="btn btn-primary" id="verifyBtn" style="min-width:220px;justify-content:center;">Vérifier mon compte</button>
+        </div>
+        <p id="formMsg" style="margin-top:14px;font-size:.88rem;text-align:center;"></p>
+
+        <p style="text-align:center;margin-top:18px;font-size:.9rem;color:var(--muted);">
+          Vous n'avez pas reçu le code ?
+          <a href="#" id="resendLink" style="color:var(--green);font-weight:600;">Renvoyer le code</a>
+          <span id="resendTimer"></span>
+        </p>
+      </form>
+    </div>
+  </section>
+
+  <script src="js/app.js?v=202607221200"></script>
+  <script>
+    let identifier = '';
+
+    function initPage() {
+      identifier = sessionStorage.getItem('am_identifier') || '';
+      if (!identifier) { location.href = 'inscription-entreprise.html'; return; }
+      document.getElementById('destIdentifier').textContent = identifier;
+
+      const inputs = Array.from(document.querySelectorAll('#otpInputs input'));
+      inputs[0].focus();
+      inputs.forEach((inp, i) => {
+        inp.addEventListener('input', () => {
+          inp.value = inp.value.replace(/\D/g, '');
+          if (inp.value && i < inputs.length - 1) inputs[i + 1].focus();
+        });
+        inp.addEventListener('keydown', (e) => {
+          if (e.key === 'Backspace' && !inp.value && i > 0) inputs[i - 1].focus();
+        });
+        inp.addEventListener('paste', (e) => {
+          e.preventDefault();
+          const data = (e.clipboardData.getData('text') || '').replace(/\D/g, '').slice(0, 6).split('');
+          data.forEach((d, k) => { if (inputs[k]) inputs[k].value = d; });
+          if (data.length) inputs[Math.min(data.length, inputs.length) - 1].focus();
+        });
+      });
+
+      document.getElementById('otpForm').addEventListener('submit', doVerify);
+      document.getElementById('resendLink').addEventListener('click', doResend);
+      startTimer();
+    }
+
+    function getCode() {
+      return Array.from(document.querySelectorAll('#otpInputs input')).map(i => i.value).join('');
+    }
+
+    let timer = 0, timerId = null;
+    function startTimer() {
+      timer = 45;
+      const link = document.getElementById('resendLink');
+      const span = document.getElementById('resendTimer');
+      link.style.pointerEvents = 'none'; link.style.opacity = '.5';
+      clearInterval(timerId);
+      timerId = setInterval(() => {
+        timer--;
+        span.textContent = ' (' + timer + 's)';
+        if (timer <= 0) { clearInterval(timerId); span.textContent = ''; link.style.pointerEvents = ''; link.style.opacity = ''; }
+      }, 1000);
+    }
+
+    async function doVerify(e) {
+      e.preventDefault();
+      const msg = document.getElementById('formMsg');
+      const btn = document.getElementById('verifyBtn');
+      const code = getCode();
+      if (code.length !== 6) { msg.style.color = '#ef4444'; msg.textContent = 'Saisissez les 6 chiffres du code.'; return; }
+      btn.disabled = true;
+      msg.style.color = ''; msg.textContent = 'Vérification en cours…';
+      try {
+        await api('/auth/otp/verify', { method: 'POST', body: { identifier: identifier, code: code } });
+        msg.style.color = 'var(--green)';
+        msg.textContent = '✓ Compte vérifié !';
+        setTimeout(() => location.href = 'compte-cree.html', 700);
+      } catch (err) {
+        btn.disabled = false;
+        msg.style.color = '#ef4444';
+        msg.textContent = err.data && err.data.message ? err.data.message : 'Code invalide ou expiré. Réessayez.';
+      }
+    }
+
+    async function doResend(e) {
+      e.preventDefault();
+      const msg = document.getElementById('formMsg');
+      msg.style.color = ''; msg.textContent = 'Envoi d\'un nouveau code…';
+      try {
+        await api('/auth/otp/resend', { method: 'POST', body: { identifier: identifier } });
+        msg.style.color = 'var(--green)';
+        msg.textContent = '✓ Un nouveau code vous a été envoyé.';
+        startTimer();
+      } catch (err) {
+        msg.style.color = '#ef4444';
+        msg.textContent = err.data && err.data.message ? err.data.message : 'Impossible de renvoyer le code pour le moment.';
+      }
+    }
+  </script>
+</body>
+</html>

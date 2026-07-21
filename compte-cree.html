@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compte créé — Bienvenue sur AlerteMarché Bénin</title>
+  <meta name="description" content="Votre compte AlerteMarché est prêt. Recevez dès maintenant les marchés publics et privés adaptés à votre activité.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=202607221200">
+</head>
+<body>
+
+  <!-- Breadcrumb étapes -->
+  <section class="container" style="padding-top:28px;">
+    <div class="progress-steps">
+      <div class="pstep done"><span class="pc"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><div class="pt"><b>Choix du profil</b><span>Profil sélectionné</span></div></div>
+      <div class="pstep-line done"></div>
+      <div class="pstep done"><span class="pc"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><div class="pt"><b>Informations personnelles</b><span>Complétées</span></div></div>
+      <div class="pstep-line done"></div>
+      <div class="pstep done"><span class="pc"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><div class="pt"><b>Préférences d'alertes</b><span>Configurées</span></div></div>
+      <div class="pstep-line done"></div>
+      <div class="pstep done"><span class="pc"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><div class="pt"><b>Vérification</b><span>Confirmée</span></div></div>
+      <div class="pstep-line done"></div>
+      <div class="pstep active"><span class="pc">5</span><div class="pt"><b>Compte créé</b><span>Vous êtes prêt !</span></div></div>
+    </div>
+  </section>
+
+  <section class="container">
+    <div style="max-width:560px;margin:0 auto;">
+      <div class="form-card">
+        <div class="success-hero">
+          <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <h2>Bienvenue sur AlerteMarché !</h2>
+          <p>Votre compte est créé et vérifié. Vous allez désormais recevoir uniquement les marchés qui correspondent à votre activité.</p>
+        </div>
+
+        <ul class="recap-list" id="recap">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> <span>Vos alertes sont configurées et actives.</span></li>
+        </ul>
+
+        <div class="form-actions" style="justify-content:center;margin-top:26px;">
+          <a href="dashboard.html" class="btn btn-primary" style="min-width:280px;justify-content:center;">Accéder à mon tableau de bord <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+        </div>
+        <p style="text-align:center;margin-top:14px;font-size:.86rem;color:var(--muted);">Vous pourrez ajuster vos secteurs, mots-clés et canaux à tout moment depuis votre tableau de bord.</p>
+      </div>
+    </div>
+  </section>
+
+  <script src="js/app.js?v=202607221200"></script>
+  <script>
+    function initPage() {
+      let info = null;
+      try { info = JSON.parse(sessionStorage.getItem('am_signup_done') || 'null'); } catch (_) {}
+      const recap = document.getElementById('recap');
+      if (info) {
+        const items = [];
+        if (info.organization) items.push('Compte pour <b>' + escapeHtml(info.organization) + '</b> créé avec succès.');
+        if (info.sectors && info.sectors.length) items.push('Secteurs suivis : <b>' + info.sectors.map(escapeHtml).join(', ') + '</b>.');
+        if (info.keywords && info.keywords.length) items.push('Mots-clés surveillés : <b>' + info.keywords.map(escapeHtml).join(', ') + '</b>.');
+        if (info.notify_email) items.push('Notifications par <b>e-mail</b> activées.');
+        items.push('Vous ne recevrez que les marchés correspondant à vos préférences.');
+        recap.innerHTML = items.map(t => '<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> <span>' + t + '</span></li>').join('');
+      }
+      // Nettoyage des données temporaires
+      try {
+        sessionStorage.removeItem('am_signup');
+        sessionStorage.removeItem('am_identifier');
+      } catch (_) {}
+    }
+    function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+  </script>
+</body>
+</html>
