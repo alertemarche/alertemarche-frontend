@@ -368,11 +368,17 @@
       const msg = document.getElementById('setMsg');
       msg.innerHTML = '<div class="notice">Enregistrement…</div>';
       try {
-        await api('/profile', { method: 'PUT', auth: true, body: {
+        const updated = await api('/profile', { method: 'PUT', auth: true, body: {
           name: document.getElementById('sName').value.trim(),
+          organization: document.getElementById('sOrg').value.trim(),
+          phone: document.getElementById('sPhone').value.trim() || null,
         }});
+        if (updated && updated.user) ME = updated.user;
         msg.innerHTML = '<div class="notice">✅ Profil enregistré.</div>';
-      } catch { msg.innerHTML = '<div class="notice" style="border-color:var(--danger);color:var(--danger);">Échec de l\'enregistrement.</div>'; }
+      } catch (e) {
+        const detail = (e && e.data && e.data.message) ? ' ' + e.data.message : '';
+        msg.innerHTML = '<div class="notice" style="border-color:var(--danger);color:var(--danger);">Échec de l\'enregistrement.' + detail + '</div>';
+      }
     }
 
     function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
