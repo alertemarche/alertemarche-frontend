@@ -570,7 +570,7 @@ p { color: var(--text); }
     max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.3s ease, opacity 0.2s ease;
   }
   /* Sous-menu visible quand le dropdown est ouvert */
-  .nav-dropdown.open .nav-dd-menu { max-height: 400px; opacity: 1; padding: 8px 0 8px 16px; }
+  .nav-dropdown.open .nav-dd-menu { max-height: 400px; opacity: 1; padding: 8px 0 8px 16px; transform: none; }
   .nav-dd-menu a { padding: 12px 8px; border-bottom: none; font-size: 0.95rem; }
   .hero-inner, .signup-hero-grid { grid-template-columns: 1fr; }
   .hero-visual { min-height: 420px; margin-top: 20px; }
