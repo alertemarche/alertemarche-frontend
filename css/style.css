@@ -153,10 +153,14 @@ p { color: var(--text); }
 .nav-dropdown.open > .nav-dd-caret .caret { transform: rotate(180deg); }
 .nav-dropdown.has-active > .nav-dd-link { color: var(--green); font-weight: 700; }
 .nav-dd-menu {
-  position: absolute; top: calc(100% + 12px); left: 50%; transform: translateX(-50%) translateY(6px);
+  position: absolute; top: calc(100% + 4px); left: 50%; transform: translateX(-50%) translateY(2px);
   background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow);
   padding: 8px; min-width: 250px; display: flex; flex-direction: column; gap: 2px;
   opacity: 0; visibility: hidden; transition: opacity .16s, transform .16s; z-index: 60;
+}
+/* Zone de sécurité invisible pour éviter la fermeture accidentelle */
+.nav-dd-menu::before {
+  content: ""; position: absolute; top: -8px; left: 0; right: 0; height: 12px;
 }
 .nav-dropdown:hover .nav-dd-menu,
 .nav-dropdown.open .nav-dd-menu { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
