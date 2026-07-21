@@ -782,3 +782,24 @@ p { color: var(--text); }
   .ab-mini-grid { grid-template-columns:1fr; }
   .ab-plans { grid-template-columns:1fr; }
 }
+
+
+
+/* ===== Sélecteur de profil (inscription étape 1 fusionnée) ===== */
+.psel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 12px; }
+.psel-card {
+  position: relative; text-align: left; cursor: pointer; background: #fff;
+  border: 1.5px solid var(--line); border-radius: var(--radius);
+  padding: 16px 14px; display: flex; flex-direction: column; gap: 4px;
+  transition: border-color .15s, box-shadow .15s, background .15s; font: inherit;
+}
+.psel-card:hover { border-color: var(--green); }
+.psel-card.selected { border-color: var(--green); background: var(--green-050); box-shadow: 0 0 0 3px rgba(26,127,90,.12); }
+.psel-ic { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; background: var(--green-050); color: var(--green); margin-bottom: 4px; }
+.psel-ic svg { width: 22px; height: 22px; }
+.psel-card b { font-size: .98rem; color: var(--ink, #111827); }
+.psel-desc { font-size: .8rem; color: var(--muted); line-height: 1.35; }
+.psel-check { position: absolute; top: 12px; right: 12px; width: 22px; height: 22px; border-radius: 50%; background: var(--green); color: #fff; display: none; place-items: center; }
+.psel-check svg { width: 12px; height: 12px; }
+.psel-card.selected .psel-check { display: grid; }
+@media (max-width: 720px) { .psel-grid { grid-template-columns: 1fr; } }

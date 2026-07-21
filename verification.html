@@ -7,22 +7,18 @@
   <meta name="description" content="Saisissez le code de vérification reçu pour confirmer votre compte AlerteMarché.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=202607221200">
+  <link rel="stylesheet" href="css/style.css?v=202607221800">
 </head>
 <body>
 
   <!-- Breadcrumb étapes -->
   <section class="container" style="padding-top:28px;">
     <div class="progress-steps">
-      <div class="pstep done"><span class="pc"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><div class="pt"><b>Choix du profil</b><span>Profil sélectionné</span></div></div>
-      <div class="pstep-line done"></div>
-      <div class="pstep done"><span class="pc"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><div class="pt"><b>Informations personnelles</b><span>Complétées</span></div></div>
+      <div class="pstep done"><span class="pc"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><div class="pt"><b>Profil &amp; informations</b><span>Complétées</span></div></div>
       <div class="pstep-line done"></div>
       <div class="pstep done"><span class="pc"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><div class="pt"><b>Préférences d'alertes</b><span>Configurées</span></div></div>
       <div class="pstep-line done"></div>
-      <div class="pstep active"><span class="pc">4</span><div class="pt"><b>Vérification</b><span>Confirmez votre compte</span></div></div>
-      <div class="pstep-line"></div>
-      <div class="pstep"><span class="pc">5</span><div class="pt"><b>Compte créé</b><span>Vous êtes prêt !</span></div></div>
+      <div class="pstep active"><span class="pc">3</span><div class="pt"><b>Vérification</b><span>Confirmez votre compte</span></div></div>
     </div>
   </section>
 
@@ -60,13 +56,13 @@
     </div>
   </section>
 
-  <script src="js/app.js?v=202607221200"></script>
+  <script src="js/app.js?v=202607221800"></script>
   <script>
     let identifier = '';
 
     function initPage() {
       identifier = sessionStorage.getItem('am_identifier') || '';
-      if (!identifier) { location.href = 'inscription-entreprise.html'; return; }
+      if (!identifier) { location.href = 'inscription.html'; return; }
       document.getElementById('destIdentifier').textContent = identifier;
 
       const inputs = Array.from(document.querySelectorAll('#otpInputs input'));
