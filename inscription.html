@@ -91,11 +91,11 @@
         </div>
 
         <div class="form-actions">
-          <a href="index.html" class="btn btn-ghost">← Annuler</a>
+          <a href="/index" class="btn btn-ghost">← Annuler</a>
           <button type="submit" class="btn btn-primary">Continuer <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
         </div>
         <p id="formMsg" style="margin-top:14px;font-size:.88rem;"></p>
-        <div class="signup-bottom" style="margin-top:8px;">Déjà un compte ? <a href="connexion.html">Se connecter</a></div>
+        <div class="signup-bottom" style="margin-top:8px;">Déjà un compte ? <a href="/connexion">Se connecter</a></div>
       </form>
 
       <!-- Récapitulatif -->
@@ -203,7 +203,7 @@
         try { sessionStorage.setItem('am_signup', JSON.stringify(signup)); } catch (_) {}
         msg.style.color = 'var(--green)';
         msg.textContent = '✓ Informations enregistrées. Configuration de vos alertes…';
-        setTimeout(() => location.href = 'preferences-alertes.html', 400);
+        setTimeout(() => location.href="preferences-alertes", 400);
       });
     }
 

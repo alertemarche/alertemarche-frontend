@@ -55,7 +55,7 @@
 
         <div style="text-align:center;margin-top:22px;padding-top:18px;border-top:1px solid var(--line);">
           <p style="font-size:.86rem;color:var(--muted);margin-bottom:8px;">Votre compte est déjà créé. Vous pourrez confirmer votre e-mail plus tard depuis votre espace.</p>
-          <a href="dashboard.html" id="skipToDash" style="color:var(--green);font-weight:600;font-size:.92rem;">Accéder directement à mon tableau de bord →</a>
+          <a href="/dashboard" id="skipToDash" style="color:var(--green);font-weight:600;font-size:.92rem;">Accéder directement à mon tableau de bord →</a>
         </div>
       </form>
     </div>
@@ -67,7 +67,7 @@
 
     function initPage() {
       identifier = sessionStorage.getItem('am_identifier') || '';
-      if (!identifier) { location.href = 'inscription.html'; return; }
+      if (!identifier) { location.href="inscription"; return; }
       document.getElementById('destIdentifier').textContent = identifier;
 
       const inputs = Array.from(document.querySelectorAll('#otpInputs input'));
@@ -123,7 +123,7 @@
         await api('/auth/otp/verify', { method: 'POST', body: { identifier: identifier, code: code } });
         msg.style.color = 'var(--green)';
         msg.textContent = '✓ Compte vérifié !';
-        setTimeout(() => location.href = 'compte-cree.html', 700);
+        setTimeout(() => location.href="compte-cree", 700);
       } catch (err) {
         btn.disabled = false;
         msg.style.color = '#ef4444';

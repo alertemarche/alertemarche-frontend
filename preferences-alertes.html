@@ -63,7 +63,7 @@
         </div>
 
         <div class="form-actions">
-          <a href="inscription.html" class="btn btn-ghost">← Précédent</a>
+          <a href="/inscription" class="btn btn-ghost">← Précédent</a>
           <button type="submit" class="btn btn-primary" id="submitBtn">Créer mon compte <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
         </div>
         <p id="formMsg" style="margin-top:14px;font-size:.88rem;"></p>
@@ -107,7 +107,7 @@
       let signup = null;
       try { signup = JSON.parse(sessionStorage.getItem('am_signup') || 'null'); } catch (_) {}
       if (!signup || !signup.payload || !signup.payload.email) {
-        location.href = 'inscription.html';
+        location.href="inscription";
         return;
       }
 
@@ -235,7 +235,7 @@
         }));
         msg.style.color = 'var(--green)';
         msg.textContent = '✓ Compte créé ! Un code de vérification vous a été envoyé.';
-        setTimeout(() => location.href = 'verification.html', 900);
+        setTimeout(() => location.href="verification", 900);
       } catch (err) {
         btn.disabled = false;
         msg.style.color = '#ef4444';

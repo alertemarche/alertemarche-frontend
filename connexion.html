@@ -17,7 +17,7 @@
     <!-- Hero Section (Left) -->
     <div class="login-hero">
       <div class="login-hero__content">
-        <a href="index.html" class="login-hero__brand">
+        <a href="/index" class="login-hero__brand">
           <span class="brand__mark">🔔</span>
           <span class="brand__text">Alerte<b>Marché</b></span>
         </a>
@@ -106,7 +106,7 @@
     <div class="login-form-wrap">
       <div class="login-form">
         <div class="login-form__header">
-          <a href="index.html" class="login-form__brand">
+          <a href="/index" class="login-form__brand">
             <span class="brand__mark">🔔</span>
             <span class="brand__text">Alerte<b>Marché</b></span>
           </a>
@@ -156,7 +156,7 @@
         </button>
 
         <p class="login-form__footer">
-          Vous n'avez pas de compte ? <a href="inscription.html" class="login-form__link">Demander un accès</a>
+          Vous n'avez pas de compte ? <a href="/inscription" class="login-form__link">Demander un accès</a>
         </p>
       </div>
 
@@ -223,7 +223,7 @@
         const res = await api('/auth/login', { method: 'POST', body: { identifier, password } });
         if (res.token) localStorage.setItem('am_token', res.token);
         gtag('event', 'login');
-        location.href = (res.user && res.user.profile_type === 'admin_public' && res.user.is_admin) ? 'admin.html' : 'dashboard.html';
+        location.href = (res.user && res.user.profile_type === 'admin_public' && res.user.is_admin) ? '/admin' : '/dashboard';
       } catch (e) {
         msg.innerHTML = '<div class="notice notice--danger">Identifiants incorrects. Veuillez réessayer.</div>';
       }

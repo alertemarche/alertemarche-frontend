@@ -14,7 +14,7 @@
   <!-- Titre + breadcrumb -->
   <section class="page-head">
     <div class="container">
-      <div class="breadcrumb"><a href="index.html">Accueil</a><span class="sep">›</span><a href="appels-offres-publics.html">Appels d'offres publics</a><span class="sep">›</span><span id="crumb">Procédure</span></div>
+      <div class="breadcrumb"><a href="/index">Accueil</a><span class="sep">›</span><a href="/appels-offres-publics">Appels d'offres publics</a><span class="sep">›</span><span id="crumb">Procédure</span></div>
       <div class="page-title">
         <div>
           <h1 id="pageTitle">Procédure de passation</h1>
@@ -87,7 +87,7 @@
       const officialUrl = t.url || '';
       const officialBtn = officialUrl
         ? `<a href="${esc(officialUrl)}" target="_blank" rel="noopener" class="btn btn-primary">Voir sur le site officiel ${svg.ext}</a>`
-        : `<a href="inscription.html" class="btn btn-primary">Voir sur le site officiel ${svg.ext}</a>`;
+        : `<a href="/inscription" class="btn btn-primary">Voir sur le site officiel ${svg.ext}</a>`;
       return `<article class="tender-card">
         <div class="tc-top">
           <span class="sector-badge ${t.badge}">${esc(t.sector)}</span>
@@ -103,7 +103,7 @@
         </div>
         <div class="tc-tags">${t.tags.map(x => `<span class="tag">${esc(x)}</span>`).join('')}</div>
         <div class="tc-actions">
-          <a href="inscription.html" class="btn btn-ghost">Voir les détails</a>
+          <a href="/inscription" class="btn btn-ghost">Voir les détails</a>
           ${officialBtn}
         </div>
       </article>`;

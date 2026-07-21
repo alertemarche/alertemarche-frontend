@@ -15,7 +15,7 @@
 
   <nav class="nav">
     <div class="container nav__inner">
-      <a href="index.html" class="brand"><span class="brand__mark">🔔</span><span>Alerte<b>Marché</b></span></a>
+      <a href="/index" class="brand"><span class="brand__mark">🔔</span><span>Alerte<b>Marché</b></span></a>
       <div class="nav__actions">
         <span class="nav__geo" id="uName">…</span>
         <button class="btn btn--ghost btn--sm" id="logoutBtn">Déconnexion</button>
@@ -30,7 +30,7 @@
       <a href="#" data-tab="alerts">🔔 Mes alertes</a>
       <a href="#" data-tab="subs">💳 Mon abonnement</a>
       <a href="#" data-tab="profile">👤 Mon profil</a>
-      <a href="tarifs.html">⬆️ Améliorer mon offre</a>
+      <a href="/tarifs">⬆️ Améliorer mon offre</a>
     </aside>
 
     <main class="dash__main">
@@ -64,7 +64,7 @@
           <div style="display:flex;gap:12px;flex-wrap:wrap;">
             <button class="btn btn--ghost" data-goto="interests">🎯 Modifier mes centres d'intérêt</button>
             <button class="btn btn--ghost" data-goto="alerts">🔔 Voir mes alertes</button>
-            <a class="btn btn--ghost" href="appels-offres-publics.html">📄 Explorer les appels d'offres</a>
+            <a class="btn btn--ghost" href="/appels-offres-publics">📄 Explorer les appels d'offres</a>
           </div>
         </div>
       </section>
@@ -121,7 +121,7 @@
       <section data-panel="subs" class="hidden">
         <h2 class="mb-2">💳 Mon abonnement</h2>
         <div id="subsList"><p class="muted">Chargement…</p></div>
-        <div class="notice mt-2">Pour activer ou changer de formule, rendez-vous sur la page <a href="tarifs.html"><b>Abonnement</b></a>.</div>
+        <div class="notice mt-2">Pour activer ou changer de formule, rendez-vous sur la page <a href="/tarifs"><b>Abonnement</b></a>.</div>
       </section>
 
       <!-- Mon profil -->
@@ -160,7 +160,7 @@
 
   <script src="js/app.js?v=202607221900"></script>
   <script>
-    if (!token()) location.href = 'connexion.html';
+    if (!token()) location.href="connexion";
 
     // Références locales (Bénin) — évite toute dépendance à des globaux non définis
     const COUNTRIES = { BJ: { flag: '🇧🇯', name: 'Bénin' } };
@@ -221,7 +221,7 @@
           box.innerHTML = `<p>✅ Abonnement <b>${planLabel}</b> actif jusqu'au <b>${exp}</b>. Vous recevez vos alertes en temps réel.</p>`;
         } else {
           box.innerHTML = `<p>🔒 Vous n'avez pas d'abonnement actif. Un abonnement est nécessaire pour <b>recevoir</b> les alertes (la consultation du site reste libre). Vos centres d'intérêt sont enregistrés et prêts.</p>
-            <div class="mt-2"><a href="tarifs.html" class="btn btn--primary">Choisir un abonnement</a></div>`;
+            <div class="mt-2"><a href="/tarifs" class="btn btn--primary">Choisir un abonnement</a></div>`;
         }
 
         // Canaux WhatsApp : disponible seulement si abonnement actif
@@ -232,7 +232,7 @@
       } catch (e) {
         console.error('Erreur chargement compte:', e);
         localStorage.removeItem('am_token');
-        location.href = 'connexion.html';
+        location.href="connexion";
       }
     }
 
@@ -356,7 +356,7 @@
       try {
         const d = await api('/subscriptions', { auth: true });
         const items = d.data || d.subscriptions || [];
-        if (!items.length) { el.innerHTML = '<div class="card">Aucun abonnement actif. <a href="tarifs.html">Découvrez nos offres</a>.</div>'; return; }
+        if (!items.length) { el.innerHTML = '<div class="card">Aucun abonnement actif. <a href="/tarifs">Découvrez nos offres</a>.</div>'; return; }
         el.innerHTML = items.map(s => `<div class="tender">
           <div class="tender__top"><h3>${s.plan ? cap(s.plan) : (PROFILES[s.profile_type]?.label || s.profile_type || 'Abonnement')}</h3><span class="chip">${s.status}</span></div>
           <div class="tender__meta"><span>Montant : <b>${fmt(s.amount||0)}</b></span><span>Échéance : <b>${s.expires_at ? new Date(s.expires_at).toLocaleDateString('fr-FR') : (s.ends_at||'—')}</b></span></div>
@@ -385,7 +385,7 @@
 
     async function doLogout() {
       try { await api('/auth/logout', { method: 'POST', auth: true }); } catch {}
-      localStorage.removeItem('am_token'); location.href = 'index.html';
+      localStorage.removeItem('am_token'); location.href="index";
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -397,7 +397,7 @@
       document.getElementById('saveProfile').addEventListener('click', saveProfile);
       document.getElementById('goVerify').addEventListener('click', () => {
         if (ME) sessionStorage.setItem('am_identifier', ME.email || ME.phone || '');
-        location.href = 'verification.html';
+        location.href="verification";
       });
       // Ouverture directe d'un onglet via #hash (ex: dashboard.html#interests)
       const hash = (location.hash || '').replace('#','');

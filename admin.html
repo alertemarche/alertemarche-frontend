@@ -13,7 +13,7 @@
 
   <nav class="nav">
     <div class="container nav__inner">
-      <a href="index.html" class="brand"><span class="brand__mark">🔔</span><span>Alerte<b>Marché</b> · Admin</span></a>
+      <a href="/index" class="brand"><span class="brand__mark">🔔</span><span>Alerte<b>Marché</b> · Admin</span></a>
       <div class="nav__actions">
         <span class="nav__geo" id="aName">Admin</span>
         <button class="btn btn--ghost btn--sm" id="logoutBtn">Déconnexion</button>
@@ -109,7 +109,7 @@
 
   <script src="js/app.js?v=202607230900"></script>
   <script>
-    if (!token()) location.href = 'connexion.html';
+    if (!token()) location.href="connexion";
 
     // Données de référence (non fournies par app.js) — évite un crash ReferenceError.
     const COUNTRIES = { BJ: { flag: '🇧🇯', name: 'Bénin' }, TG: { flag: '🇹🇬', name: 'Togo' }, CI: { flag: '🇨🇮', name: "Côte d'Ivoire" } };
@@ -177,7 +177,7 @@
         document.getElementById('sAlerts').textContent = d.alerts_sent ?? '—';
         document.getElementById('revBox').innerHTML = `<p style="font-size:1.6rem;font-weight:800;color:var(--green-700);">${fmt(d.revenue_active || 0)}</p><p class="muted">Chiffre d'affaires actif estimé · ${d.tenders_today ?? 0} avis collectés aujourd'hui.</p>`;
       } catch (e) {
-        if (e.status === 401 || e.status === 403) { location.href = 'connexion.html'; }
+        if (e.status === 401 || e.status === 403) { location.href="connexion"; }
       }
     }
 
@@ -204,7 +204,7 @@
           <div class="kpi"><b style="color:#b45309">${s.pending ?? 0}</b><span>En attente</span></div>`;
         renderSubs();
       } catch (e) {
-        if (e.status === 401 || e.status === 403) { location.href = 'connexion.html'; return; }
+        if (e.status === 401 || e.status === 403) { location.href="connexion"; return; }
         el.innerHTML = '<div class="card">Impossible de charger les abonnements.</div>'; sumEl.innerHTML = '';
       }
     }
@@ -256,7 +256,7 @@
         USERS_CACHE = d.data || [];
         renderUsers();
       } catch (e) {
-        if (e.status === 401 || e.status === 403) { location.href = 'connexion.html'; return; }
+        if (e.status === 401 || e.status === 403) { location.href="connexion"; return; }
         el.innerHTML = '<div class="card">Impossible de charger les utilisateurs.</div>';
       }
     }
@@ -386,7 +386,7 @@
       document.getElementById('usersProfile').addEventListener('change', loadUsers);
       document.getElementById('logoutBtn').addEventListener('click', async () => {
         try { await api('/auth/logout', { method: 'POST', auth: true }); } catch {}
-        localStorage.removeItem('am_token'); location.href = 'index.html';
+        localStorage.removeItem('am_token'); location.href="index";
       });
       loadStats();
     });

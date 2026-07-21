@@ -164,7 +164,7 @@
       const token = localStorage.getItem('am_token');
       if (!token) {
         sessionStorage.setItem('am_checkout_intent', JSON.stringify({ plan: planKey }));
-        window.location.href = 'inscription.html';
+        window.location.href="inscription";
         return;
       }
       try {
@@ -206,7 +206,7 @@
       if (!transactionId || !sub) return;
       try {
         await api('/payments/kkiapay/verify', { method: 'POST', auth: true, body: { transaction_id: transactionId, subscription_id: sub.id } });
-        window.location.href = 'dashboard.html';
+        window.location.href="dashboard";
       } catch {
         if (hint) { hint.style.display = 'block'; hint.textContent = "Paiement reçu, activation en cours de vérification. Vous recevrez une confirmation par e-mail."; }
       }

@@ -52,11 +52,11 @@ async function api(path, { method = 'GET', body = null, auth = false } = {}) {
 
 /* -------- Header -------- */
 function renderNav() {
-    const path = location.pathname.split('/').pop() || 'index.html';
+    const path = location.pathname.split('/').pop() || '/index';
     // Repère la page courante en tenant compte du paramètre de procédure
-    // (procedures.html?p=…) afin de surligner la bonne sous-catégorie.
+    // (/procedures?p=…) afin de surligner la bonne sous-catégorie.
     const params = new URLSearchParams(location.search);
-    const current = path + (path === 'procedures.html' && params.get('p') ? '?p=' + params.get('p') : '');
+    const current = path + (path === '/procedures' && params.get('p') ? '?p=' + params.get('p') : '');
     const isActive = (h) => (h === current || h === path) ? 'active' : '';
 
     // Header conservé à l'identique : « Appels d'offres publics » et « Appels d'offres
@@ -67,15 +67,15 @@ function renderNav() {
     // l'ensemble des marchés publics en cours ET planifiés (plans de passation),
     // ce qui élargit fortement le nombre de marchés remontés.
     const publicSub = [
-        ['appels-offres-publics.html', "Appels d'offres publics", 'var(--green)'],
-        ['procedures.html?p=cotation', 'Demande de cotation', 'var(--green)'],
-        ['procedures.html?p=drp', 'Demande de renseignement et de prix (DRP)', 'var(--green)'],
-        ['procedures.html?p=aaon', "Avis d'appel d'offres national (AAON)", 'var(--green)'],
-        ['procedures.html?p=aaoi', "Avis d'appel d'offres international (AAOI)", 'var(--green)'],
-        ['procedures.html?p=ami', 'Avis à manifestation d\'intérêt (AMI)', 'var(--green)'],
-        ['appels-concurrence.html', "Avis d'Appel à Concurrence", 'var(--green)'],
-        ['avis-generaux.html', 'Avis Généraux', 'var(--orange)'],
-        ['plan-passation.html', 'Plans de Passation', 'var(--indigo)'],
+        ['/appels-offres-publics', "Appels d'offres publics", 'var(--green)'],
+        ['/procedures?p=cotation', 'Demande de cotation', 'var(--green)'],
+        ['/procedures?p=drp', 'Demande de renseignement et de prix (DRP)', 'var(--green)'],
+        ['/procedures?p=aaon', "Avis d'appel d'offres national (AAON)", 'var(--green)'],
+        ['/procedures?p=aaoi', "Avis d'appel d'offres international (AAOI)", 'var(--green)'],
+        ['/procedures?p=ami', 'Avis à manifestation d\'intérêt (AMI)', 'var(--green)'],
+        ['/appels-concurrence', "Avis d'Appel à Concurrence", 'var(--green)'],
+        ['/avis-generaux', 'Avis Généraux', 'var(--orange)'],
+        ['/plan-passation', 'Plans de Passation', 'var(--indigo)'],
     ];
     const ddItems = (items) => items.map(([h, t, c]) =>
         `<a href="${h}" class="${isActive(h)}"><span class="dot" style="background:${c}"></span>${t}</a>`).join('');
@@ -85,7 +85,7 @@ function renderNav() {
     header.className = 'site-header';
     header.innerHTML = `
       <div class="container header-inner">
-        <a href="index.html" class="brand">
+        <a href="/index" class="brand">
           <span class="brand-mark">${IC.bell}</span>
           <span class="brand-lines">
             <span class="brand-text">Alerte<span class="brand-accent">Marché</span></span>
@@ -94,21 +94,21 @@ function renderNav() {
         </a>
         <span class="country-badge" title="Bénin">BÉNIN <span class="flag">🇧🇯</span> <span class="caret">▼</span></span>
         <nav class="main-nav" id="mainNav">
-          <a href="index.html" class="${isActive('index.html')}">Accueil</a>
+          <a href="/index" class="${isActive('/index')}">Accueil</a>
           <div class="nav-dropdown ${groupActive(publicSub)}">
-            <a href="appels-offres-publics.html" class="nav-dd-link ${isActive('appels-offres-publics.html')}">Appels d'offres publics</a>
+            <a href="/appels-offres-publics" class="nav-dd-link ${isActive('/appels-offres-publics')}">Appels d'offres publics</a>
             <button type="button" class="nav-dd-caret" aria-label="Sous-catégories des appels d'offres publics"><span class="caret">▾</span></button>
             <div class="nav-dd-menu">${ddItems(publicSub)}</div>
           </div>
-          <a href="appels-offres-prives.html" class="${isActive('appels-offres-prives.html')}">Appels d'offres privés</a>
-          <a href="tarifs.html" class="${isActive('tarifs.html')}">Abonnement</a>
-          <a href="ressources.html" class="${isActive('ressources.html')}">Ressources</a>
-          <a href="inscription.html" class="nav-auth-mobile ${isActive('inscription.html')}">Créer un compte</a>
-          <a href="connexion.html" class="nav-auth-mobile ${isActive('connexion.html')}">Se connecter</a>
+          <a href="/appels-offres-prives" class="${isActive('/appels-offres-prives')}">Appels d'offres privés</a>
+          <a href="/tarifs" class="${isActive('/tarifs')}">Abonnement</a>
+          <a href="/ressources" class="${isActive('/ressources')}">Ressources</a>
+          <a href="/inscription" class="nav-auth-mobile ${isActive('/inscription')}">Créer un compte</a>
+          <a href="/connexion" class="nav-auth-mobile ${isActive('/connexion')}">Se connecter</a>
         </nav>
         <div class="header-actions">
-          <a href="connexion.html" class="btn btn-outline btn-sm">${IC.user}<span>Se connecter</span></a>
-          <a href="inscription.html" class="btn btn-primary btn-sm">S'inscrire</a>
+          <a href="/connexion" class="btn btn-outline btn-sm">${IC.user}<span>Se connecter</span></a>
+          <a href="/inscription" class="btn btn-primary btn-sm">S'inscrire</a>
           <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
         </div>
       </div>`;
@@ -144,25 +144,25 @@ function renderFooter() {
           </div>
           <div class="footer-col">
             <h4>Plateforme</h4>
-            <a href="appels-offres-publics.html">Appels d'offres publics</a>
-            <a href="appels-offres-prives.html">Appels d'offres privés</a>
-            <a href="appels-concurrence.html">Avis d'Appel à Concurrence</a>
-            <a href="avis-generaux.html">Avis Généraux</a>
-            <a href="plan-passation.html">Plans de Passation</a>
-            <a href="tarifs.html">Abonnement</a>
+            <a href="/appels-offres-publics">Appels d'offres publics</a>
+            <a href="/appels-offres-prives">Appels d'offres privés</a>
+            <a href="/appels-concurrence">Avis d'Appel à Concurrence</a>
+            <a href="/avis-generaux">Avis Généraux</a>
+            <a href="/plan-passation">Plans de Passation</a>
+            <a href="/tarifs">Abonnement</a>
           </div>
           <div class="footer-col">
             <h4>Ressources</h4>
-            <a href="ressources.html">Blog & Guides</a>
-            <a href="ressources.html#faq">FAQ</a>
-            <a href="inscription.html">Créer un compte</a>
-            <a href="connexion.html">Se connecter</a>
+            <a href="/ressources">Blog & Guides</a>
+            <a href="/ressources#faq">FAQ</a>
+            <a href="/inscription">Créer un compte</a>
+            <a href="/connexion">Se connecter</a>
           </div>
           <div class="footer-col">
             <h4>Informations</h4>
-            <a href="mentions-legales.html">Mentions légales</a>
-            <a href="confidentialite.html">Confidentialité</a>
-            <a href="cgu.html">CGU</a>
+            <a href="/mentions-legales">Mentions légales</a>
+            <a href="/confidentialite">Confidentialité</a>
+            <a href="/cgu">CGU</a>
             <a href="mailto:info@alertemarche.com">info@alertemarche.com</a>
           </div>
         </div>
