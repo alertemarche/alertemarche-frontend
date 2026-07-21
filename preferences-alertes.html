@@ -243,7 +243,14 @@
       } catch (err) {
         btn.disabled = false;
         msg.style.color = '#ef4444';
-        msg.textContent = err.data && err.data.message ? err.data.message : "Erreur lors de la création du compte. Vérifiez vos informations.";
+        // Afficher les erreurs de validation détaillées si disponibles
+        if (err.data && err.data.errors) {
+          const firstError = Object.values(err.data.errors)[0];
+          msg.textContent = Array.isArray(firstError) ? firstError[0] : (err.data.message || "Erreur de validation.");
+        } else {
+          msg.textContent = err.data && err.data.message ? err.data.message : "Erreur lors de la création du compte. Vérifiez vos informations.";
+        }
+        console.error('Erreur inscription:', err);
       }
     }
   </script>
