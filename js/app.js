@@ -89,7 +89,6 @@ function renderNav() {
             <div class="nav-dd-menu">${ddItems(publicSub)}</div>
           </div>
           <a href="appels-offres-prives.html" class="${isActive('appels-offres-prives.html')}">Appels d'offres privés</a>
-          <a href="artisans.html" class="${isActive('artisans.html')}">Artisans &amp; Prestataires</a>
           <a href="tarifs.html" class="${isActive('tarifs.html')}">Tarifs</a>
           <a href="ressources.html" class="${isActive('ressources.html')}">Ressources</a>
           <a href="inscription.html" class="nav-auth-mobile ${isActive('inscription.html')}">Créer un compte gratuit</a>
@@ -138,7 +137,6 @@ function renderFooter() {
             <a href="appels-concurrence.html">Avis d'Appel à Concurrence</a>
             <a href="avis-generaux.html">Avis Généraux</a>
             <a href="plan-passation.html">Plans de Passation</a>
-            <a href="artisans.html">Artisans & Prestataires</a>
             <a href="tarifs.html">Tarifs</a>
           </div>
           <div class="footer-col">
