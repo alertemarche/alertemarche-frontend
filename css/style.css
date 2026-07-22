@@ -126,6 +126,13 @@ p { color: var(--text); }
   font-size: .92rem; font-weight: 600; color: #374151; padding: 6px 0;
   position: relative; transition: color .15s;
 }
+
+/* Amélioration pour grands écrans (desktop > 1280px) */
+@media (min-width: 1280px) {
+  .main-nav { gap: 32px; } /* Plus d'espace sur grands écrans */
+  .main-nav a { font-size: .94rem; } /* Texte légèrement plus grand */
+  .header-actions { gap: 14px; }
+}
 .main-nav a:hover { color: var(--green); }
 .main-nav a.active { color: var(--green); font-weight: 700; }
 .main-nav a.active::after {
@@ -606,7 +613,28 @@ p { color: var(--text); }
   .hero-visual { width: 560px; max-width: 100%; min-height: 430px; margin: 24px auto 0; transform: scale(.92); transform-origin: top center; }
   .cta-banner { grid-template-columns: 1fr; }
   .header-actions .btn-outline { display: none; }
+  /* Adapter le bouton "S'inscrire gratuitement" pour tablette/mobile large */
+  .header-actions .btn-primary { 
+    font-size: 0.8rem; 
+    padding: 8px 11px;
+  }
 }
+
+/* Media query intermédiaire pour mieux gérer les tablettes (650px - 860px) */
+@media (max-width: 750px) and (min-width: 561px) {
+  .header-inner { gap: 8px; }
+  .header-actions { gap: 8px; }
+  .header-actions .btn-primary { 
+    font-size: 0.75rem; 
+    padding: 7px 10px;
+  }
+  .header-actions .btn-outline { 
+    font-size: 0.8rem; 
+    padding: 7px 10px;
+  }
+  .main-nav { gap: 20px; } /* Réduire l'espacement sur petites tablettes */
+}
+
 @media (max-width: 560px) {
   h1, .hero h1, .signup-hero h1 { font-size: 2rem; }
   .feature-grid, .profiles-grid, .stats-grid, .trust-grid, .form-grid, .form-grid.two { grid-template-columns: 1fr; }
