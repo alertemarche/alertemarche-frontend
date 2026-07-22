@@ -55,7 +55,7 @@ async function api(path, { method = 'GET', body = null, auth = false } = {}) {
    ne s'affichent PAS sur Windows/Chrome (rendus en lettres « BJ », « TG »…).
    Le Bénin est actif ; Togo et Côte d'Ivoire sont proposés (« Bientôt »)
    pour les visiteurs de ces pays. Le choix est mémorisé dans localStorage. */
-const COUNTRIES = [
+const AM_COUNTRIES = [
     { code: 'BJ', name: 'Bénin',          cc: 'bj', available: true },
     { code: 'TG', name: 'Togo',           cc: 'tg', available: false },
     { code: 'CI', name: "Côte d'Ivoire",  cc: 'ci', available: false },
@@ -64,11 +64,11 @@ const flagImg = (cc, alt) =>
     `<img class="flag-img" src="https://flagcdn.com/w40/${cc}.png" srcset="https://flagcdn.com/w80/${cc}.png 2x" width="22" height="16" alt="${alt}" loading="lazy">`;
 const currentCountry = () => {
     const saved = localStorage.getItem('am_country');
-    return COUNTRIES.find((c) => c.code === saved && c.available) || COUNTRIES[0];
+    return AM_COUNTRIES.find((c) => c.code === saved && c.available) || AM_COUNTRIES[0];
 };
 function countrySelector() {
     const cur = currentCountry();
-    const opts = COUNTRIES.map((c) => `
+    const opts = AM_COUNTRIES.map((c) => `
         <button type="button" class="country-opt ${c.code === cur.code ? 'active' : ''} ${c.available ? '' : 'soon'}"
                 data-country="${c.code}" ${c.available ? '' : 'aria-disabled="true"'}>
           ${flagImg(c.cc, c.name)}
@@ -181,7 +181,7 @@ function renderNav() {
             opt.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const code = opt.getAttribute('data-country');
-                const country = COUNTRIES.find((c) => c.code === code);
+                const country = AM_COUNTRIES.find((c) => c.code === code);
                 if (!country) return;
                 if (!country.available) {
                     // Pays pas encore disponible : message informatif, pas de changement.
