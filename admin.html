@@ -7,7 +7,7 @@
   <meta name="description" content="Administration AlerteMarché.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=202607230900">
+  <link rel="stylesheet" href="css/style.css?v=202607221100b">
 </head>
 <body data-no-chrome="1">
 
@@ -24,6 +24,7 @@
   <div class="dash">
     <aside class="dash__side">
       <a href="#" class="active" data-tab="overview">📊 Statistiques</a>
+      <a href="#" data-tab="billing">📨 Alertes & Facturation</a>
       <a href="#" data-tab="subs">💳 Abonnés & Revenus</a>
       <a href="#" data-tab="users">👥 Utilisateurs</a>
       <a href="#" data-tab="scrapers">🤖 Scrapers</a>
@@ -41,6 +42,67 @@
           <div class="kpi"><b id="sAlerts">—</b><span>Alertes envoyées</span></div>
         </div>
         <div class="card"><h3 class="mb-2">Revenus estimés</h3><div id="revBox"><p class="muted">Chargement...</p></div></div>
+      </section>
+
+      <!-- ===== ALERTES & FACTURATION ===== -->
+      <section data-panel="billing" class="hidden">
+        <div class="flex" style="justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;">
+          <h2>Alertes & Facturation</h2>
+          <div class="flex" style="gap:.5rem;align-items:center;">
+            <label class="muted" style="font-size:.85rem;">Période détail :</label>
+            <select class="input" id="billDays" style="max-width:150px;">
+              <option value="7">7 derniers jours</option>
+              <option value="30" selected>30 derniers jours</option>
+              <option value="90">90 derniers jours</option>
+            </select>
+            <button class="btn btn--primary btn--sm" id="dlBilling">⬇ CSV</button>
+          </div>
+        </div>
+
+        <!-- Totaux cumulés par canal -->
+        <div class="kpi-grid mt-2">
+          <div class="kpi"><b id="bTotal">—</b><span>Alertes envoyées (total)</span></div>
+          <div class="kpi"><b id="bEmail" style="color:#2563eb">—</b><span>📧 E-mails envoyés</span></div>
+          <div class="kpi"><b id="bWhatsapp" style="color:#16a34a">—</b><span>💬 WhatsApp envoyés</span></div>
+          <div class="kpi"><b id="bPeriodTotal">—</b><span id="bPeriodLabel">Sur la période</span></div>
+        </div>
+
+        <!-- Estimateur de coûts -->
+        <div class="card mt-2">
+          <h3 class="mb-1">💰 Estimation de votre facture</h3>
+          <p class="muted" style="font-size:.85rem;margin-bottom:.8rem;">
+            Saisissez vos <b>tarifs unitaires réels</b> (facturés par votre fournisseur e-mail et WhatsApp) pour estimer le coût.
+            Les valeurs ci-dessous sont des estimations par défaut, modifiables.
+          </p>
+          <div class="flex" style="gap:1.2rem;flex-wrap:wrap;align-items:flex-end;">
+            <div>
+              <label class="muted" style="font-size:.8rem;display:block;margin-bottom:.2rem;">📧 Coût par e-mail (FCFA)</label>
+              <input class="input" id="rateEmail" type="number" min="0" step="0.5" value="0" style="max-width:150px;">
+            </div>
+            <div>
+              <label class="muted" style="font-size:.8rem;display:block;margin-bottom:.2rem;">💬 Coût par message WhatsApp (FCFA)</label>
+              <input class="input" id="rateWhatsapp" type="number" min="0" step="0.5" value="25" style="max-width:190px;">
+            </div>
+          </div>
+          <div class="kpi-grid mt-2">
+            <div class="kpi"><b id="costEmail" style="color:#2563eb">—</b><span>Coût e-mails (cumulé)</span></div>
+            <div class="kpi"><b id="costWhatsapp" style="color:#16a34a">—</b><span>Coût WhatsApp (cumulé)</span></div>
+            <div class="kpi"><b id="costTotal" style="color:var(--green-700)">—</b><span>Coût total estimé (cumulé)</span></div>
+            <div class="kpi"><b id="costPeriod" style="color:var(--green-700)">—</b><span id="costPeriodLabel">Coût sur la période</span></div>
+          </div>
+          <p class="muted" style="font-size:.78rem;margin-top:.6rem;">
+            ℹ️ Repères 2026 : l'e-mail est souvent <b>gratuit</b> à faible volume (offres Brevo/Sendinblue ≤ 9 000 e-mails/mois).
+            Le coût WhatsApp dépend du tarif « conversation utilitaire » de Meta pour la zone (à confirmer avec votre fournisseur).
+          </p>
+        </div>
+
+        <!-- Ventilation par pays -->
+        <h3 class="mt-3 mb-2">Ventilation par pays</h3>
+        <div id="billByCountry"><p class="muted">Chargement...</p></div>
+
+        <!-- Ventilation par jour -->
+        <h3 class="mt-3 mb-2">Détail journalier <span id="billDayRange" class="muted" style="font-weight:400;font-size:.85rem;"></span></h3>
+        <div id="billByDay"><p class="muted">Chargement...</p></div>
       </section>
 
       <!-- ===== ABONNÉS & REVENUS ===== -->
@@ -107,7 +169,7 @@
     </main>
   </div>
 
-  <script src="js/app.js?v=202607230900"></script>
+  <script src="js/app.js?v=202607221100b"></script>
   <script>
     if (!token()) location.href="connexion";
 
@@ -134,6 +196,7 @@
     function switchTab(tab) {
       $$('.dash__side a[data-tab]').forEach(a => a.classList.toggle('active', a.dataset.tab === tab));
       $$('[data-panel]').forEach(p => p.classList.toggle('hidden', p.dataset.panel !== tab));
+      if (tab === 'billing') loadBilling();
       if (tab === 'subs') loadSubs();
       if (tab === 'users') loadUsers();
       if (tab === 'scrapers') loadScrapers();
@@ -179,6 +242,98 @@
       } catch (e) {
         if (e.status === 401 || e.status === 403) { location.href="connexion"; }
       }
+    }
+
+    // ===== ALERTES & FACTURATION =====
+    let BILLING = null;                       // dernières données reçues du backend
+    const COUNTRY_NAMES = { BJ: 'Bénin', TG: 'Togo', CI: "Côte d'Ivoire" };
+
+    async function loadBilling() {
+      const days = document.getElementById('billDays').value || '30';
+      const cEl = document.getElementById('billByCountry');
+      const dEl = document.getElementById('billByDay');
+      cEl.innerHTML = '<p class="muted">Chargement...</p>';
+      dEl.innerHTML = '<p class="muted">Chargement...</p>';
+      try {
+        const d = await api('/admin/alerts-stats?days=' + days, { auth: true });
+        BILLING = d;
+        const t = d.totals || {}, tp = d.totals_period || {};
+
+        // KPIs cumulés
+        document.getElementById('bTotal').textContent = (t.total ?? 0).toLocaleString('fr-FR');
+        document.getElementById('bEmail').textContent = (t.email ?? 0).toLocaleString('fr-FR');
+        document.getElementById('bWhatsapp').textContent = (t.whatsapp ?? 0).toLocaleString('fr-FR');
+        document.getElementById('bPeriodTotal').textContent = (tp.total ?? 0).toLocaleString('fr-FR');
+        document.getElementById('bPeriodLabel').textContent = 'Sur ' + (d.period_days || days) + ' jours (' + (tp.email ?? 0) + ' 📧 · ' + (tp.whatsapp ?? 0) + ' 💬)';
+
+        renderBillingCosts();
+
+        // Tableau par pays
+        const bc = d.by_country || [];
+        cEl.innerHTML = !bc.length ? '<div class="card">Aucune alerte envoyée.</div>' :
+          `<div class="card" style="padding:0;overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:.9rem;">
+            <thead><tr style="text-align:left;border-bottom:2px solid var(--line);">
+              <th style="padding:.6rem .8rem;">Pays</th><th style="padding:.6rem .8rem;">📧 E-mails</th>
+              <th style="padding:.6rem .8rem;">💬 WhatsApp</th><th style="padding:.6rem .8rem;">Total</th></tr></thead>
+            <tbody>${bc.map(r => `<tr style="border-bottom:1px solid var(--line);">
+              <td style="padding:.55rem .8rem;font-weight:600;">${(COUNTRIES[r.country]?.flag||'')} ${COUNTRY_NAMES[r.country] || r.country}</td>
+              <td style="padding:.55rem .8rem;">${(+r.email).toLocaleString('fr-FR')}</td>
+              <td style="padding:.55rem .8rem;">${(+r.whatsapp).toLocaleString('fr-FR')}</td>
+              <td style="padding:.55rem .8rem;font-weight:700;">${(+r.total).toLocaleString('fr-FR')}</td></tr>`).join('')}</tbody></table></div>`;
+
+        // Tableau par jour
+        const bd = d.by_day || [];
+        if (bd.length) {
+          document.getElementById('billDayRange').textContent = '(' + fmtDate(bd[0].day) + ' → ' + fmtDate(bd[bd.length-1].day) + ')';
+        }
+        dEl.innerHTML = !bd.length ? '<div class="card">Aucune alerte sur la période.</div>' :
+          `<div class="card" style="padding:0;overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:.9rem;">
+            <thead><tr style="text-align:left;border-bottom:2px solid var(--line);">
+              <th style="padding:.6rem .8rem;">Jour</th><th style="padding:.6rem .8rem;">📧 E-mails</th>
+              <th style="padding:.6rem .8rem;">💬 WhatsApp</th><th style="padding:.6rem .8rem;">Total</th></tr></thead>
+            <tbody>${bd.slice().reverse().map(r => `<tr style="border-bottom:1px solid var(--line);">
+              <td style="padding:.55rem .8rem;">${fmtDate(r.day)}</td>
+              <td style="padding:.55rem .8rem;">${(+r.email).toLocaleString('fr-FR')}</td>
+              <td style="padding:.55rem .8rem;">${(+r.whatsapp).toLocaleString('fr-FR')}</td>
+              <td style="padding:.55rem .8rem;font-weight:700;">${(+r.total).toLocaleString('fr-FR')}</td></tr>`).join('')}</tbody></table></div>`;
+      } catch (e) {
+        if (e.status === 401 || e.status === 403) { location.href="connexion"; return; }
+        cEl.innerHTML = '<div class="card">Impossible de charger les statistiques d\'alertes.</div>';
+        dEl.innerHTML = '';
+      }
+    }
+
+    // Recalcule les coûts à partir des tarifs saisis (sans rappeler l'API).
+    function renderBillingCosts() {
+      if (!BILLING) return;
+      const rE = parseFloat(document.getElementById('rateEmail').value) || 0;
+      const rW = parseFloat(document.getElementById('rateWhatsapp').value) || 0;
+      const t = BILLING.totals || {}, tp = BILLING.totals_period || {};
+      const costE = (t.email || 0) * rE;
+      const costW = (t.whatsapp || 0) * rW;
+      const costP = (tp.email || 0) * rE + (tp.whatsapp || 0) * rW;
+      document.getElementById('costEmail').textContent = fmt(Math.round(costE));
+      document.getElementById('costWhatsapp').textContent = fmt(Math.round(costW));
+      document.getElementById('costTotal').textContent = fmt(Math.round(costE + costW));
+      document.getElementById('costPeriod').textContent = fmt(Math.round(costP));
+      document.getElementById('costPeriodLabel').textContent = 'Coût sur ' + (BILLING.period_days || 30) + ' jours';
+    }
+
+    function exportBilling() {
+      if (!BILLING || !(BILLING.by_day || []).length) { alert('Aucune donnée à exporter.'); return; }
+      const rE = parseFloat(document.getElementById('rateEmail').value) || 0;
+      const rW = parseFloat(document.getElementById('rateWhatsapp').value) || 0;
+      const rows = (BILLING.by_day || []).map(r => ({
+        day: r.day, email: +r.email, whatsapp: +r.whatsapp, total: +r.total,
+        cost: Math.round((+r.email) * rE + (+r.whatsapp) * rW),
+      }));
+      downloadCSV('facturation_alertes_' + new Date().toISOString().slice(0, 10) + '.csv', rows, [
+        { label: 'Jour', key: 'day' },
+        { label: 'E-mails', key: 'email' },
+        { label: 'WhatsApp', key: 'whatsapp' },
+        { label: 'Total alertes', key: 'total' },
+        { label: 'Coût estimé (FCFA)', key: 'cost' },
+      ]);
     }
 
     // ===== ABONNÉS & REVENUS =====
@@ -378,6 +533,10 @@
     document.addEventListener('DOMContentLoaded', () => {
       $$('.dash__side a[data-tab]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); switchTab(a.dataset.tab); }));
       const rs = document.getElementById('refreshScrapers'); if (rs) rs.addEventListener('click', loadScrapers);
+      document.getElementById('billDays').addEventListener('change', loadBilling);
+      document.getElementById('rateEmail').addEventListener('input', renderBillingCosts);
+      document.getElementById('rateWhatsapp').addEventListener('input', renderBillingCosts);
+      document.getElementById('dlBilling').addEventListener('click', exportBilling);
       document.getElementById('dlSubs').addEventListener('click', exportSubs);
       document.getElementById('dlUsers').addEventListener('click', exportUsers);
       document.getElementById('subsSearch').addEventListener('input', renderSubs);
