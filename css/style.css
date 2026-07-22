@@ -111,14 +111,59 @@ p { color: var(--text); }
 .brand-accent { color: var(--green); }
 .brand-tag { font-size: .62rem; color: var(--muted); letter-spacing: .02em; font-weight: 600; text-transform: none; }
 
+/* -------- Sélecteur de pays (drapeaux images) -------- */
+.country-select { position: relative; }
 .country-badge {
   display: inline-flex; align-items: center; gap: 7px;
   background: var(--green-050); color: var(--green-700);
   border: 1px solid var(--green-100); border-radius: 999px;
   padding: 6px 13px; font-weight: 800; font-size: .8rem; cursor: pointer;
+  font-family: inherit; transition: background .15s, border-color .15s;
 }
-.country-badge .flag { font-size: 1rem; }
-.country-badge .caret { font-size: .6rem; opacity: .7; }
+.country-badge:hover { background: var(--green-100); border-color: var(--green); }
+.country-badge .flag-img {
+  width: 22px; height: 16px; border-radius: 3px; object-fit: cover;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.08); flex: none;
+}
+.country-badge .country-badge-name { line-height: 1; }
+.country-badge .caret { font-size: .6rem; opacity: .7; transition: transform .18s; }
+.country-select.open .country-badge .caret { transform: rotate(180deg); }
+
+.country-menu {
+  position: absolute; top: calc(100% + 10px); left: 0; z-index: 200;
+  background: #fff; border: 1px solid var(--line); border-radius: 12px;
+  box-shadow: var(--shadow); padding: 8px; min-width: 220px;
+  opacity: 0; visibility: hidden; transform: translateY(-6px);
+  transition: opacity .16s, transform .16s, visibility .16s;
+}
+.country-select.open .country-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+.country-menu-head {
+  font-size: .72rem; font-weight: 700; color: var(--muted); text-transform: uppercase;
+  letter-spacing: .04em; padding: 6px 10px 8px;
+}
+.country-opt {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  background: transparent; border: none; border-radius: 8px;
+  padding: 10px; font-family: inherit; font-size: .9rem; font-weight: 600;
+  color: var(--ink); cursor: pointer; text-align: left; transition: background .13s;
+}
+.country-opt:hover { background: var(--green-050); }
+.country-opt .flag-img {
+  width: 26px; height: 19px; border-radius: 3px; object-fit: cover;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.08); flex: none;
+}
+.country-opt-name { flex: 1; }
+.country-opt.active { color: var(--green-700); font-weight: 800; }
+.country-opt.active .country-opt-check { color: var(--green); display: inline-flex; }
+.country-opt-check svg { width: 16px; height: 16px; }
+.country-opt.soon { cursor: default; }
+.country-opt.soon .country-opt-name { color: var(--muted); }
+.country-opt.soon:hover { background: #f9fafb; }
+.country-opt-soon {
+  font-size: .68rem; font-weight: 700; color: var(--orange, #d97706);
+  background: #fff7ed; border: 1px solid #fed7aa; border-radius: 999px;
+  padding: 2px 8px; letter-spacing: .02em;
+}
 
 .main-nav { display: flex; align-items: center; gap: 28px; margin: 0 auto; }
 .nav-auth-mobile { display: none; } /* liens auth réservés au menu hamburger mobile */
@@ -575,7 +620,8 @@ p { color: var(--text); }
 }
 @media (max-width: 860px) {
   .header-inner { gap: 12px; } /* réduire l'espacement sur mobile */
-  .country-badge { font-size: 0.8rem; padding: 4px 10px; } /* badge pays plus compact */
+  .country-badge { font-size: 0.78rem; padding: 5px 10px; gap: 5px; } /* badge pays plus compact */
+  .country-badge .flag-img { width: 20px; height: 14px; }
   .brand-tag { display: none; } /* cacher le slogan sur très petit écran */
   .main-nav { display: none; position: absolute; top: 76px; left: 0; right: 0; background: #fff; flex-direction: column; padding: 16px 24px; box-shadow: var(--shadow); gap: 4px; align-items: stretch; z-index: 100; }
   .main-nav.open { display: flex; }

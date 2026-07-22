@@ -50,6 +50,45 @@ async function api(path, { method = 'GET', body = null, auth = false } = {}) {
     return data;
 }
 
+/* -------- Sélecteur de pays --------
+   Utilise de vraies images de drapeaux (flagcdn.com) car les emojis drapeaux
+   ne s'affichent PAS sur Windows/Chrome (rendus en lettres « BJ », « TG »…).
+   Le Bénin est actif ; Togo et Côte d'Ivoire sont proposés (« Bientôt »)
+   pour les visiteurs de ces pays. Le choix est mémorisé dans localStorage. */
+const COUNTRIES = [
+    { code: 'BJ', name: 'Bénin',          cc: 'bj', available: true },
+    { code: 'TG', name: 'Togo',           cc: 'tg', available: false },
+    { code: 'CI', name: "Côte d'Ivoire",  cc: 'ci', available: false },
+];
+const flagImg = (cc, alt) =>
+    `<img class="flag-img" src="https://flagcdn.com/w40/${cc}.png" srcset="https://flagcdn.com/w80/${cc}.png 2x" width="22" height="16" alt="${alt}" loading="lazy">`;
+const currentCountry = () => {
+    const saved = localStorage.getItem('am_country');
+    return COUNTRIES.find((c) => c.code === saved && c.available) || COUNTRIES[0];
+};
+function countrySelector() {
+    const cur = currentCountry();
+    const opts = COUNTRIES.map((c) => `
+        <button type="button" class="country-opt ${c.code === cur.code ? 'active' : ''} ${c.available ? '' : 'soon'}"
+                data-country="${c.code}" ${c.available ? '' : 'aria-disabled="true"'}>
+          ${flagImg(c.cc, c.name)}
+          <span class="country-opt-name">${c.name}</span>
+          ${c.available ? (c.code === cur.code ? `<span class="country-opt-check">${IC.check}</span>` : '') : '<span class="country-opt-soon">Bientôt</span>'}
+        </button>`).join('');
+    return `
+      <div class="country-select" id="countrySelect">
+        <button type="button" class="country-badge" id="countryBadge" title="Changer de pays" aria-haspopup="true" aria-expanded="false">
+          ${flagImg(cur.cc, cur.name)}
+          <span class="country-badge-name">${cur.name}</span>
+          <span class="caret">▼</span>
+        </button>
+        <div class="country-menu" id="countryMenu">
+          <div class="country-menu-head">Choisissez votre pays</div>
+          ${opts}
+        </div>
+      </div>`;
+}
+
 /* -------- Header -------- */
 function renderNav() {
     const path = location.pathname.split('/').pop() || '/index';
@@ -92,7 +131,7 @@ function renderNav() {
             <span class="brand-tag">Opportunités • Veille • Croissance</span>
           </span>
         </a>
-        <span class="country-badge" title="Bénin">BÉNIN <span class="flag">🇧🇯</span> <span class="caret">▼</span></span>
+        ${countrySelector()}
         <nav class="main-nav" id="mainNav">
           <a href="/index" class="${isActive('/index')}">Accueil</a>
           <div class="nav-dropdown ${groupActive(publicSub)}">
@@ -127,6 +166,38 @@ function renderNav() {
         });
     });
     document.addEventListener('click', () => $$('.nav-dropdown').forEach((d) => d.classList.remove('open')));
+
+    // -------- Sélecteur de pays --------
+    const cBadge = $('#countryBadge');
+    const cSelect = $('#countrySelect');
+    if (cBadge && cSelect) {
+        cBadge.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const open = cSelect.classList.toggle('open');
+            cBadge.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+        // Sélection d'un pays
+        $$('.country-opt', cSelect).forEach((opt) => {
+            opt.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const code = opt.getAttribute('data-country');
+                const country = COUNTRIES.find((c) => c.code === code);
+                if (!country) return;
+                if (!country.available) {
+                    // Pays pas encore disponible : message informatif, pas de changement.
+                    alert(`${country.name} sera bientôt disponible sur AlerteMarché.\n\nNous travaillons à l'ouverture de ce pays. Restez connecté !`);
+                    return;
+                }
+                localStorage.setItem('am_country', code);
+                location.reload();
+            });
+        });
+        // Fermer au clic extérieur
+        document.addEventListener('click', () => {
+            cSelect.classList.remove('open');
+            cBadge.setAttribute('aria-expanded', 'false');
+        });
+    }
 }
 
 /* -------- Footer -------- */
@@ -139,7 +210,7 @@ function renderFooter() {
           <div>
             <div class="footer-brand"><span class="brand-mark">${IC.bell}</span> Alerte<b style="color:#fff">Marché</b></div>
             <p>La plateforme de référence pour la veille des appels d'offres au Bénin. Recevez les meilleures opportunités par WhatsApp et Email, en temps réel.</p>
-            <p class="footer-flags">🇧🇯 Bénin</p>
+            <p class="footer-flags"><img src="https://flagcdn.com/w40/bj.png" width="20" height="14" alt="Bénin" style="border-radius:2px;vertical-align:middle;margin-right:6px"> Bénin</p>
           </div>
           <div class="footer-col">
             <h4>Plateforme</h4>
