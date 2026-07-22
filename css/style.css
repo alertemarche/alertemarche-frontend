@@ -90,7 +90,7 @@ p { color: var(--text); }
 .btn-white { background: #fff; color: var(--green); }
 .btn-white:hover { background: #f1f5f4; }
 .btn-lg { padding: 15px 28px; font-size: 1.02rem; }
-.btn-sm { padding: 9px 16px; font-size: .875rem; }
+.btn-sm { padding: 9px 16px; font-size: .875rem; white-space: nowrap; }
 .btn-block { width: 100%; }
 
 /* ---------------- Header ---------------- */
@@ -120,7 +120,7 @@ p { color: var(--text); }
 .country-badge .flag { font-size: 1rem; }
 .country-badge .caret { font-size: .6rem; opacity: .7; }
 
-.main-nav { display: flex; align-items: center; gap: 26px; margin: 0 auto; }
+.main-nav { display: flex; align-items: center; gap: 28px; margin: 0 auto; }
 .nav-auth-mobile { display: none; } /* liens auth réservés au menu hamburger mobile */
 .main-nav a {
   font-size: .92rem; font-weight: 600; color: #374151; padding: 6px 0;

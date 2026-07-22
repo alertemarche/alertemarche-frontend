@@ -102,13 +102,12 @@ function renderNav() {
           </div>
           <a href="/appels-offres-prives" class="${isActive('/appels-offres-prives')}">Appels d'offres privés</a>
           <a href="/tarifs" class="${isActive('/tarifs')}">Abonnement</a>
-          <a href="/ressources" class="${isActive('/ressources')}">Ressources</a>
           <a href="/inscription" class="nav-auth-mobile ${isActive('/inscription')}">Créer un compte</a>
           <a href="/connexion" class="nav-auth-mobile ${isActive('/connexion')}">Se connecter</a>
         </nav>
         <div class="header-actions">
           <a href="/connexion" class="btn btn-outline btn-sm">${IC.user}<span>Se connecter</span></a>
-          <a href="/inscription" class="btn btn-primary btn-sm">S'inscrire</a>
+          <a href="/inscription" class="btn btn-primary btn-sm">S'inscrire gratuitement</a>
           <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
         </div>
       </div>`;
@@ -152,9 +151,7 @@ function renderFooter() {
             <a href="/tarifs">Abonnement</a>
           </div>
           <div class="footer-col">
-            <h4>Ressources</h4>
-            <a href="/ressources">Blog & Guides</a>
-            <a href="/ressources#faq">FAQ</a>
+            <h4>Compte</h4>
             <a href="/inscription">Créer un compte</a>
             <a href="/connexion">Se connecter</a>
           </div>
