@@ -253,6 +253,8 @@
     function initPage() {
       // Récupère le total depuis meta.total si dispo, sinon la longueur du tableau.
       function totalOf(res) {
+        // Le paginator Laravel expose « total » à la racine de la réponse.
+        if (res && typeof res.total === 'number') return res.total;
         if (res && res.meta && typeof res.meta.total === 'number') return res.meta.total;
         const items = (res && (res.data || res)) || [];
         return Array.isArray(items) ? items.length : 0;
@@ -264,11 +266,11 @@
         el.innerHTML = `${new Intl.NumberFormat('fr-FR').format(n)} <small>${label}</small>`;
       }
       const cfg = [
-        ['countPublic', '/tenders?country=BJ&type=public&per_page=1', 'avis'],
-        ['countPrive', '/tenders?country=BJ&type=prive&per_page=1', 'avis'],
-        ['countAac', '/tenders?country=BJ&type=public&per_page=1', 'avis'],
-        ['countAvisGen', '/tenders?country=BJ&type=avis_general&per_page=1', 'avis'],
-        ['countPlan', '/tenders?country=BJ&type=plan_passation&per_page=1', 'plans'],
+        ['countPublic', '/tenders?country=BJ&type=public&active=1&per_page=1', 'avis'],
+        ['countPrive', '/tenders?country=BJ&type=prive&active=1&per_page=1', 'avis'],
+        ['countAac', '/tenders?country=BJ&type=aac&active=1&per_page=1', 'avis'],
+        ['countAvisGen', '/tenders?country=BJ&type=avis_general&active=1&per_page=1', 'avis'],
+        ['countPlan', '/tenders?country=BJ&type=plan_passation&active=1&per_page=1', 'plans'],
       ];
       cfg.forEach(([id, path, label]) => {
         api(path)
