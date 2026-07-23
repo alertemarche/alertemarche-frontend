@@ -56,9 +56,27 @@ async function api(path, { method = 'GET', body = null, auth = false } = {}) {
    Le Bénin est actif ; Togo et Côte d'Ivoire sont proposés (« Bientôt »)
    pour les visiteurs de ces pays. Le choix est mémorisé dans localStorage. */
 const AM_COUNTRIES = [
-    { code: 'BJ', name: 'Bénin',          cc: 'bj', available: true },
-    { code: 'TG', name: 'Togo',           cc: 'tg', available: false },
-    { code: 'CI', name: "Côte d'Ivoire",  cc: 'ci', available: false },
+    {
+        code: 'BJ', name: 'Bénin', cc: 'bj', available: true,
+        hero: 'img/amazone.jpg',
+        heroTitle: 'au Bénin',
+        heroLead: "Soyez alerté instantanément par <b>WhatsApp</b> et <b>Email</b> dès qu'un appel d'offres correspondant à vos activités est publié.",
+        armp: 'ARMP Bénin',
+    },
+    {
+        code: 'TG', name: 'Togo', cc: 'tg', available: true,
+        hero: 'img/hero-tg.jpg',
+        heroTitle: 'au Togo',
+        heroLead: "Accédez en temps réel aux marchés publics et privés du Togo. Recevez vos alertes par <b>WhatsApp</b> et <b>Email</b>.",
+        armp: 'ARMP Togo',
+    },
+    {
+        code: 'CI', name: "Côte d'Ivoire", cc: 'ci', available: true,
+        hero: 'img/hero-ci.jpg',
+        heroTitle: "en Côte d'Ivoire",
+        heroLead: "Accédez en temps réel aux marchés publics et privés de Côte d'Ivoire. Recevez vos alertes par <b>WhatsApp</b> et <b>Email</b>.",
+        armp: 'ANRMP Côte d\'Ivoire',
+    },
 ];
 const flagImg = (cc, alt) =>
     `<img class="flag-img" src="https://flagcdn.com/w40/${cc}.png" srcset="https://flagcdn.com/w80/${cc}.png 2x" width="22" height="16" alt="${alt}" loading="lazy">`;
@@ -66,6 +84,14 @@ const currentCountry = () => {
     const saved = localStorage.getItem('am_country');
     return AM_COUNTRIES.find((c) => c.code === saved && c.available) || AM_COUNTRIES[0];
 };
+/* Code pays courant (BJ/TG/CI) — utilisé pour filtrer les appels API. */
+const amCode = () => currentCountry().code;
+/* Métadonnées du pays courant (nom, hero, drapeau, régulateur…). */
+const amMeta = () => currentCountry();
+/* Exposition globale pour les scripts inline des différentes pages. */
+window.amCode = amCode;
+window.amMeta = amMeta;
+window.AM_COUNTRIES = AM_COUNTRIES;
 function countrySelector() {
     const cur = currentCountry();
     const opts = AM_COUNTRIES.map((c) => `
@@ -85,6 +111,7 @@ function countrySelector() {
         <div class="country-menu" id="countryMenu">
           <div class="country-menu-head">Choisissez votre pays</div>
           ${opts}
+          <a href="/country-select.html" class="country-menu-more">Voir la page de sélection →</a>
         </div>
       </div>`;
 }
@@ -140,6 +167,7 @@ function renderNav() {
             <div class="nav-dd-menu">${ddItems(publicSub)}</div>
           </div>
           <a href="/appels-offres-prives" class="${isActive('/appels-offres-prives')}">Appels d'offres privés</a>
+          <a href="/publier" class="nav-publier ${isActive('/publier')}">📢 Publier une annonce</a>
           <a href="/tarifs" class="${isActive('/tarifs')}">Abonnement</a>
           <a href="/inscription" class="nav-auth-mobile ${isActive('/inscription')}">Créer un compte</a>
           <a href="/connexion" class="nav-auth-mobile ${isActive('/connexion')}">Se connecter</a>

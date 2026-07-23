@@ -4,552 +4,1353 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <title>Back-office — AlerteMarché</title>
-  <meta name="description" content="Administration AlerteMarché.">
+  <title>Back-office — AlerteMarché Admin</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=202607221100b">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ====================== RESET + BASE ====================== */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Inter',sans-serif;background:#f1f5f9;color:#1e293b;font-size:.9rem;}
+    a{color:inherit;text-decoration:none;}
+    button{font-family:inherit;cursor:pointer;}
+    input,select,textarea{font-family:inherit;}
+
+    /* ====================== LOGIN SCREEN ====================== */
+    .login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0a3d20 0%,#064d27 60%,#083d1e 100%);}
+    .login-card{background:#fff;border-radius:16px;padding:44px 40px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+    .login-brand{font-size:1.4rem;font-weight:800;color:#0a7d3f;margin-bottom:28px;display:flex;align-items:center;gap:8px;}
+    .login-brand span{color:#1e293b;}
+    .login-card h1{font-size:1.25rem;font-weight:700;margin-bottom:6px;}
+    .login-card p.sub{color:#64748b;font-size:.88rem;margin-bottom:28px;}
+    .lf-group{display:flex;flex-direction:column;gap:5px;margin-bottom:16px;}
+    .lf-group label{font-weight:600;font-size:.85rem;color:#374151;}
+    .lf-group input{padding:.7rem .9rem;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.9rem;transition:border-color .15s;}
+    .lf-group input:focus{outline:none;border-color:#0a7d3f;box-shadow:0 0 0 3px rgba(10,125,63,.1);}
+    .login-btn{width:100%;padding:.85rem;background:#0a7d3f;color:#fff;border:none;border-radius:8px;font-size:.95rem;font-weight:700;margin-top:8px;transition:background .18s;}
+    .login-btn:hover{background:#065f2e;}
+    .login-btn:disabled{opacity:.55;cursor:not-allowed;}
+    .login-err{color:#dc2626;font-size:.85rem;margin-top:10px;min-height:20px;}
+
+    /* ====================== ADMIN APP LAYOUT ====================== */
+    .admin-app{display:flex;min-height:100vh;}
+
+    /* ---- SIDEBAR ---- */
+    .admin-sidebar{width:240px;flex-shrink:0;background:#0f1f14;color:#cbd5e1;display:flex;flex-direction:column;min-height:100vh;position:sticky;top:0;}
+    .admin-sidebar-brand{padding:22px 20px 18px;border-bottom:1px solid rgba(255,255,255,.08);}
+    .admin-sidebar-brand .brand-title{font-size:1.05rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;}
+    .admin-sidebar-brand .brand-sub{font-size:.72rem;color:#6b7280;margin-top:2px;letter-spacing:.04em;text-transform:uppercase;}
+    .admin-nav{flex:1;padding:12px 10px;}
+    .admin-nav a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;font-size:.875rem;font-weight:500;color:#94a3b8;transition:background .15s,color .15s;margin-bottom:2px;}
+    .admin-nav a:hover{background:rgba(255,255,255,.06);color:#e2e8f0;}
+    .admin-nav a.active{background:rgba(10,125,63,.25);color:#4ade80;font-weight:700;}
+    .admin-nav .nav-section{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:#475569;padding:14px 12px 6px;font-weight:600;}
+    .admin-sidebar-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,.08);font-size:.8rem;}
+    .admin-sidebar-footer .admin-user{color:#94a3b8;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+    .admin-sidebar-footer .logout-btn{width:100%;padding:.5rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#cbd5e1;border-radius:6px;font-size:.8rem;transition:background .15s;}
+    .admin-sidebar-footer .logout-btn:hover{background:rgba(220,38,38,.2);color:#fca5a5;border-color:rgba(220,38,38,.3);}
+
+    /* ---- MAIN CONTENT ---- */
+    .admin-main{flex:1;overflow-x:auto;min-width:0;}
+    .admin-panel{padding:28px;max-width:1400px;}
+    .admin-panel.hidden{display:none;}
+
+    .panel-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:24px;}
+    .panel-header h1{font-size:1.35rem;font-weight:800;color:#0f172a;}
+    .panel-header .panel-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+
+    /* ---- KPI CARDS ---- */
+    .kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:24px;}
+    .kpi-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:18px 20px;}
+    .kpi-card .kv{font-size:1.85rem;font-weight:800;line-height:1;margin-bottom:4px;}
+    .kpi-card .kl{font-size:.78rem;color:#64748b;font-weight:500;}
+    .kpi-card.green .kv{color:#059669;}
+    .kpi-card.blue .kv{color:#2563eb;}
+    .kpi-card.orange .kv{color:#d97706;}
+    .kpi-card.red .kv{color:#dc2626;}
+
+    /* ---- CARDS ---- */
+    .acard{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px 24px;margin-bottom:20px;}
+    .acard h3{font-size:.95rem;font-weight:700;margin-bottom:14px;color:#0f172a;}
+
+    /* ---- TOOLBAR ---- */
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:14px 16px;border-bottom:1px solid #f1f5f9;}
+    .toolbar input,.toolbar select{padding:.5rem .8rem;border:1.5px solid #e2e8f0;border-radius:7px;font-size:.85rem;background:#fff;min-width:180px;}
+    .toolbar input:focus,.toolbar select:focus{outline:none;border-color:#0a7d3f;}
+
+    /* ---- TABLES ---- */
+    .table-wrap{overflow-x:auto;}
+    table.data-table{width:100%;border-collapse:collapse;font-size:.85rem;}
+    table.data-table thead tr{background:#f8fafc;border-bottom:2px solid #e2e8f0;}
+    table.data-table th{padding:.65rem .9rem;text-align:left;font-weight:700;color:#374151;white-space:nowrap;}
+    table.data-table tbody tr{border-bottom:1px solid #f1f5f9;transition:background .1s;}
+    table.data-table tbody tr:hover{background:#f8fafc;}
+    table.data-table td{padding:.6rem .9rem;vertical-align:middle;}
+    .td-org b{display:block;font-size:.88rem;font-weight:700;}
+    .td-org small{color:#64748b;font-size:.78rem;}
+    .td-actions{display:flex;gap:5px;flex-wrap:wrap;}
+
+    /* ---- CHIPS ---- */
+    .chip{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:600;}
+    .chip-green{background:#dcfce7;color:#15803d;}
+    .chip-orange{background:#fef3c7;color:#b45309;}
+    .chip-red{background:#fee2e2;color:#b91c1c;}
+    .chip-gray{background:#f1f5f9;color:#475569;}
+    .chip-blue{background:#dbeafe;color:#1d4ed8;}
+    .chip-purple{background:#ede9fe;color:#6d28d9;}
+
+    /* ---- BUTTONS ---- */
+    .btn-a{padding:.45rem .9rem;border-radius:7px;font-size:.8rem;font-weight:600;border:none;transition:background .15s,opacity .15s;cursor:pointer;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
+    .btn-primary{background:#0a7d3f;color:#fff;}
+    .btn-primary:hover{background:#065f2e;}
+    .btn-danger{background:#fee2e2;color:#b91c1c;border:1px solid #fecaca;}
+    .btn-danger:hover{background:#fecaca;}
+    .btn-warn{background:#fef3c7;color:#b45309;border:1px solid #fde68a;}
+    .btn-warn:hover{background:#fde68a;}
+    .btn-ghost{background:#f1f5f9;color:#374151;border:1px solid #e2e8f0;}
+    .btn-ghost:hover{background:#e2e8f0;}
+    .btn-blue{background:#dbeafe;color:#1d4ed8;border:1px solid #bfdbfe;}
+    .btn-blue:hover{background:#bfdbfe;}
+    .btn-lg{padding:.75rem 1.4rem;font-size:.92rem;border-radius:9px;}
+
+    /* ---- MODALS ---- */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;}
+    .modal-box{background:#fff;border-radius:16px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 25px 50px rgba(0,0,0,.2);}
+    .modal-header{padding:22px 24px 16px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;}
+    .modal-header h2{font-size:1.05rem;font-weight:800;}
+    .modal-close{background:none;border:none;font-size:1.4rem;color:#64748b;cursor:pointer;line-height:1;}
+    .modal-close:hover{color:#0f172a;}
+    .modal-body{padding:24px;}
+    .modal-footer{padding:16px 24px;border-top:1px solid #f1f5f9;display:flex;justify-content:flex-end;gap:8px;}
+    .mf-group{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+    .mf-group label{font-weight:600;font-size:.83rem;color:#374151;}
+    .mf-group input,.mf-group select{padding:.6rem .8rem;border:1.5px solid #e2e8f0;border-radius:7px;font-size:.88rem;}
+    .mf-group input:focus,.mf-group select:focus{outline:none;border-color:#0a7d3f;}
+    .mf-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    .modal-msg{font-size:.85rem;min-height:20px;margin-bottom:4px;}
+    .modal-msg.ok{color:#059669;}
+    .modal-msg.err{color:#dc2626;}
+
+    /* ---- NEED CARDS ---- */
+    .need-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:18px;margin-bottom:12px;}
+    .need-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:8px;}
+    .need-card-top h3{font-size:.95rem;font-weight:700;color:#0f172a;}
+    .need-meta{display:flex;flex-wrap:wrap;gap:10px;font-size:.8rem;color:#64748b;margin-top:8px;}
+
+    /* ---- SCRAPER CARDS ---- */
+    .scraper-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;}
+    .scraper-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px;}
+    .scraper-card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+    .scraper-card-top h3{font-weight:700;font-size:.9rem;}
+    .scraper-stats{font-size:.8rem;color:#64748b;display:flex;flex-direction:column;gap:3px;}
+
+    /* ---- TOPBAR (mobile) ---- */
+    .admin-topbar{display:none;background:#0f1f14;color:#fff;padding:12px 16px;align-items:center;justify-content:space-between;}
+    .admin-topbar h1{font-size:1rem;font-weight:800;}
+    .menu-toggle{background:none;border:none;color:#fff;font-size:1.4rem;cursor:pointer;}
+
+    /* ---- MISC ---- */
+    .empty{padding:32px;text-align:center;color:#94a3b8;font-size:.9rem;}
+    .loading{padding:24px;text-align:center;color:#94a3b8;}
+    .section-sep{border:none;border-top:1px solid #f1f5f9;margin:24px 0;}
+    .badge-manual{background:#ede9fe;color:#5b21b6;font-size:.72rem;font-weight:700;padding:2px 7px;border-radius:10px;}
+
+    /* ---- CHECKBOX MULTI-SELECT ---- */
+    .cb-wrap{display:flex;align-items:center;justify-content:center;}
+    input[type=checkbox].row-cb,input[type=checkbox].cb-all{width:16px;height:16px;accent-color:#0a7d3f;cursor:pointer;}
+    table.data-table tbody tr.selected-row{background:#f0fdf4;}
+    table.data-table tbody tr.selected-row td{border-bottom-color:#dcfce7;}
+
+    /* ---- BULK ACTION BAR ---- */
+    .bulk-bar{position:sticky;bottom:16px;left:0;right:0;z-index:300;
+      display:none;align-items:center;gap:10px;flex-wrap:wrap;
+      background:#0f1f14;color:#fff;border-radius:12px;
+      padding:12px 20px;margin:0 24px 24px;
+      box-shadow:0 8px 32px rgba(0,0,0,.3);}
+    .bulk-bar.visible{display:flex;}
+    .bulk-bar .bulk-count{font-weight:700;font-size:.9rem;margin-right:6px;flex:1;min-width:120px;}
+    .bulk-bar .btn-bulk-cancel{background:rgba(255,255,255,.1);color:#e2e8f0;border:1px solid rgba(255,255,255,.2);border-radius:7px;padding:.42rem .9rem;font-size:.82rem;font-weight:600;cursor:pointer;}
+    .bulk-bar .btn-bulk-cancel:hover{background:rgba(255,255,255,.18);}
+
+    /* ---- MODAL BULK CONFIRM ---- */
+    .bulk-confirm-list{max-height:200px;overflow-y:auto;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:.83rem;line-height:1.7;}
+
+    /* ---- RESPONSIVE ---- */
+    @media(max-width:768px){
+      .admin-sidebar{position:fixed;left:-240px;top:0;bottom:0;z-index:500;transition:left .25s;}
+      .admin-sidebar.open{left:0;}
+      .admin-topbar{display:flex;}
+      .admin-main{padding-top:0;}
+      .admin-panel{padding:16px;}
+      .kpi-grid{grid-template-columns:1fr 1fr;}
+      .mf-grid{grid-template-columns:1fr;}
+    }
+
+    /* ====================== PRINT / PDF ====================== */
+    @media print {
+      .admin-sidebar,.admin-topbar,.panel-actions,.toolbar .btn-a,
+      .btn-a,.modal-overlay,.td-actions,.login-screen{display:none!important;}
+      body{background:#fff;}
+      .admin-main{padding:0;}
+      .admin-panel.hidden{display:block!important;}
+      .admin-panel:not([data-print]){display:none!important;}
+      .admin-panel[data-print]{display:block!important;}
+      table.data-table{font-size:.75rem;}
+      .acard{border:none;padding:0;}
+      @page{margin:15mm;size:A4 landscape;}
+    }
+  </style>
 </head>
 <body data-no-chrome="1">
 
-  <nav class="nav">
-    <div class="container nav__inner">
-      <a href="/index" class="brand"><span class="brand__mark">🔔</span><span>Alerte<b>Marché</b> · Admin</span></a>
-      <div class="nav__actions">
-        <span class="nav__geo" id="aName">Admin</span>
-        <button class="btn btn--ghost btn--sm" id="logoutBtn">Déconnexion</button>
-      </div>
+<!-- ====================== LOGIN SCREEN ====================== -->
+<div id="loginScreen" class="login-screen">
+  <div class="login-card">
+    <div class="login-brand">🔔 <span>AlerteMarché &nbsp;·&nbsp; Admin</span></div>
+    <h1>Connexion administrateur</h1>
+    <p class="sub">Accès réservé à l'équipe AlerteMarché.</p>
+    <div class="lf-group">
+      <label>Identifiant</label>
+      <input id="lUsername" type="text" placeholder="admin" autocomplete="username">
     </div>
-  </nav>
+    <div class="lf-group">
+      <label>Mot de passe</label>
+      <input id="lPassword" type="password" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="login-btn" id="loginBtn" onclick="doAdminLogin()">Se connecter</button>
+    <p class="login-err" id="loginErr"></p>
+  </div>
+</div>
 
-  <div class="dash">
-    <aside class="dash__side">
-      <a href="#" class="active" data-tab="overview">📊 Statistiques</a>
-      <a href="#" data-tab="billing">📨 Alertes & Facturation</a>
-      <a href="#" data-tab="subs">💳 Abonnés & Revenus</a>
-      <a href="#" data-tab="users">👥 Utilisateurs</a>
-      <a href="#" data-tab="scrapers">🤖 Scrapers</a>
-      <a href="#" data-tab="needs">📢 Besoins à valider</a>
-    </aside>
+<!-- ====================== ADMIN APP ====================== -->
+<div id="adminApp" class="admin-app" style="display:none;">
 
-    <main class="dash__main">
-      <!-- ===== STATISTIQUES ===== -->
-      <section data-panel="overview">
-        <h2 class="mb-2">Statistiques</h2>
-        <div class="kpi-grid">
-          <div class="kpi"><b id="sUsers">—</b><span>Utilisateurs</span></div>
-          <div class="kpi"><b id="sSubs">—</b><span>Abonnements actifs</span></div>
-          <div class="kpi"><b id="sTenders">—</b><span>Appels d'offres</span></div>
-          <div class="kpi"><b id="sAlerts">—</b><span>Alertes envoyées</span></div>
-        </div>
-        <div class="card"><h3 class="mb-2">Revenus estimés</h3><div id="revBox"><p class="muted">Chargement...</p></div></div>
-      </section>
-
-      <!-- ===== ALERTES & FACTURATION ===== -->
-      <section data-panel="billing" class="hidden">
-        <div class="flex" style="justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;">
-          <h2>Alertes & Facturation</h2>
-          <div class="flex" style="gap:.5rem;align-items:center;">
-            <label class="muted" style="font-size:.85rem;">Période détail :</label>
-            <select class="input" id="billDays" style="max-width:150px;">
-              <option value="7">7 derniers jours</option>
-              <option value="30" selected>30 derniers jours</option>
-              <option value="90">90 derniers jours</option>
-            </select>
-            <button class="btn btn--primary btn--sm" id="dlBilling">⬇ CSV</button>
-          </div>
-        </div>
-
-        <!-- Totaux cumulés par canal -->
-        <div class="kpi-grid mt-2">
-          <div class="kpi"><b id="bTotal">—</b><span>Alertes envoyées (total)</span></div>
-          <div class="kpi"><b id="bEmail" style="color:#2563eb">—</b><span>📧 E-mails envoyés</span></div>
-          <div class="kpi"><b id="bWhatsapp" style="color:#16a34a">—</b><span>💬 WhatsApp envoyés</span></div>
-          <div class="kpi"><b id="bPeriodTotal">—</b><span id="bPeriodLabel">Sur la période</span></div>
-        </div>
-
-        <!-- Estimateur de coûts -->
-        <div class="card mt-2">
-          <h3 class="mb-1">💰 Estimation de votre facture</h3>
-          <p class="muted" style="font-size:.85rem;margin-bottom:.8rem;">
-            Saisissez vos <b>tarifs unitaires réels</b> (facturés par votre fournisseur e-mail et WhatsApp) pour estimer le coût.
-            Les valeurs ci-dessous sont des estimations par défaut, modifiables.
-          </p>
-          <div class="flex" style="gap:1.2rem;flex-wrap:wrap;align-items:flex-end;">
-            <div>
-              <label class="muted" style="font-size:.8rem;display:block;margin-bottom:.2rem;">📧 Coût par e-mail (FCFA)</label>
-              <input class="input" id="rateEmail" type="number" min="0" step="0.5" value="0" style="max-width:150px;">
-            </div>
-            <div>
-              <label class="muted" style="font-size:.8rem;display:block;margin-bottom:.2rem;">💬 Coût par message WhatsApp (FCFA)</label>
-              <input class="input" id="rateWhatsapp" type="number" min="0" step="0.5" value="25" style="max-width:190px;">
-            </div>
-          </div>
-          <div class="kpi-grid mt-2">
-            <div class="kpi"><b id="costEmail" style="color:#2563eb">—</b><span>Coût e-mails (cumulé)</span></div>
-            <div class="kpi"><b id="costWhatsapp" style="color:#16a34a">—</b><span>Coût WhatsApp (cumulé)</span></div>
-            <div class="kpi"><b id="costTotal" style="color:var(--green-700)">—</b><span>Coût total estimé (cumulé)</span></div>
-            <div class="kpi"><b id="costPeriod" style="color:var(--green-700)">—</b><span id="costPeriodLabel">Coût sur la période</span></div>
-          </div>
-          <p class="muted" style="font-size:.78rem;margin-top:.6rem;">
-            ℹ️ Repères 2026 : l'e-mail est souvent <b>gratuit</b> à faible volume (offres Brevo/Sendinblue ≤ 9 000 e-mails/mois).
-            Le coût WhatsApp dépend du tarif « conversation utilitaire » de Meta pour la zone (à confirmer avec votre fournisseur).
-          </p>
-        </div>
-
-        <!-- Ventilation par pays -->
-        <h3 class="mt-3 mb-2">Ventilation par pays</h3>
-        <div id="billByCountry"><p class="muted">Chargement...</p></div>
-
-        <!-- Ventilation par jour -->
-        <h3 class="mt-3 mb-2">Détail journalier <span id="billDayRange" class="muted" style="font-weight:400;font-size:.85rem;"></span></h3>
-        <div id="billByDay"><p class="muted">Chargement...</p></div>
-      </section>
-
-      <!-- ===== ABONNÉS & REVENUS ===== -->
-      <section data-panel="subs" class="hidden">
-        <div class="flex" style="justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;">
-          <h2>Abonnés & Revenus</h2>
-          <button class="btn btn--primary btn--sm" id="dlSubs">⬇ Télécharger (CSV)</button>
-        </div>
-        <div class="kpi-grid mt-2" id="subsSummary"></div>
-        <div class="card mt-2" style="padding:0;overflow-x:auto;">
-          <div style="padding:1rem 1rem 0;display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;">
-            <input class="input" id="subsSearch" placeholder="🔎 Rechercher entreprise, contact…" style="max-width:280px;">
-            <select class="input" id="subsStatus" style="max-width:180px;">
-              <option value="">Tous les statuts</option>
-              <option value="active">Actifs</option>
-              <option value="pending">En attente</option>
-              <option value="expired">Expirés</option>
-              <option value="cancelled">Annulés</option>
-            </select>
-          </div>
-          <div id="subsList"><p class="muted" style="padding:1rem;">Chargement...</p></div>
-        </div>
-      </section>
-
-      <!-- ===== UTILISATEURS ===== -->
-      <section data-panel="users" class="hidden">
-        <div class="flex" style="justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;">
-          <h2>Utilisateurs</h2>
-          <button class="btn btn--primary btn--sm" id="dlUsers">⬇ Télécharger (CSV)</button>
-        </div>
-        <div class="card mt-2" style="padding:0;overflow-x:auto;">
-          <div style="padding:1rem 1rem 0;display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;">
-            <input class="input" id="usersSearch" placeholder="🔎 Rechercher nom, entreprise, e-mail…" style="max-width:300px;">
-            <select class="input" id="usersProfile" style="max-width:200px;">
-              <option value="">Tous les profils</option>
-              <option value="prestataire">Prestataire / Entreprise</option>
-              <option value="admin_public">Administration</option>
-              <option value="ong">ONG / Projet</option>
-              <option value="artisan">Artisan</option>
-            </select>
-          </div>
-          <div id="usersList"><p class="muted" style="padding:1rem;">Chargement...</p></div>
-        </div>
-      </section>
-
-      <!-- ===== SCRAPERS ===== -->
-      <section data-panel="scrapers" class="hidden">
-        <div class="flex" style="justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;">
-          <h2>État des robots de collecte</h2>
-          <button class="btn btn--ghost btn--sm" id="refreshScrapers">↻ Rafraîchir</button>
-        </div>
-        <div class="kpi-grid mt-2" id="scrapersSummary"></div>
-        <h3 class="mt-3 mb-2">Robots par source</h3>
-        <div id="scrapersList"><p class="muted">Chargement...</p></div>
-        <h3 class="mt-3 mb-2">Journal des exécutions récentes</h3>
-        <div id="scrapersLogs"><p class="muted">Chargement...</p></div>
-      </section>
-
-      <!-- ===== BESOINS ===== -->
-      <section data-panel="needs" class="hidden">
-        <h2 class="mb-2">Besoins en attente de validation</h2>
-        <div id="needsList"><p class="muted">Chargement...</p></div>
-      </section>
-    </main>
+  <!-- Topbar mobile -->
+  <div class="admin-topbar">
+    <h1>🔔 AlerteMarché Admin</h1>
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
   </div>
 
-  <script src="js/app.js?v=202607231600"></script>
-  <script>
-    if (!token()) location.href="connexion";
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="admin-sidebar-brand">
+      <div class="brand-title">🔔 AlerteMarché</div>
+      <div class="brand-sub">Panneau d'administration</div>
+    </div>
+    <nav class="admin-nav">
+      <a href="#" data-tab="stats" class="active">📊 Tableau de bord</a>
+      <div class="nav-section">Données</div>
+      <a href="#" data-tab="users">👥 Utilisateurs inscrits</a>
+      <a href="#" data-tab="subs">💳 Abonnements</a>
+      <a href="#" data-tab="payments">💰 Paiements</a>
+      <div class="nav-section">Contenu</div>
+      <a href="#" data-tab="needs">📢 Annonces à valider</a>
+      <a href="#" data-tab="scrapers">🤖 Scrapers</a>
+    </nav>
+    <div class="admin-sidebar-footer">
+      <div class="admin-user">👤 <span id="adminNameLabel">Admin</span></div>
+      <button class="logout-btn" onclick="adminLogout()">🚪 Se déconnecter</button>
+    </div>
+  </aside>
 
-    // Données de référence (non fournies par app.js) — évite un crash ReferenceError.
-    const COUNTRIES = { BJ: { flag: '🇧🇯', name: 'Bénin' }, TG: { flag: '🇹🇬', name: 'Togo' }, CI: { flag: '🇨🇮', name: "Côte d'Ivoire" } };
-    const PROFILES = {
-      prestataire:  { label: 'Prestataire / Entreprise' },
-      admin_public: { label: 'Administration publique' },
-      ong:          { label: 'ONG / Projet' },
-      artisan:      { label: 'Artisan' },
-    };
-    const PLAN_LABELS = { mensuel: 'Mensuel', trimestriel: 'Trimestriel', semestriel: 'Semestriel', annuel: 'Annuel' };
-    const SUB_STATUS = {
-      active:    { label: 'Actif',      color: '#16a34a', bg: '#dcfce7' },
-      pending:   { label: 'En attente', color: '#b45309', bg: '#fef3c7' },
-      expired:   { label: 'Expiré',     color: '#6b7280', bg: '#f1f5f9' },
-      cancelled: { label: 'Annulé',     color: '#b91c1c', bg: '#fee2e2' },
-      aucun:     { label: 'Aucun',      color: '#6b7280', bg: '#f1f5f9' },
-    };
+  <!-- MAIN -->
+  <main class="admin-main">
 
-    let USERS_CACHE = [];
-    let SUBS_CACHE = [];
+    <!-- ===== STATS ===== -->
+    <div id="panel-stats" class="admin-panel">
+      <div class="panel-header">
+        <h1>📊 Tableau de bord</h1>
+        <div class="panel-actions">
+          <button class="btn-a btn-ghost" onclick="loadStats()">↻ Rafraîchir</button>
+          <button class="btn-a btn-ghost" onclick="printPanel('stats')">🖨️ Imprimer / PDF</button>
+        </div>
+      </div>
+      <div class="kpi-grid" id="statsKpi">
+        <div class="kpi-card"><div class="kv" id="kUsers">—</div><div class="kl">👥 Utilisateurs inscrits</div></div>
+        <div class="kpi-card green"><div class="kv" id="kSubs">—</div><div class="kl">💳 Abonnements actifs</div></div>
+        <div class="kpi-card green"><div class="kv" id="kRev">—</div><div class="kl">💰 Revenus actifs (FCFA)</div></div>
+        <div class="kpi-card blue"><div class="kv" id="kTenders">—</div><div class="kl">📋 Appels d'offres collectés</div></div>
+        <div class="kpi-card orange"><div class="kv" id="kAlerts">—</div><div class="kl">📨 Alertes envoyées</div></div>
+        <div class="kpi-card red"><div class="kv" id="kNeeds">—</div><div class="kl">📢 Annonces en attente</div></div>
+      </div>
+      <div class="acard">
+        <h3>Répartition par profil</h3>
+        <div id="statsProfiles"><p class="loading">Chargement…</p></div>
+      </div>
+      <div class="acard">
+        <h3>Répartition par pays</h3>
+        <div id="statsCountries"><p class="loading">Chargement…</p></div>
+      </div>
+    </div>
 
-    function switchTab(tab) {
-      $$('.dash__side a[data-tab]').forEach(a => a.classList.toggle('active', a.dataset.tab === tab));
-      $$('[data-panel]').forEach(p => p.classList.toggle('hidden', p.dataset.panel !== tab));
-      if (tab === 'billing') loadBilling();
-      if (tab === 'subs') loadSubs();
-      if (tab === 'users') loadUsers();
-      if (tab === 'scrapers') loadScrapers();
-      if (tab === 'needs') loadNeeds();
-    }
+    <!-- ===== UTILISATEURS ===== -->
+    <div id="panel-users" class="admin-panel hidden">
+      <div class="panel-header">
+        <h1>👥 Utilisateurs inscrits</h1>
+        <div class="panel-actions">
+          <button class="btn-a btn-primary btn-lg" onclick="openModal('modalAddUser')">➕ Ajouter un utilisateur</button>
+          <button class="btn-a btn-ghost" onclick="exportCSV('users')">⬇ CSV</button>
+          <button class="btn-a btn-ghost" onclick="printPanel('users')">🖨️ PDF</button>
+        </div>
+      </div>
+      <div class="acard" style="padding:0;">
+        <div class="toolbar">
+          <input id="usersSearch" placeholder="🔎 Nom, entreprise, e-mail…" oninput="renderUsers()">
+          <select id="usersProfile" onchange="loadUsers()">
+            <option value="">Tous les profils</option>
+            <option value="prestataire">Prestataire / Entreprise</option>
+            <option value="admin_public">Administration</option>
+            <option value="ong">ONG / Projet</option>
+            <option value="artisan">Artisan</option>
+          </select>
+          <select id="usersCountry" onchange="loadUsers()">
+            <option value="">Tous les pays</option>
+            <option value="BJ">🇧🇯 Bénin</option>
+            <option value="TG">🇹🇬 Togo</option>
+            <option value="CI">🇨🇮 Côte d'Ivoire</option>
+          </select>
+        </div>
+        <div id="usersList" class="table-wrap"><p class="loading">Chargement…</p></div>
+      </div>
+      <!-- BARRE D'ACTIONS GROUPÉES -->
+      <div class="bulk-bar" id="bulkBar">
+        <span class="bulk-count" id="bulkCount">0 sélectionné(s)</span>
+        <button class="btn-a btn-warn" onclick="bulkAction('suspend')">⏸ Suspendre</button>
+        <button class="btn-a btn-blue" onclick="bulkAction('reactivate')">🔓 Réactiver</button>
+        <button class="btn-a btn-primary" onclick="bulkAction('grant')">🎁 Abonnement</button>
+        <button class="btn-a btn-danger" onclick="bulkAction('delete')">🗑 Supprimer</button>
+        <button class="btn-bulk-cancel" onclick="clearSelection()">✕ Désélectionner</button>
+      </div>
+    </div>
 
-    function fmtDate(v) {
-      if (!v) return '—';
-      try { return new Date(v).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' }); }
-      catch { return v; }
-    }
-    function fmtDateTime(v) {
-      if (!v) return '—';
-      try { return new Date(v).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }); }
-      catch { return v; }
-    }
+    <!-- ===== ABONNEMENTS ===== -->
+    <div id="panel-subs" class="admin-panel hidden">
+      <div class="panel-header">
+        <h1>💳 Abonnements</h1>
+        <div class="panel-actions">
+          <button class="btn-a btn-primary btn-lg" onclick="openModal('modalGrantSub')">🎁 Accorder sans paiement</button>
+          <button class="btn-a btn-ghost" onclick="exportCSV('subs')">⬇ CSV</button>
+          <button class="btn-a btn-ghost" onclick="printPanel('subs')">🖨️ PDF</button>
+        </div>
+      </div>
+      <div class="kpi-grid" id="subsKpi" style="margin-bottom:20px;"></div>
+      <div class="acard" style="padding:0;">
+        <div class="toolbar">
+          <input id="subsSearch" placeholder="🔎 Entreprise, e-mail…" oninput="renderSubs()">
+          <select id="subsStatus" onchange="loadSubs()">
+            <option value="">Tous les statuts</option>
+            <option value="active">Actifs</option>
+            <option value="pending">En attente</option>
+            <option value="expired">Expirés</option>
+            <option value="cancelled">Annulés</option>
+          </select>
+          <select id="subsPlan" onchange="loadSubs()">
+            <option value="">Toutes les formules</option>
+            <option value="mensuel">Mensuel</option>
+            <option value="trimestriel">Trimestriel</option>
+            <option value="semestriel">Semestriel</option>
+            <option value="annuel">Annuel</option>
+          </select>
+        </div>
+        <div id="subsList" class="table-wrap"><p class="loading">Chargement…</p></div>
+      </div>
+    </div>
 
-    // ---- Export CSV (universel) ----
-    function downloadCSV(filename, rows, headers) {
-      const esc = v => {
-        if (v === null || v === undefined) v = '';
-        v = String(v).replace(/"/g, '""');
-        return /[",;\n]/.test(v) ? `"${v}"` : v;
-      };
-      const lines = [headers.map(h => esc(h.label)).join(';')];
-      rows.forEach(r => lines.push(headers.map(h => esc(typeof h.get === 'function' ? h.get(r) : r[h.key])).join(';')));
-      const blob = new Blob(['\ufeff' + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = filename; a.click();
-      setTimeout(() => URL.revokeObjectURL(url), 500);
-    }
+    <!-- ===== PAIEMENTS ===== -->
+    <div id="panel-payments" class="admin-panel hidden">
+      <div class="panel-header">
+        <h1>💰 Paiements & Transactions</h1>
+        <div class="panel-actions">
+          <button class="btn-a btn-ghost" onclick="exportCSV('payments')">⬇ CSV</button>
+          <button class="btn-a btn-ghost" onclick="printPanel('payments')">🖨️ PDF</button>
+        </div>
+      </div>
+      <div class="kpi-grid" id="paymentsKpi" style="margin-bottom:20px;"></div>
+      <div class="acard" style="padding:0;">
+        <div class="toolbar">
+          <input id="paymentsSearch" placeholder="🔎 Entreprise, référence…" oninput="renderPayments()">
+          <select id="paymentsType" onchange="renderPayments()">
+            <option value="">Tous les types</option>
+            <option value="real">Paiements réels (KKiaPay)</option>
+            <option value="manual">Accordés manuellement</option>
+          </select>
+        </div>
+        <div id="paymentsList" class="table-wrap"><p class="loading">Chargement…</p></div>
+      </div>
+    </div>
 
-    // ===== STATISTIQUES =====
-    async function loadStats() {
-      try {
-        const d = await api('/admin/stats', { auth: true });
-        document.getElementById('sUsers').textContent = d.users_total ?? '—';
-        document.getElementById('sSubs').textContent = d.active_subscriptions ?? '—';
-        document.getElementById('sTenders').textContent = d.tenders_total ?? '—';
-        document.getElementById('sAlerts').textContent = d.alerts_sent ?? '—';
-        document.getElementById('revBox').innerHTML = `<p style="font-size:1.6rem;font-weight:800;color:var(--green-700);">${fmt(d.revenue_active || 0)}</p><p class="muted">Chiffre d'affaires actif estimé · ${d.tenders_today ?? 0} avis collectés aujourd'hui.</p>`;
-      } catch (e) {
-        if (e.status === 401 || e.status === 403) { location.href="connexion"; }
-      }
-    }
+    <!-- ===== ANNONCES ===== -->
+    <div id="panel-needs" class="admin-panel hidden">
+      <div class="panel-header">
+        <h1>📢 Annonces à valider</h1>
+        <div class="panel-actions">
+          <button class="btn-a btn-ghost" onclick="loadNeeds()">↻ Rafraîchir</button>
+          <button class="btn-a btn-ghost" onclick="printPanel('needs')">🖨️ PDF</button>
+        </div>
+      </div>
+      <div id="needsList"><p class="loading">Chargement…</p></div>
+    </div>
 
-    // ===== ALERTES & FACTURATION =====
-    let BILLING = null;                       // dernières données reçues du backend
-    const COUNTRY_NAMES = { BJ: 'Bénin', TG: 'Togo', CI: "Côte d'Ivoire" };
+    <!-- ===== SCRAPERS ===== -->
+    <div id="panel-scrapers" class="admin-panel hidden">
+      <div class="panel-header">
+        <h1>🤖 Robots de collecte</h1>
+        <div class="panel-actions">
+          <button class="btn-a btn-ghost" onclick="loadScrapers()">↻ Rafraîchir</button>
+          <button class="btn-a btn-ghost" onclick="printPanel('scrapers')">🖨️ PDF</button>
+        </div>
+      </div>
+      <div class="kpi-grid" id="scrapersKpi" style="margin-bottom:20px;"></div>
+      <div class="scraper-grid" id="scrapersList"></div>
+      <hr class="section-sep">
+      <h3 style="font-size:.95rem;font-weight:700;margin-bottom:14px;">Journal des exécutions récentes</h3>
+      <div class="acard" style="padding:0;"><div id="scrapersLogs" class="table-wrap"></div></div>
+    </div>
 
-    async function loadBilling() {
-      const days = document.getElementById('billDays').value || '30';
-      const cEl = document.getElementById('billByCountry');
-      const dEl = document.getElementById('billByDay');
-      cEl.innerHTML = '<p class="muted">Chargement...</p>';
-      dEl.innerHTML = '<p class="muted">Chargement...</p>';
-      try {
-        const d = await api('/admin/alerts-stats?days=' + days, { auth: true });
-        BILLING = d;
-        const t = d.totals || {}, tp = d.totals_period || {};
+  </main>
+</div>
 
-        // KPIs cumulés
-        document.getElementById('bTotal').textContent = (t.total ?? 0).toLocaleString('fr-FR');
-        document.getElementById('bEmail').textContent = (t.email ?? 0).toLocaleString('fr-FR');
-        document.getElementById('bWhatsapp').textContent = (t.whatsapp ?? 0).toLocaleString('fr-FR');
-        document.getElementById('bPeriodTotal').textContent = (tp.total ?? 0).toLocaleString('fr-FR');
-        document.getElementById('bPeriodLabel').textContent = 'Sur ' + (d.period_days || days) + ' jours (' + (tp.email ?? 0) + ' 📧 · ' + (tp.whatsapp ?? 0) + ' 💬)';
+<!-- ====================== MODALS ====================== -->
+<div id="modalOverlay" class="modal-overlay" style="display:none;" onclick="handleOverlayClick(event)">
 
-        renderBillingCosts();
+  <!-- MODALE : Ajouter utilisateur -->
+  <div id="modalAddUser" class="modal-box" style="display:none;" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2>➕ Créer un utilisateur</h2>
+      <button class="modal-close" onclick="closeModal('modalAddUser')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="mf-grid">
+        <div class="mf-group"><label>Nom complet *</label><input id="auName" placeholder="Jean Dupont"></div>
+        <div class="mf-group"><label>Organisation</label><input id="auOrg" placeholder="SARL BTP Bénin"></div>
+        <div class="mf-group"><label>E-mail *</label><input id="auEmail" type="email" placeholder="contact@exemple.bj"></div>
+        <div class="mf-group"><label>Téléphone *</label><input id="auPhone" placeholder="+229 01 XX XX XX"></div>
+        <div class="mf-group"><label>Profil *</label>
+          <select id="auProfile">
+            <option value="prestataire">Prestataire / Entreprise</option>
+            <option value="admin_public">Administration publique</option>
+            <option value="ong">ONG / Projet</option>
+            <option value="artisan">Artisan</option>
+          </select>
+        </div>
+        <div class="mf-group"><label>Pays *</label>
+          <select id="auCountry">
+            <option value="BJ">🇧🇯 Bénin</option>
+            <option value="TG">🇹🇬 Togo</option>
+            <option value="CI">🇨🇮 Côte d'Ivoire</option>
+          </select>
+        </div>
+      </div>
+      <hr style="border:none;border-top:1px solid #f1f5f9;margin:14px 0;">
+      <p style="font-size:.82rem;color:#64748b;margin-bottom:12px;">🎁 Abonnement sans paiement (optionnel)</p>
+      <div class="mf-grid">
+        <div class="mf-group"><label>Formule</label>
+          <select id="auPlan">
+            <option value="">Aucun abonnement</option>
+            <option value="mensuel">Mensuel (15 000 FCFA)</option>
+            <option value="trimestriel">Trimestriel (40 000 FCFA)</option>
+            <option value="semestriel">Semestriel (70 000 FCFA)</option>
+            <option value="annuel">Annuel (120 000 FCFA)</option>
+          </select>
+        </div>
+        <div class="mf-group"><label>Durée (mois)</label>
+          <input id="auDuration" type="number" min="1" max="36" placeholder="ex : 12">
+        </div>
+      </div>
+      <p id="auMsg" class="modal-msg"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-a btn-ghost" onclick="closeModal('modalAddUser')">Annuler</button>
+      <button class="btn-a btn-primary" id="auBtn" onclick="createUser()">Créer l'utilisateur</button>
+    </div>
+  </div>
 
-        // Tableau par pays
-        const bc = d.by_country || [];
-        cEl.innerHTML = !bc.length ? '<div class="card">Aucune alerte envoyée.</div>' :
-          `<div class="card" style="padding:0;overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:.9rem;">
-            <thead><tr style="text-align:left;border-bottom:2px solid var(--line);">
-              <th style="padding:.6rem .8rem;">Pays</th><th style="padding:.6rem .8rem;">📧 E-mails</th>
-              <th style="padding:.6rem .8rem;">💬 WhatsApp</th><th style="padding:.6rem .8rem;">Total</th></tr></thead>
-            <tbody>${bc.map(r => `<tr style="border-bottom:1px solid var(--line);">
-              <td style="padding:.55rem .8rem;font-weight:600;">${(COUNTRIES[r.country]?.flag||'')} ${COUNTRY_NAMES[r.country] || r.country}</td>
-              <td style="padding:.55rem .8rem;">${(+r.email).toLocaleString('fr-FR')}</td>
-              <td style="padding:.55rem .8rem;">${(+r.whatsapp).toLocaleString('fr-FR')}</td>
-              <td style="padding:.55rem .8rem;font-weight:700;">${(+r.total).toLocaleString('fr-FR')}</td></tr>`).join('')}</tbody></table></div>`;
+  <!-- MODALE : Accorder abonnement -->
+  <div id="modalGrantSub" class="modal-box" style="display:none;" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2>🎁 Accorder un abonnement</h2>
+      <button class="modal-close" onclick="closeModal('modalGrantSub')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:.85rem;color:#64748b;margin-bottom:16px;">Recherchez un utilisateur existant pour lui accorder un abonnement actif sans paiement.</p>
+      <div class="mf-group">
+        <label>E-mail de l'utilisateur *</label>
+        <input id="gsEmail" placeholder="contact@exemple.bj" oninput="searchUserForGrant()">
+        <div id="gsUserInfo" style="margin-top:6px;font-size:.82rem;color:#059669;"></div>
+      </div>
+      <input type="hidden" id="gsUserId">
+      <div class="mf-grid">
+        <div class="mf-group"><label>Formule *</label>
+          <select id="gsPlan">
+            <option value="mensuel">Mensuel (15 000 FCFA)</option>
+            <option value="trimestriel">Trimestriel (40 000 FCFA)</option>
+            <option value="semestriel">Semestriel (70 000 FCFA)</option>
+            <option value="annuel">Annuel (120 000 FCFA)</option>
+          </select>
+        </div>
+        <div class="mf-group"><label>Durée (mois) *</label>
+          <input id="gsDuration" type="number" min="1" max="36" value="12">
+        </div>
+      </div>
+      <div class="mf-group"><label>Montant (FCFA) — 0 pour gratuit</label>
+        <input id="gsAmount" type="number" min="0" placeholder="ex : 0 ou 120000">
+      </div>
+      <p id="gsMsg" class="modal-msg"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-a btn-ghost" onclick="closeModal('modalGrantSub')">Annuler</button>
+      <button class="btn-a btn-primary" id="gsBtn" onclick="grantSub()">Accorder l'abonnement</button>
+    </div>
+  </div>
 
-        // Tableau par jour
-        const bd = d.by_day || [];
-        if (bd.length) {
-          document.getElementById('billDayRange').textContent = '(' + fmtDate(bd[0].day) + ' → ' + fmtDate(bd[bd.length-1].day) + ')';
-        }
-        dEl.innerHTML = !bd.length ? '<div class="card">Aucune alerte sur la période.</div>' :
-          `<div class="card" style="padding:0;overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:.9rem;">
-            <thead><tr style="text-align:left;border-bottom:2px solid var(--line);">
-              <th style="padding:.6rem .8rem;">Jour</th><th style="padding:.6rem .8rem;">📧 E-mails</th>
-              <th style="padding:.6rem .8rem;">💬 WhatsApp</th><th style="padding:.6rem .8rem;">Total</th></tr></thead>
-            <tbody>${bd.slice().reverse().map(r => `<tr style="border-bottom:1px solid var(--line);">
-              <td style="padding:.55rem .8rem;">${fmtDate(r.day)}</td>
-              <td style="padding:.55rem .8rem;">${(+r.email).toLocaleString('fr-FR')}</td>
-              <td style="padding:.55rem .8rem;">${(+r.whatsapp).toLocaleString('fr-FR')}</td>
-              <td style="padding:.55rem .8rem;font-weight:700;">${(+r.total).toLocaleString('fr-FR')}</td></tr>`).join('')}</tbody></table></div>`;
-      } catch (e) {
-        if (e.status === 401 || e.status === 403) { location.href="connexion"; return; }
-        cEl.innerHTML = '<div class="card">Impossible de charger les statistiques d\'alertes.</div>';
-        dEl.innerHTML = '';
-      }
-    }
+  <!-- MODALE : Confirmation suppression -->
+  <div id="modalConfirmDelete" class="modal-box" style="max-width:420px;display:none;" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2>⚠️ Confirmer la suppression</h2>
+      <button class="modal-close" onclick="closeModal('modalConfirmDelete')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p>Vous êtes sur le point de <strong>supprimer définitivement</strong> l'utilisateur :</p>
+      <p id="deleteTargetName" style="font-weight:700;margin:12px 0;color:#dc2626;font-size:1rem;"></p>
+      <p style="font-size:.85rem;color:#64748b;">Cette action est irréversible. Tous ses abonnements seront annulés.</p>
+      <p id="deleteMsg" class="modal-msg" style="margin-top:10px;"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-a btn-ghost" onclick="closeModal('modalConfirmDelete')">Annuler</button>
+      <button class="btn-a btn-danger" id="confirmDeleteBtn" onclick="confirmDelete()">Supprimer définitivement</button>
+    </div>
+  </div>
 
-    // Recalcule les coûts à partir des tarifs saisis (sans rappeler l'API).
-    function renderBillingCosts() {
-      if (!BILLING) return;
-      const rE = parseFloat(document.getElementById('rateEmail').value) || 0;
-      const rW = parseFloat(document.getElementById('rateWhatsapp').value) || 0;
-      const t = BILLING.totals || {}, tp = BILLING.totals_period || {};
-      const costE = (t.email || 0) * rE;
-      const costW = (t.whatsapp || 0) * rW;
-      const costP = (tp.email || 0) * rE + (tp.whatsapp || 0) * rW;
-      document.getElementById('costEmail').textContent = fmt(Math.round(costE));
-      document.getElementById('costWhatsapp').textContent = fmt(Math.round(costW));
-      document.getElementById('costTotal').textContent = fmt(Math.round(costE + costW));
-      document.getElementById('costPeriod').textContent = fmt(Math.round(costP));
-      document.getElementById('costPeriodLabel').textContent = 'Coût sur ' + (BILLING.period_days || 30) + ' jours';
-    }
+  <!-- MODALE : Résultat / Info (password temp, etc.) -->
+  <div id="modalResult" class="modal-box" style="max-width:420px;display:none;" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2 id="resultTitle">✅ Succès</h2>
+      <button class="modal-close" onclick="closeModal('modalResult')">✕</button>
+    </div>
+    <div class="modal-body" id="resultBody"></div>
+    <div class="modal-footer">
+      <button class="btn-a btn-primary" onclick="closeModal('modalResult')">Fermer</button>
+    </div>
+  </div>
 
-    function exportBilling() {
-      if (!BILLING || !(BILLING.by_day || []).length) { alert('Aucune donnée à exporter.'); return; }
-      const rE = parseFloat(document.getElementById('rateEmail').value) || 0;
-      const rW = parseFloat(document.getElementById('rateWhatsapp').value) || 0;
-      const rows = (BILLING.by_day || []).map(r => ({
-        day: r.day, email: +r.email, whatsapp: +r.whatsapp, total: +r.total,
-        cost: Math.round((+r.email) * rE + (+r.whatsapp) * rW),
-      }));
-      downloadCSV('facturation_alertes_' + new Date().toISOString().slice(0, 10) + '.csv', rows, [
-        { label: 'Jour', key: 'day' },
-        { label: 'E-mails', key: 'email' },
-        { label: 'WhatsApp', key: 'whatsapp' },
-        { label: 'Total alertes', key: 'total' },
-        { label: 'Coût estimé (FCFA)', key: 'cost' },
-      ]);
-    }
+  <!-- MODALE : Confirmation suppression groupée -->
+  <div id="modalBulkDelete" class="modal-box" style="max-width:480px;display:none;" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2>⚠️ Supprimer les comptes sélectionnés</h2>
+      <button class="modal-close" onclick="closeModal('modalBulkDelete')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="margin-bottom:10px;">Vous êtes sur le point de <strong>supprimer définitivement</strong> les comptes suivants :</p>
+      <div class="bulk-confirm-list" id="bulkDeleteList"></div>
+      <p style="font-size:.84rem;color:#dc2626;font-weight:600;">⚠️ Action irréversible — les abonnements actifs seront annulés.</p>
+      <p id="bulkDeleteMsg" class="modal-msg" style="margin-top:10px;"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-a btn-ghost" onclick="closeModal('modalBulkDelete')">Annuler</button>
+      <button class="btn-a btn-danger" id="bulkDeleteBtn" onclick="confirmBulkDelete()">Supprimer définitivement</button>
+    </div>
+  </div>
 
-    // ===== ABONNÉS & REVENUS =====
-    function subStatusChip(st) {
-      const s = SUB_STATUS[st] || SUB_STATUS.aucun;
-      return `<span class="chip" style="background:${s.bg};color:${s.color};">${s.label}</span>`;
-    }
-    async function loadSubs() {
-      const el = document.getElementById('subsList');
-      const sumEl = document.getElementById('subsSummary');
-      el.innerHTML = '<p class="muted" style="padding:1rem;">Chargement...</p>';
-      const params = new URLSearchParams({ all: '1' });
-      const st = document.getElementById('subsStatus').value;
-      if (st) params.set('status', st);
-      try {
-        const d = await api('/admin/subscriptions?' + params.toString(), { auth: true });
-        SUBS_CACHE = d.data || [];
-        const s = d.summary || {};
-        sumEl.innerHTML = `
-          <div class="kpi"><b style="color:var(--green-700)">${fmt(s.revenue_active || 0)}</b><span>Revenus actifs</span></div>
-          <div class="kpi"><b>${fmt(s.revenue_total || 0)}</b><span>Revenus cumulés</span></div>
-          <div class="kpi"><b style="color:#16a34a">${s.active ?? 0}</b><span>Abonnements actifs</span></div>
-          <div class="kpi"><b style="color:#b45309">${s.pending ?? 0}</b><span>En attente</span></div>`;
-        renderSubs();
-      } catch (e) {
-        if (e.status === 401 || e.status === 403) { location.href="connexion"; return; }
-        el.innerHTML = '<div class="card">Impossible de charger les abonnements.</div>'; sumEl.innerHTML = '';
-      }
-    }
-    function renderSubs() {
-      const el = document.getElementById('subsList');
-      const q = (document.getElementById('subsSearch').value || '').toLowerCase().trim();
-      let items = SUBS_CACHE;
-      if (q) items = items.filter(s => [s.organization, s.name, s.email, s.phone].some(v => (v || '').toLowerCase().includes(q)));
-      if (!items.length) { el.innerHTML = '<p class="muted" style="padding:1rem;">Aucun abonnement.</p>'; return; }
-      el.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:.88rem;">
-        <thead><tr style="text-align:left;border-bottom:2px solid var(--line);">
-          <th style="padding:.6rem .8rem;">Entreprise</th><th style="padding:.6rem .8rem;">Contact</th>
-          <th style="padding:.6rem .8rem;">Formule</th><th style="padding:.6rem .8rem;">Montant</th>
-          <th style="padding:.6rem .8rem;">Statut</th><th style="padding:.6rem .8rem;">Échéance</th></tr></thead>
-        <tbody>${items.map(s => `<tr style="border-bottom:1px solid var(--line);">
-          <td style="padding:.55rem .8rem;"><b>${s.organization || '—'}</b><br><span class="muted" style="font-size:.8rem;">${s.name || ''}</span></td>
-          <td style="padding:.55rem .8rem;">${s.email || ''}${s.phone ? '<br>' + s.phone : ''}</td>
-          <td style="padding:.55rem .8rem;">${PLAN_LABELS[s.plan] || s.plan || '—'}</td>
-          <td style="padding:.55rem .8rem;font-weight:600;">${fmt(s.amount || 0)}</td>
-          <td style="padding:.55rem .8rem;">${subStatusChip(s.status)}</td>
-          <td style="padding:.55rem .8rem;">${fmtDate(s.expires_at)}</td></tr>`).join('')}</tbody></table>`;
-    }
-    function exportSubs() {
-      if (!SUBS_CACHE.length) { alert('Aucune donnée à exporter.'); return; }
-      downloadCSV('abonnes_alertemarche_' + new Date().toISOString().slice(0, 10) + '.csv', SUBS_CACHE, [
-        { label: 'Entreprise', key: 'organization' },
-        { label: 'Nom du contact', key: 'name' },
-        { label: 'E-mail', key: 'email' },
-        { label: 'Téléphone', key: 'phone' },
-        { label: 'Profil', get: s => PROFILES[s.profile_type]?.label || s.profile_type || '' },
-        { label: 'Formule', get: s => PLAN_LABELS[s.plan] || s.plan || '' },
-        { label: 'Durée (mois)', key: 'duration_months' },
-        { label: 'Montant (FCFA)', key: 'amount' },
-        { label: 'Statut', get: s => SUB_STATUS[s.status]?.label || s.status || '' },
-        { label: 'Début', get: s => fmtDate(s.started_at) },
-        { label: 'Échéance', get: s => fmtDate(s.expires_at) },
-        { label: 'Référence paiement', key: 'payment_reference' },
-      ]);
-    }
+  <!-- MODALE : Abonnement groupé -->
+  <div id="modalBulkGrant" class="modal-box" style="max-width:480px;display:none;" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2>🎁 Accorder un abonnement groupé</h2>
+      <button class="modal-close" onclick="closeModal('modalBulkGrant')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="margin-bottom:10px;font-size:.85rem;color:#64748b;">L'abonnement sera accordé aux <strong id="bulkGrantCount">0</strong> utilisateurs sélectionnés.</p>
+      <div class="bulk-confirm-list" id="bulkGrantList" style="margin-bottom:14px;"></div>
+      <div class="mf-grid">
+        <div class="mf-group"><label>Formule *</label>
+          <select id="bgPlan">
+            <option value="mensuel">Mensuel (15 000 FCFA)</option>
+            <option value="trimestriel">Trimestriel (40 000 FCFA)</option>
+            <option value="semestriel">Semestriel (70 000 FCFA)</option>
+            <option value="annuel">Annuel (120 000 FCFA)</option>
+          </select>
+        </div>
+        <div class="mf-group"><label>Durée (mois) *</label>
+          <input id="bgDuration" type="number" min="1" max="36" value="12">
+        </div>
+      </div>
+      <div class="mf-group"><label>Montant (FCFA) — 0 pour gratuit</label>
+        <input id="bgAmount" type="number" min="0" placeholder="0">
+      </div>
+      <p id="bulkGrantMsg" class="modal-msg"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-a btn-ghost" onclick="closeModal('modalBulkGrant')">Annuler</button>
+      <button class="btn-a btn-primary" id="bulkGrantBtn" onclick="confirmBulkGrant()">Accorder l'abonnement</button>
+    </div>
+  </div>
 
-    // ===== UTILISATEURS =====
-    async function loadUsers() {
-      const el = document.getElementById('usersList'); el.innerHTML = '<p class="muted" style="padding:1rem;">Chargement...</p>';
-      const params = new URLSearchParams({ all: '1' });
-      const pf = document.getElementById('usersProfile').value;
-      if (pf) params.set('profile_type', pf);
-      try {
-        const d = await api('/admin/users?' + params.toString(), { auth: true });
-        USERS_CACHE = d.data || [];
-        renderUsers();
-      } catch (e) {
-        if (e.status === 401 || e.status === 403) { location.href="connexion"; return; }
-        el.innerHTML = '<div class="card">Impossible de charger les utilisateurs.</div>';
-      }
-    }
-    function renderUsers() {
-      const el = document.getElementById('usersList');
-      const q = (document.getElementById('usersSearch').value || '').toLowerCase().trim();
-      let items = USERS_CACHE;
-      if (q) items = items.filter(u => [u.organization, u.name, u.email, u.phone].some(v => (v || '').toLowerCase().includes(q)));
-      if (!items.length) { el.innerHTML = '<p class="muted" style="padding:1rem;">Aucun utilisateur.</p>'; return; }
-      el.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:.88rem;">
-        <thead><tr style="text-align:left;border-bottom:2px solid var(--line);">
-          <th style="padding:.6rem .8rem;">Entreprise / Nom</th><th style="padding:.6rem .8rem;">Contact</th>
-          <th style="padding:.6rem .8rem;">Profil</th><th style="padding:.6rem .8rem;">Pays</th>
-          <th style="padding:.6rem .8rem;">Abonnement</th><th style="padding:.6rem .8rem;">Inscrit le</th></tr></thead>
-        <tbody>${items.map(u => `<tr style="border-bottom:1px solid var(--line);">
-          <td style="padding:.55rem .8rem;"><b>${u.organization || u.name || '—'}</b>${u.organization && u.name ? '<br><span class="muted" style="font-size:.8rem;">' + u.name + '</span>' : ''}</td>
-          <td style="padding:.55rem .8rem;">${u.email || ''}${u.phone ? '<br>' + u.phone : ''}</td>
-          <td style="padding:.55rem .8rem;">${PROFILES[u.profile_type]?.label || u.profile_type || '—'}</td>
-          <td style="padding:.55rem .8rem;">${COUNTRIES[u.primary_country]?.flag || ''} ${u.primary_country || ''}</td>
-          <td style="padding:.55rem .8rem;">${subStatusChip(u.subscription_status)}${u.subscription_amount ? '<br><span class="muted" style="font-size:.8rem;">' + fmt(u.subscription_amount) + '</span>' : ''}</td>
-          <td style="padding:.55rem .8rem;">${fmtDate(u.created_at)}</td></tr>`).join('')}</tbody></table>`;
-    }
-    function exportUsers() {
-      if (!USERS_CACHE.length) { alert('Aucune donnée à exporter.'); return; }
-      downloadCSV('utilisateurs_alertemarche_' + new Date().toISOString().slice(0, 10) + '.csv', USERS_CACHE, [
-        { label: 'Entreprise', key: 'organization' },
-        { label: 'Nom', key: 'name' },
-        { label: 'E-mail', key: 'email' },
-        { label: 'Téléphone', key: 'phone' },
-        { label: 'Profil', get: u => PROFILES[u.profile_type]?.label || u.profile_type || '' },
-        { label: 'Pays', key: 'primary_country' },
-        { label: 'Secteurs', get: u => (u.sectors || []).join(', ') },
-        { label: 'Mots-clés', get: u => (u.keywords || []).join(', ') },
-        { label: 'Statut abonnement', get: u => SUB_STATUS[u.subscription_status]?.label || u.subscription_status || '' },
-        { label: 'Formule', get: u => PLAN_LABELS[u.subscription_plan] || u.subscription_plan || '' },
-        { label: 'Montant (FCFA)', key: 'subscription_amount' },
-        { label: 'E-mail vérifié', get: u => u.email_verified ? 'Oui' : 'Non' },
-        { label: 'Alertes reçues', key: 'alerts_count' },
-        { label: 'Inscrit le', get: u => fmtDate(u.created_at) },
-      ]);
-    }
+</div>
 
-    // ===== SCRAPERS =====
-    const HEALTH = {
-      ok:    { label: 'Opérationnel', color: '#16a34a', bg: '#dcfce7', dot: '🟢' },
-      stale: { label: 'Inactif',      color: '#b45309', bg: '#fef3c7', dot: '🟡' },
-      down:  { label: 'En panne',     color: '#b91c1c', bg: '#fee2e2', dot: '🔴' },
-    };
-    async function loadScrapers() {
-      const el = document.getElementById('scrapersList');
-      const sumEl = document.getElementById('scrapersSummary');
-      const logsEl = document.getElementById('scrapersLogs');
-      el.innerHTML = '<p class="muted">Chargement...</p>';
-      try {
-        const d = await api('/admin/scrapers', { auth: true });
-        const robots = d.robots || [];
-        const s = d.summary || {};
-        sumEl.innerHTML = `
-          <div class="kpi"><b>${s.total ?? robots.length}</b><span>Robots</span></div>
-          <div class="kpi"><b style="color:#16a34a">${s.ok ?? 0}</b><span>🟢 Opérationnels</span></div>
-          <div class="kpi"><b style="color:#b45309">${s.stale ?? 0}</b><span>🟡 Inactifs</span></div>
-          <div class="kpi"><b style="color:#b91c1c">${s.down ?? 0}</b><span>🔴 En panne</span></div>`;
+<!-- ====================== SCRIPTS ====================== -->
+<script>
+  /* ---- Config ---- */
+  const API_BASE = '/api';
+  const ADMIN_TOKEN_KEY = 'am_admin_token';
 
-        if (!robots.length) {
-          el.innerHTML = '<div class="card">Aucun robot n\'a encore tourné. Lancez une première collecte.</div>';
-        } else {
-          el.innerHTML = robots.map(r => {
-            const h = HEALTH[r.health] || HEALTH.stale;
-            return `<div class="tender" style="border-left:4px solid ${h.color};">
-              <div class="tender__top">
-                <h3>${(COUNTRIES[r.country]?.flag||'')} ${r.source_name || r.country}</h3>
-                <span class="chip" style="background:${h.bg};color:${h.color};">${h.dot} ${h.label}</span>
-              </div>
-              <div class="tender__meta">
-                <span>Dernière exécution : <b>${fmtDateTime(r.last_run)}</b></span>
-                <span>Collectés : <b>${r.last_items_collected ?? '—'}</b></span>
-                <span>Nouveaux : <b>${r.last_items_new ?? '—'}</b></span>
-                <span>Échecs (24h) : <b style="color:${r.failures_24h>0?'#b91c1c':'inherit'}">${r.failures_24h ?? 0}</b></span>
-              </div>
-              ${r.last_message ? `<p class="muted mt-1" style="font-size:.85rem;">${r.last_message}</p>` : ''}
-            </div>`;
-          }).join('');
-        }
+  const PROFILES = {
+    prestataire:  'Prestataire / Entreprise',
+    admin_public: 'Administration publique',
+    ong:          'ONG / Projet',
+    artisan:      'Artisan',
+  };
+  const COUNTRIES = { BJ: '🇧🇯 Bénin', TG: '🇹🇬 Togo', CI: "🇨🇮 Côte d'Ivoire" };
+  const PLANS = { mensuel: 'Mensuel', trimestriel: 'Trimestriel', semestriel: 'Semestriel', annuel: 'Annuel' };
+  const SUB_STATUS = {
+    active:    { label: 'Actif',      cls: 'chip-green' },
+    pending:   { label: 'En attente', cls: 'chip-orange' },
+    expired:   { label: 'Expiré',     cls: 'chip-gray' },
+    cancelled: { label: 'Annulé',     cls: 'chip-red' },
+    suspended: { label: 'Suspendu',   cls: 'chip-red' },
+    aucun:     { label: 'Aucun',      cls: 'chip-gray' },
+  };
 
-        const logs = d.recent_logs || [];
-        logsEl.innerHTML = logs.length
-          ? `<div class="card" style="overflow-x:auto;padding:0;"><table style="width:100%;border-collapse:collapse;font-size:.88rem;">
-              <thead><tr style="text-align:left;border-bottom:2px solid var(--line);">
-                <th style="padding:.6rem .8rem;">Date</th><th style="padding:.6rem .8rem;">Pays</th><th style="padding:.6rem .8rem;">Source</th>
-                <th style="padding:.6rem .8rem;">Statut</th><th style="padding:.6rem .8rem;">Collectés</th><th style="padding:.6rem .8rem;">Nouveaux</th></tr></thead>
-              <tbody>${logs.map(l => `<tr style="border-bottom:1px solid var(--line);">
-                <td style="padding:.55rem .8rem;">${fmtDateTime(l.ran_at)}</td>
-                <td style="padding:.55rem .8rem;">${(COUNTRIES[l.country]?.flag||'')} ${l.country||''}</td>
-                <td style="padding:.55rem .8rem;">${l.source_name||'—'}</td>
-                <td style="padding:.55rem .8rem;"><span style="color:${l.status==='success'?'#16a34a':'#b91c1c'};font-weight:600;">${l.status==='success'?'✓ Succès':'✕ Échec'}</span></td>
-                <td style="padding:.55rem .8rem;">${l.items_collected ?? '—'}</td>
-                <td style="padding:.55rem .8rem;">${l.items_new ?? '—'}</td></tr>`).join('')}</tbody></table></div>`
-          : '<div class="card">Aucune exécution enregistrée.</div>';
-      } catch { el.innerHTML = '<div class="card">Impossible de charger l\'état des robots.</div>'; sumEl.innerHTML=''; logsEl.innerHTML=''; }
-    }
+  /* ---- CACHES ---- */
+  let USERS_CACHE = [], SUBS_CACHE = [], PAYMENTS_CACHE = [];
+  let deleteTargetId = null;
+  let grantTargetUsers = [];
+  let currentPrintPanel = null;
 
-    // ===== BESOINS =====
-    async function loadNeeds() {
-      const el = document.getElementById('needsList'); el.innerHTML = '<p class="muted">Chargement...</p>';
-      try {
-        const d = await api('/admin/needs/pending', { auth: true });
-        const items = d.data || d.needs || [];
-        if (!items.length) { el.innerHTML = '<div class="card">Aucun besoin en attente.</div>'; return; }
-        el.innerHTML = items.map(n => `<div class="tender"><div class="tender__top"><h3>${n.title || 'Besoin'}</h3><button class="btn btn--primary btn--sm" onclick="validateNeed(${n.id})">Valider & diffuser</button></div>
-          <p class="muted mt-1">${n.description || ''}</p>
-          <div class="tender__meta"><span>${(COUNTRIES[n.country_code]?.flag||'')} ${n.city||''}</span><span>Contact : <b>${n.phone||n.name||'—'}</b></span></div></div>`).join('');
-      } catch { el.innerHTML = '<div class="card">Impossible de charger les besoins.</div>'; }
-    }
-    async function validateNeed(id) {
-      try { await api(`/admin/needs/${id}/validate`, { method: 'POST', auth: true, body: { approve: true } }); loadNeeds(); }
-      catch { alert('Échec de la validation.'); }
-    }
+  /* ====================== AUTH ====================== */
+  function adminToken() { return sessionStorage.getItem(ADMIN_TOKEN_KEY); }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      $$('.dash__side a[data-tab]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); switchTab(a.dataset.tab); }));
-      const rs = document.getElementById('refreshScrapers'); if (rs) rs.addEventListener('click', loadScrapers);
-      document.getElementById('billDays').addEventListener('change', loadBilling);
-      document.getElementById('rateEmail').addEventListener('input', renderBillingCosts);
-      document.getElementById('rateWhatsapp').addEventListener('input', renderBillingCosts);
-      document.getElementById('dlBilling').addEventListener('click', exportBilling);
-      document.getElementById('dlSubs').addEventListener('click', exportSubs);
-      document.getElementById('dlUsers').addEventListener('click', exportUsers);
-      document.getElementById('subsSearch').addEventListener('input', renderSubs);
-      document.getElementById('subsStatus').addEventListener('change', loadSubs);
-      document.getElementById('usersSearch').addEventListener('input', renderUsers);
-      document.getElementById('usersProfile').addEventListener('change', loadUsers);
-      document.getElementById('logoutBtn').addEventListener('click', async () => {
-        try { await api('/auth/logout', { method: 'POST', auth: true }); } catch {}
-        localStorage.removeItem('am_token'); location.href="index";
+  async function doAdminLogin() {
+    const btn = document.getElementById('loginBtn');
+    const err = document.getElementById('loginErr');
+    const user = document.getElementById('lUsername').value.trim();
+    const pass = document.getElementById('lPassword').value;
+    if (!user || !pass) { err.textContent = 'Veuillez remplir identifiant et mot de passe.'; return; }
+    btn.disabled = true; btn.textContent = 'Connexion…'; err.textContent = '';
+    try {
+      const r = await fetch(API_BASE + '/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ username: user, password: pass }),
       });
-      loadStats();
+      const d = await r.json();
+      if (!r.ok) { err.textContent = d.message || 'Identifiants incorrects.'; return; }
+      sessionStorage.setItem(ADMIN_TOKEN_KEY, d.token);
+      document.getElementById('adminNameLabel').textContent = d.user?.name || 'Admin';
+      showApp();
+    } catch (e) {
+      err.textContent = 'Erreur de connexion au serveur.';
+    } finally {
+      btn.disabled = false; btn.textContent = 'Se connecter';
+    }
+  }
+
+  function adminLogout() {
+    sessionStorage.removeItem(ADMIN_TOKEN_KEY);
+    location.reload();
+  }
+
+  function showApp() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminApp').style.display = 'flex';
+    loadStats();
+  }
+
+  /* ====================== API HELPER ====================== */
+  async function adminApi(path, opts = {}) {
+    const res = await fetch(API_BASE + path, {
+      method: opts.method || 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ' + adminToken(),
+      },
+      body: opts.body ? JSON.stringify(opts.body) : undefined,
     });
-  </script>
+    // Déconnecter UNIQUEMENT sur 401 (session expirée/invalide)
+    // Un 403 = action interdite sur cette ressource, on affiche juste l'erreur
+    if (res.status === 401) {
+      sessionStorage.removeItem(ADMIN_TOKEN_KEY);
+      location.reload();
+      throw new Error('Session expirée');
+    }
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Erreur API (' + res.status + ')');
+    return data;
+  }
+
+  /* ====================== NAVIGATION ====================== */
+  function switchTab(tab) {
+    document.querySelectorAll('.admin-nav a[data-tab]').forEach(a => a.classList.toggle('active', a.dataset.tab === tab));
+    document.querySelectorAll('.admin-panel').forEach(p => p.classList.toggle('hidden', p.id !== 'panel-' + tab));
+    currentPrintPanel = tab;
+    if (tab === 'stats')    loadStats();
+    if (tab === 'users')    loadUsers();
+    if (tab === 'subs')     loadSubs();
+    if (tab === 'payments') loadPayments();
+    if (tab === 'needs')    loadNeeds();
+    if (tab === 'scrapers') loadScrapers();
+    // Fermer sidebar mobile
+    document.getElementById('adminSidebar').classList.remove('open');
+  }
+
+  function toggleSidebar() {
+    document.getElementById('adminSidebar').classList.toggle('open');
+  }
+
+  /* ====================== FORMAT HELPERS ====================== */
+  function fmt(n) { return (n || 0).toLocaleString('fr-FR') + ' FCFA'; }
+  function fmtN(n) { return (n || 0).toLocaleString('fr-FR'); }
+  function fmtD(v) {
+    if (!v) return '—';
+    try { return new Date(v).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' }); }
+    catch { return v; }
+  }
+  function fmtDT(v) {
+    if (!v) return '—';
+    try { return new Date(v).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }); }
+    catch { return v; }
+  }
+  function chip(status) {
+    const s = SUB_STATUS[status] || SUB_STATUS.aucun;
+    return `<span class="chip ${s.cls}">${s.label}</span>`;
+  }
+
+  /* ====================== PRINT / PDF ====================== */
+  function printPanel(tab) {
+    // Afficher uniquement ce panel pour l'impression
+    document.querySelectorAll('.admin-panel').forEach(p => {
+      p.removeAttribute('data-print');
+    });
+    const el = document.getElementById('panel-' + tab);
+    if (el) el.setAttribute('data-print', '1');
+    window.print();
+    // Nettoyer après
+    setTimeout(() => { if(el) el.removeAttribute('data-print'); }, 500);
+  }
+
+  /* ====================== CSV EXPORT ====================== */
+  function downloadCSV(filename, rows, headers) {
+    const esc = v => { v = String(v ?? '').replace(/"/g, '""'); return /[",;\n]/.test(v) ? `"${v}"` : v; };
+    const lines = [headers.map(h => esc(h.label)).join(';')];
+    rows.forEach(r => lines.push(headers.map(h => esc(typeof h.get === 'function' ? h.get(r) : r[h.key])).join(';')));
+    const blob = new Blob(['\ufeff' + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename; a.click();
+  }
+
+  function exportCSV(type) {
+    if (type === 'users') {
+      if (!USERS_CACHE.length) { alert('Aucune donnée.'); return; }
+      downloadCSV('utilisateurs_' + new Date().toISOString().slice(0,10) + '.csv', USERS_CACHE, [
+        {label:'ID', key:'id'},{label:'Organisation', key:'organization'},{label:'Nom', key:'name'},
+        {label:'E-mail', key:'email'},{label:'Téléphone', key:'phone'},
+        {label:'Profil', get: u => PROFILES[u.profile_type] || u.profile_type || ''},
+        {label:'Pays', key:'primary_country'},
+        {label:'Abonnement', get: u => SUB_STATUS[u.subscription_status]?.label || u.subscription_status || ''},
+        {label:'Montant', key:'subscription_amount'},
+        {label:'Suspendu', get: u => u.is_suspended ? 'Oui' : 'Non'},
+        {label:'Email vérifié', get: u => u.email_verified ? 'Oui' : 'Non'},
+        {label:'Alertes reçues', key:'alerts_count'},
+        {label:'Inscrit le', get: u => fmtD(u.created_at)},
+      ]);
+    } else if (type === 'subs') {
+      if (!SUBS_CACHE.length) { alert('Aucune donnée.'); return; }
+      downloadCSV('abonnements_' + new Date().toISOString().slice(0,10) + '.csv', SUBS_CACHE, [
+        {label:'ID', key:'id'},{label:'Organisation', key:'organization'},{label:'Nom', key:'name'},
+        {label:'E-mail', key:'email'},{label:'Téléphone', key:'phone'},
+        {label:'Formule', get: s => PLANS[s.plan] || s.plan || ''},
+        {label:'Durée (mois)', key:'duration_months'},{label:'Montant (FCFA)', key:'amount'},
+        {label:'Statut', get: s => SUB_STATUS[s.status]?.label || s.status || ''},
+        {label:'Début', get: s => fmtD(s.started_at)},{label:'Échéance', get: s => fmtD(s.expires_at)},
+        {label:'Référence paiement', key:'payment_reference'},
+      ]);
+    } else if (type === 'payments') {
+      if (!PAYMENTS_CACHE.length) { alert('Aucune donnée.'); return; }
+      downloadCSV('paiements_' + new Date().toISOString().slice(0,10) + '.csv', PAYMENTS_CACHE, [
+        {label:'ID', key:'id'},{label:'Organisation', key:'organization'},{label:'Nom', key:'name'},
+        {label:'E-mail', key:'email'},{label:'Téléphone', key:'phone'},
+        {label:'Formule', get: p => PLANS[p.plan] || p.plan || ''},
+        {label:'Montant (FCFA)', key:'amount'},{label:'Statut', get: p => SUB_STATUS[p.status]?.label || p.status || ''},
+        {label:'Référence', key:'payment_reference'},{label:'Type', get: p => p.is_manual ? 'Manuel' : 'KKiaPay'},
+        {label:'Date', get: p => fmtD(p.created_at)},
+      ]);
+    }
+  }
+
+  /* ====================== STATS ====================== */
+  async function loadStats() {
+    try {
+      const d = await adminApi('/admin/stats');
+      document.getElementById('kUsers').textContent = fmtN(d.users_total);
+      document.getElementById('kSubs').textContent = fmtN(d.active_subscriptions);
+      document.getElementById('kRev').textContent = fmtN(d.revenue_active);
+      document.getElementById('kTenders').textContent = fmtN(d.tenders_total);
+      document.getElementById('kAlerts').textContent = fmtN(d.alerts_sent);
+      document.getElementById('kNeeds').textContent = fmtN(d.needs_pending);
+
+      // Profils
+      const byPf = d.users_by_profile || {};
+      document.getElementById('statsProfiles').innerHTML = Object.keys(byPf).length
+        ? Object.entries(byPf).map(([k,v]) => {
+            const pct = d.users_total ? Math.round(v/d.users_total*100) : 0;
+            return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+              <div style="min-width:160px;font-size:.85rem;">${PROFILES[k]||k}</div>
+              <div style="flex:1;background:#f1f5f9;border-radius:6px;height:8px;overflow:hidden;">
+                <div style="width:${pct}%;background:#0a7d3f;height:100%;border-radius:6px;"></div></div>
+              <div style="min-width:60px;font-size:.82rem;color:#64748b;text-align:right;">${fmtN(v)} (${pct}%)</div></div>`;
+          }).join('')
+        : '<p style="color:#94a3b8;font-size:.85rem;">Aucune donnée.</p>';
+
+      // Pays
+      const byC = d.users_by_country || {};
+      document.getElementById('statsCountries').innerHTML = Object.keys(byC).length
+        ? Object.entries(byC).map(([k,v]) => `
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+              <div style="min-width:120px;font-size:.85rem;">${COUNTRIES[k]||k}</div>
+              <div style="font-weight:700;">${fmtN(v)}</div></div>`).join('')
+        : '<p style="color:#94a3b8;font-size:.85rem;">Aucune donnée.</p>';
+    } catch(e) { console.error(e); }
+  }
+
+  /* ====================== UTILISATEURS ====================== */
+  async function loadUsers() {
+    const el = document.getElementById('usersList');
+    el.innerHTML = '<p class="loading">Chargement…</p>';
+    const params = new URLSearchParams({ all: '1' });
+    const pf = document.getElementById('usersProfile')?.value;
+    const cc = document.getElementById('usersCountry')?.value;
+    if (pf) params.set('profile_type', pf);
+    if (cc) params.set('country', cc);
+    try {
+      const d = await adminApi('/admin/users?' + params);
+      USERS_CACHE = d.data || [];
+      renderUsers();
+    } catch(e) { el.innerHTML = `<p class="empty">Impossible de charger les utilisateurs.</p>`; }
+  }
+
+  /* ====================== MULTI-SELECT ====================== */
+  let selectedIds = new Set();
+
+  function updateBulkBar() {
+    const bar = document.getElementById('bulkBar');
+    const cnt = document.getElementById('bulkCount');
+    if (selectedIds.size > 0) {
+      bar.classList.add('visible');
+      cnt.textContent = selectedIds.size + ' compte' + (selectedIds.size > 1 ? 's' : '') + ' sélectionné' + (selectedIds.size > 1 ? 's' : '');
+    } else {
+      bar.classList.remove('visible');
+    }
+  }
+
+  function clearSelection() {
+    selectedIds.clear();
+    document.querySelectorAll('input.row-cb').forEach(cb => cb.checked = false);
+    const cbAll = document.getElementById('cbAll');
+    if (cbAll) cbAll.checked = false;
+    updateBulkBar();
+    // Enlever la classe selected-row
+    document.querySelectorAll('tr.selected-row').forEach(tr => tr.classList.remove('selected-row'));
+  }
+
+  function toggleRowSelect(id, checked, tr) {
+    if (checked) { selectedIds.add(id); tr.classList.add('selected-row'); }
+    else { selectedIds.delete(id); tr.classList.remove('selected-row'); }
+    // Sync checkbox "tout sélectionner"
+    const cbAll = document.getElementById('cbAll');
+    const allCbs = document.querySelectorAll('input.row-cb');
+    if (cbAll) cbAll.checked = allCbs.length > 0 && [...allCbs].every(c => c.checked);
+    updateBulkBar();
+  }
+
+  function toggleSelectAll(checked) {
+    document.querySelectorAll('input.row-cb').forEach(cb => {
+      cb.checked = checked;
+      const id = parseInt(cb.dataset.id);
+      const tr = cb.closest('tr');
+      if (checked) { selectedIds.add(id); tr.classList.add('selected-row'); }
+      else { selectedIds.delete(id); tr.classList.remove('selected-row'); }
+    });
+    updateBulkBar();
+  }
+
+  function bulkAction(action) {
+    if (selectedIds.size === 0) return;
+    const ids = [...selectedIds];
+    const users = ids.map(id => USERS_CACHE.find(u => u.id === id)).filter(Boolean);
+
+    if (action === 'delete') {
+      document.getElementById('bulkDeleteList').innerHTML = users.map(u =>
+        `<div>🗑 <strong>${u.organization||u.name||'—'}</strong> <span style="color:#94a3b8;">(${u.email||''})</span></div>`
+      ).join('');
+      document.getElementById('bulkDeleteMsg').textContent = '';
+      openModal('modalBulkDelete');
+    }
+    else if (action === 'suspend') {
+      const toSuspend = users.filter(u => !u.is_suspended && !u.is_admin);
+      if (!toSuspend.length) { alert('Aucun des comptes sélectionnés ne peut être suspendu (déjà suspendus ou admin).'); return; }
+      if (!confirm(`Suspendre ${toSuspend.length} compte(s) ?`)) return;
+      executeBulkSuspend(toSuspend.map(u => u.id), true);
+    }
+    else if (action === 'reactivate') {
+      const toActivate = users.filter(u => u.is_suspended);
+      if (!toActivate.length) { alert('Aucun des comptes sélectionnés n\'est suspendu.'); return; }
+      if (!confirm(`Réactiver ${toActivate.length} compte(s) ?`)) return;
+      executeBulkSuspend(toActivate.map(u => u.id), false);
+    }
+    else if (action === 'grant') {
+      document.getElementById('bulkGrantCount').textContent = users.length;
+      document.getElementById('bulkGrantList').innerHTML = users.map(u =>
+        `<div>👤 <strong>${u.organization||u.name||'—'}</strong> <span style="color:#94a3b8;">(${u.email||''})</span></div>`
+      ).join('');
+      document.getElementById('bulkGrantMsg').textContent = '';
+      openModal('modalBulkGrant');
+    }
+  }
+
+  async function executeBulkSuspend(ids, suspend) {
+    let ok = 0, fail = 0;
+    for (const id of ids) {
+      try { await adminApi(`/admin/users/${id}/suspend`, { method: 'PATCH' }); ok++; }
+      catch(e) { fail++; }
+    }
+    clearSelection();
+    loadUsers();
+    showResult(suspend ? '⏸ Suspension effectuée' : '🔓 Réactivation effectuée',
+      `<p>${ok} compte(s) traité(s) avec succès.${fail ? `<br><span style="color:#dc2626;">${fail} échec(s).</span>` : ''}</p>`);
+  }
+
+  async function confirmBulkDelete() {
+    const ids = [...selectedIds];
+    const btn = document.getElementById('bulkDeleteBtn');
+    const msg = document.getElementById('bulkDeleteMsg');
+    btn.disabled = true; btn.textContent = 'Suppression en cours…';
+    let ok = 0, fail = 0, failMsgs = [];
+    for (const id of ids) {
+      try { await adminApi(`/admin/users/${id}`, { method: 'DELETE' }); ok++; }
+      catch(e) { fail++; failMsgs.push(e.message); }
+    }
+    btn.disabled = false; btn.textContent = 'Supprimer définitivement';
+    closeModal('modalBulkDelete');
+    clearSelection();
+    loadUsers(); loadStats();
+    showResult('🗑 Suppression terminée',
+      `<p>${ok} compte(s) supprimé(s) avec succès.${fail ? `<br><span style="color:#dc2626;">${fail} échec(s) : ${[...new Set(failMsgs)].join(', ')}</span>` : ''}</p>`);
+  }
+
+  async function confirmBulkGrant() {
+    const ids = [...selectedIds];
+    const btn = document.getElementById('bulkGrantBtn');
+    const msg = document.getElementById('bulkGrantMsg');
+    const plan = document.getElementById('bgPlan').value;
+    const dur = parseInt(document.getElementById('bgDuration').value);
+    const amount = document.getElementById('bgAmount').value;
+    if (!plan || !dur) { msg.className='modal-msg err'; msg.textContent='⚠️ Formule et durée obligatoires.'; return; }
+    btn.disabled = true; btn.textContent = 'Attribution en cours…';
+    let ok = 0, fail = 0;
+    for (const id of ids) {
+      try {
+        const body = { user_id: id, plan, duration_months: dur };
+        if (amount !== '') body.amount = parseInt(amount) || 0;
+        await adminApi('/admin/subscriptions/grant', { method: 'POST', body });
+        ok++;
+      } catch(e) { fail++; }
+    }
+    btn.disabled = false; btn.textContent = 'Accorder l\'abonnement';
+    closeModal('modalBulkGrant');
+    clearSelection();
+    loadUsers(); loadSubs(); loadStats();
+    showResult('🎁 Abonnements accordés',
+      `<p>${ok} abonnement(s) accordé(s) avec succès.${fail ? `<br><span style="color:#dc2626;">${fail} échec(s).</span>` : ''}</p>`);
+  }
+
+  /* ====================== RENDU UTILISATEURS ====================== */
+  function renderUsers() {
+    const el = document.getElementById('usersList');
+    const q = (document.getElementById('usersSearch')?.value || '').toLowerCase();
+    let items = USERS_CACHE;
+    if (q) items = items.filter(u => [u.organization,u.name,u.email,u.phone].some(v=>(v||'').toLowerCase().includes(q)));
+    if (!items.length) { el.innerHTML = '<p class="empty">Aucun utilisateur trouvé.</p>'; clearSelection(); return; }
+
+    el.innerHTML = `<table class="data-table">
+      <thead><tr>
+        <th class="cb-wrap"><input type="checkbox" class="cb-all" id="cbAll" onchange="toggleSelectAll(this.checked)" title="Tout sélectionner"></th>
+        <th>Entreprise / Nom</th><th>Contact</th><th>Profil</th><th>Pays</th>
+        <th>Abonnement</th><th>Alertes</th><th>Inscrit le</th><th>Actions</th>
+      </tr></thead>
+      <tbody>${items.map(u => {
+        const rowId = 'row-' + u.id;
+        const isChecked = selectedIds.has(u.id);
+        return `<tr id="${rowId}" class="${isChecked ? 'selected-row' : ''}">
+          <td class="cb-wrap">
+            ${u.is_admin ? '<span title="Admin" style="color:#0a7d3f;font-size:.85rem;">👑</span>' :
+              `<input type="checkbox" class="row-cb" data-id="${u.id}" ${isChecked ? 'checked' : ''}
+                onchange="toggleRowSelect(${u.id}, this.checked, this.closest('tr'))">`}
+          </td>
+          <td class="td-org">
+            <b>${u.organization||u.name||'—'}</b>
+            ${u.organization&&u.name?`<small>${u.name}</small>`:''}
+            ${u.is_suspended?'<br><span class="chip chip-red" style="margin-top:3px;">🔒 Suspendu</span>':''}
+          </td>
+          <td>${u.email||''}${u.phone?'<br><small style="color:#64748b;">'+u.phone+'</small>':''}</td>
+          <td><small>${PROFILES[u.profile_type]||u.profile_type||'—'}</small></td>
+          <td>${COUNTRIES[u.primary_country]||u.primary_country||'—'}</td>
+          <td>${chip(u.subscription_status)}${u.subscription_amount?'<br><small style="color:#64748b;">'+fmt(u.subscription_amount)+'</small>':''}</td>
+          <td style="text-align:center;">${fmtN(u.alerts_count||0)}</td>
+          <td>${fmtD(u.created_at)}</td>
+          <td class="td-actions">
+            <button class="btn-a btn-blue" onclick="openGrantForUser(${u.id},'${(u.email||'').replace(/'/g,"\\'")}')">🎁</button>
+            <button class="btn-a btn-warn" onclick="toggleSuspend(${u.id},${!!u.is_suspended})" title="${u.is_suspended?'Réactiver':'Suspendre'}">${u.is_suspended?'🔓':'⏸'}</button>
+            ${!u.is_admin ? `<button class="btn-a btn-danger" onclick="askDelete(${u.id},'${((u.organization||u.name)||'cet utilisateur').replace(/'/g,"\\'")}')">🗑</button>` : ''}
+          </td>
+        </tr>`;
+      }).join('')}</tbody></table>`;
+  }
+
+  async function toggleSuspend(userId, isSuspended) {
+    try {
+      await adminApi(`/admin/users/${userId}/suspend`, { method: 'PATCH' });
+      loadUsers();
+    } catch(e) { alert('Erreur : ' + e.message); }
+  }
+
+  function askDelete(id, name) {
+    deleteTargetId = id;
+    document.getElementById('deleteTargetName').textContent = name;
+    document.getElementById('deleteMsg').textContent = '';
+    openModal('modalConfirmDelete');
+  }
+
+  async function confirmDelete() {
+    if (!deleteTargetId) return;
+    const btn = document.getElementById('confirmDeleteBtn');
+    const msg = document.getElementById('deleteMsg');
+    btn.disabled = true; btn.textContent = 'Suppression…';
+    try {
+      await adminApi(`/admin/users/${deleteTargetId}`, { method: 'DELETE' });
+      closeModal('modalConfirmDelete');
+      deleteTargetId = null;
+      loadUsers();
+      loadStats();
+    } catch(e) {
+      msg.className = 'modal-msg err';
+      msg.textContent = e.message || 'Erreur lors de la suppression.';
+    } finally { btn.disabled = false; btn.textContent = 'Supprimer définitivement'; }
+  }
+
+  /* ====================== CRÉER UTILISATEUR ====================== */
+  async function createUser() {
+    const msg = document.getElementById('auMsg');
+    const btn = document.getElementById('auBtn');
+    msg.textContent = '';
+    const name = document.getElementById('auName').value.trim();
+    const email = document.getElementById('auEmail').value.trim();
+    const phone = document.getElementById('auPhone').value.trim();
+    const profile = document.getElementById('auProfile').value;
+    const country = document.getElementById('auCountry').value;
+    if (!name || !email || !phone) {
+      msg.className = 'modal-msg err'; msg.textContent = '⚠️ Nom, e-mail et téléphone sont obligatoires.'; return;
+    }
+    btn.disabled = true; btn.textContent = 'Création…';
+    try {
+      const body = {
+        name, email, phone,
+        organization: document.getElementById('auOrg').value.trim() || name,
+        profile_type: profile,
+        primary_country: country,
+      };
+      const plan = document.getElementById('auPlan').value;
+      const dur = parseInt(document.getElementById('auDuration').value) || null;
+      if (plan) { body.plan = plan; if (dur) body.duration_months = dur; }
+
+      const d = await adminApi('/admin/users', { method: 'POST', body });
+      closeModal('modalAddUser');
+      // Réinitialiser les champs
+      ['auName','auOrg','auEmail','auPhone','auDuration'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('auPlan').value = '';
+
+      // Afficher le résultat avec le mot de passe temporaire
+      document.getElementById('resultTitle').textContent = '✅ Utilisateur créé !';
+      document.getElementById('resultBody').innerHTML = `
+        <p style="margin-bottom:12px;">L'utilisateur <strong>${d.user.email}</strong> a été créé avec succès.</p>
+        <div style="background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:8px;padding:14px;">
+          <p style="font-size:.85rem;color:#64748b;margin-bottom:6px;">🔑 Mot de passe temporaire (à communiquer à l'utilisateur) :</p>
+          <code style="font-size:1rem;font-weight:700;color:#0a7d3f;letter-spacing:.1em;">${d.user.temp_password}</code>
+        </div>
+        ${d.subscription ? `<p style="margin-top:10px;color:#059669;font-size:.88rem;">✅ Abonnement <strong>${PLANS[d.subscription.plan]||d.subscription.plan}</strong> activé jusqu'au ${fmtD(d.subscription.expires_at)}.</p>` : ''}`;
+      openModal('modalResult');
+      loadUsers(); loadStats();
+    } catch(e) { msg.className = 'modal-msg err'; msg.textContent = '⚠️ ' + (e.message || 'Erreur.'); }
+    finally { btn.disabled = false; btn.textContent = 'Créer l\'utilisateur'; }
+  }
+
+  /* ====================== ABONNEMENTS ====================== */
+  async function loadSubs() {
+    const el = document.getElementById('subsList');
+    el.innerHTML = '<p class="loading">Chargement…</p>';
+    const params = new URLSearchParams({ all: '1' });
+    const st = document.getElementById('subsStatus')?.value;
+    const pl = document.getElementById('subsPlan')?.value;
+    if (st) params.set('status', st);
+    if (pl) params.set('plan', pl);
+    try {
+      const d = await adminApi('/admin/subscriptions?' + params);
+      SUBS_CACHE = d.data || [];
+      const s = d.summary || {};
+      document.getElementById('subsKpi').innerHTML = `
+        <div class="kpi-card green"><div class="kv">${fmt(s.revenue_active||0)}</div><div class="kl">Revenus actifs</div></div>
+        <div class="kpi-card"><div class="kv">${fmt(s.revenue_total||0)}</div><div class="kl">Revenus cumulés</div></div>
+        <div class="kpi-card green"><div class="kv">${fmtN(s.active||0)}</div><div class="kl">Abonnements actifs</div></div>
+        <div class="kpi-card orange"><div class="kv">${fmtN(s.pending||0)}</div><div class="kl">En attente</div></div>`;
+      renderSubs();
+    } catch(e) { el.innerHTML = '<p class="empty">Impossible de charger les abonnements.</p>'; }
+  }
+
+  function renderSubs() {
+    const el = document.getElementById('subsList');
+    const q = (document.getElementById('subsSearch')?.value || '').toLowerCase();
+    let items = SUBS_CACHE;
+    if (q) items = items.filter(s => [s.organization,s.name,s.email].some(v=>(v||'').toLowerCase().includes(q)));
+    if (!items.length) { el.innerHTML = '<p class="empty">Aucun abonnement trouvé.</p>'; return; }
+    el.innerHTML = `<table class="data-table">
+      <thead><tr>
+        <th>Entreprise / Contact</th><th>E-mail / Tél</th><th>Formule</th>
+        <th>Montant</th><th>Statut</th><th>Début</th><th>Échéance</th><th>Référence</th>
+      </tr></thead>
+      <tbody>${items.map(s => `<tr>
+        <td class="td-org"><b>${s.organization||'—'}</b>${s.name?`<small>${s.name}</small>`:''}</td>
+        <td>${s.email||''}${s.phone?'<br><small style="color:#64748b;">'+s.phone+'</small>':''}</td>
+        <td><strong>${PLANS[s.plan]||s.plan||'—'}</strong><br><small style="color:#64748b;">${s.duration_months||'?'} mois</small></td>
+        <td style="font-weight:700;">${fmt(s.amount)}</td>
+        <td>${chip(s.status)}</td>
+        <td>${fmtD(s.started_at)}</td>
+        <td>${fmtD(s.expires_at)}</td>
+        <td><small style="color:#94a3b8;font-size:.75rem;">${(s.payment_reference||'—').substring(0,18)}${(s.payment_reference||'').length>18?'…':''}</small></td>
+      </tr>`).join('')}</tbody></table>`;
+  }
+
+  /* ====================== GRANT SUBSCRIPTION ====================== */
+  let gsSearchTimeout = null;
+  function searchUserForGrant() {
+    clearTimeout(gsSearchTimeout);
+    gsSearchTimeout = setTimeout(async () => {
+      const email = document.getElementById('gsEmail').value.trim().toLowerCase();
+      const infoEl = document.getElementById('gsUserInfo');
+      document.getElementById('gsUserId').value = '';
+      if (email.length < 3) { infoEl.textContent = ''; return; }
+      const match = USERS_CACHE.find(u => (u.email||'').toLowerCase().includes(email));
+      if (match) {
+        infoEl.textContent = `✅ ${match.organization||match.name||match.email} (ID #${match.id})`;
+        document.getElementById('gsUserId').value = match.id;
+      } else {
+        infoEl.style.color = '#dc2626';
+        infoEl.textContent = '⚠️ Utilisateur non trouvé dans la liste chargée. Vérifiez l\'e-mail.';
+      }
+    }, 350);
+  }
+
+  function openGrantForUser(userId, email) {
+    document.getElementById('gsEmail').value = email;
+    document.getElementById('gsUserId').value = userId;
+    document.getElementById('gsUserInfo').textContent = `✅ Utilisateur #${userId} sélectionné`;
+    document.getElementById('gsUserInfo').style.color = '#059669';
+    openModal('modalGrantSub');
+  }
+
+  async function grantSub() {
+    const msg = document.getElementById('gsMsg');
+    const btn = document.getElementById('gsBtn');
+    msg.textContent = '';
+    const userId = parseInt(document.getElementById('gsUserId').value);
+    const plan = document.getElementById('gsPlan').value;
+    const dur = parseInt(document.getElementById('gsDuration').value);
+    const amount = document.getElementById('gsAmount').value;
+    if (!userId) { msg.className='modal-msg err'; msg.textContent='⚠️ Sélectionnez d\'abord un utilisateur.'; return; }
+    if (!plan||!dur) { msg.className='modal-msg err'; msg.textContent='⚠️ Formule et durée sont obligatoires.'; return; }
+    btn.disabled = true; btn.textContent = 'Attribution…';
+    try {
+      const body = { user_id: userId, plan, duration_months: dur };
+      if (amount !== '') body.amount = parseInt(amount) || 0;
+      const d = await adminApi('/admin/subscriptions/grant', { method: 'POST', body });
+      closeModal('modalGrantSub');
+      document.getElementById('gsEmail').value = '';
+      document.getElementById('gsUserId').value = '';
+      document.getElementById('gsUserInfo').textContent = '';
+      showResult('✅ Abonnement accordé !',
+        `<p>Abonnement <strong>${PLANS[plan]||plan}</strong> accordé jusqu'au <strong>${fmtD(d.subscription?.expires_at)}</strong>.</p>`);
+      loadSubs(); loadUsers(); loadStats();
+    } catch(e) { msg.className='modal-msg err'; msg.textContent='⚠️ ' + (e.message||'Erreur.'); }
+    finally { btn.disabled=false; btn.textContent='Accorder l\'abonnement'; }
+  }
+
+  /* ====================== PAIEMENTS ====================== */
+  async function loadPayments() {
+    const el = document.getElementById('paymentsList');
+    el.innerHTML = '<p class="loading">Chargement…</p>';
+    try {
+      const d = await adminApi('/admin/payments?all=1');
+      PAYMENTS_CACHE = d.data || [];
+      document.getElementById('paymentsKpi').innerHTML = `
+        <div class="kpi-card green"><div class="kv">${fmt(d.total_real||0)}</div><div class="kl">Revenus réels (KKiaPay)</div></div>
+        <div class="kpi-card"><div class="kv">${fmt(d.total_all||0)}</div><div class="kl">Total incluant manuels</div></div>
+        <div class="kpi-card blue"><div class="kv">${fmtN(PAYMENTS_CACHE.filter(p=>!p.is_manual).length)}</div><div class="kl">Paiements réels</div></div>
+        <div class="kpi-card purple"><div class="kv">${fmtN(PAYMENTS_CACHE.filter(p=>p.is_manual).length)}</div><div class="kl">Accordés manuellement</div></div>`;
+      renderPayments();
+    } catch(e) { el.innerHTML = '<p class="empty">Impossible de charger les paiements.</p>'; }
+  }
+
+  function renderPayments() {
+    const el = document.getElementById('paymentsList');
+    const q = (document.getElementById('paymentsSearch')?.value||'').toLowerCase();
+    const type = document.getElementById('paymentsType')?.value;
+    let items = PAYMENTS_CACHE;
+    if (q) items = items.filter(p => [p.organization,p.name,p.email,p.payment_reference].some(v=>(v||'').toLowerCase().includes(q)));
+    if (type === 'real') items = items.filter(p => !p.is_manual);
+    if (type === 'manual') items = items.filter(p => p.is_manual);
+    if (!items.length) { el.innerHTML = '<p class="empty">Aucun paiement trouvé.</p>'; return; }
+    el.innerHTML = `<table class="data-table">
+      <thead><tr>
+        <th>#</th><th>Entreprise / Contact</th><th>E-mail</th><th>Formule</th>
+        <th>Montant</th><th>Type</th><th>Statut</th><th>Référence</th><th>Date</th>
+      </tr></thead>
+      <tbody>${items.map(p => `<tr>
+        <td style="color:#94a3b8;font-size:.78rem;">#${p.id}</td>
+        <td class="td-org"><b>${p.organization||p.name||'—'}</b>${p.organization&&p.name?`<small>${p.name}</small>`:''}</td>
+        <td style="font-size:.8rem;">${p.email||'—'}</td>
+        <td>${PLANS[p.plan]||p.plan||'—'}<br><small style="color:#64748b;">${p.duration_months||'?'} mois</small></td>
+        <td style="font-weight:700;color:${p.is_manual?'#64748b':'#059669'};">${fmt(p.amount)}</td>
+        <td>${p.is_manual?'<span class="badge-manual">Admin</span>':'<span class="chip chip-blue">KKiaPay</span>'}</td>
+        <td>${chip(p.status)}</td>
+        <td><small style="color:#94a3b8;font-size:.73rem;">${(p.payment_reference||'—')}</small></td>
+        <td style="font-size:.8rem;">${fmtD(p.created_at)}</td>
+      </tr>`).join('')}</tbody></table>`;
+  }
+
+  /* ====================== ANNONCES ====================== */
+  async function loadNeeds() {
+    const el = document.getElementById('needsList');
+    el.innerHTML = '<p class="loading">Chargement…</p>';
+    try {
+      const d = await adminApi('/admin/needs/pending');
+      const items = d.data || d.needs || (Array.isArray(d) ? d : []);
+      if (!items.length) { el.innerHTML = '<div class="empty">✅ Aucune annonce en attente de validation.</div>'; return; }
+      el.innerHTML = items.map(n => `
+        <div class="need-card">
+          <div class="need-card-top">
+            <div>
+              <h3>${n.trade||n.title||'Sans titre'}</h3>
+              <div class="need-meta">
+                ${n.employer_name||n.org_name?`<span>🏢 ${n.employer_name||n.org_name}</span>`:''}
+                ${n.locality?`<span>📍 ${n.locality}</span>`:''}
+                ${n.contact||n.phone?`<span>📞 ${n.contact||n.phone}</span>`:''}
+                <span style="color:#94a3b8;">Soumis ${fmtDT(n.created_at)}</span>
+              </div>
+            </div>
+            <div class="td-actions" style="flex-shrink:0;">
+              <button class="btn-a btn-primary" onclick="validateNeed(${n.id},true)">✅ Approuver</button>
+              <button class="btn-a btn-danger" onclick="validateNeed(${n.id},false)">✕ Rejeter</button>
+            </div>
+          </div>
+          ${n.description?`<p style="font-size:.83rem;color:#475569;margin-top:8px;line-height:1.6;white-space:pre-wrap;">${n.description.substring(0,400)}${n.description.length>400?'…':''}</p>`:''}
+        </div>`).join('');
+    } catch(e) { el.innerHTML = '<p class="empty">Impossible de charger les annonces.</p>'; }
+  }
+
+  async function validateNeed(id, approve) {
+    try {
+      const d = await adminApi(`/admin/needs/${id}/validate`, { method: 'POST', body: { approve } });
+      showResult(approve?'✅ Annonce approuvée !':'✕ Annonce rejetée', `<p>${d.message||''}</p>`);
+      loadNeeds(); loadStats();
+    } catch(e) { alert('Erreur : ' + e.message); }
+  }
+
+  /* ====================== SCRAPERS ====================== */
+  async function loadScrapers() {
+    const kpi = document.getElementById('scrapersKpi');
+    const el = document.getElementById('scrapersList');
+    const logs = document.getElementById('scrapersLogs');
+    el.innerHTML = '<p class="loading">Chargement…</p>';
+    try {
+      const d = await adminApi('/admin/scrapers');
+      const robots = d.robots || [], s = d.summary || {};
+      kpi.innerHTML = `
+        <div class="kpi-card"><div class="kv">${fmtN(s.total||robots.length)}</div><div class="kl">Robots</div></div>
+        <div class="kpi-card green"><div class="kv">${fmtN(s.ok||0)}</div><div class="kl">🟢 Opérationnels</div></div>
+        <div class="kpi-card orange"><div class="kv">${fmtN(s.stale||0)}</div><div class="kl">🟡 Inactifs</div></div>
+        <div class="kpi-card red"><div class="kv">${fmtN(s.down||0)}</div><div class="kl">🔴 En panne</div></div>`;
+
+      const healthInfo = {
+        ok:    { dot:'🟢', lbl:'Opérationnel', border:'#16a34a' },
+        stale: { dot:'🟡', lbl:'Inactif',       border:'#d97706' },
+        down:  { dot:'🔴', lbl:'En panne',       border:'#dc2626' },
+      };
+      el.innerHTML = robots.length
+        ? robots.map(r => {
+            const h = healthInfo[r.health] || healthInfo.stale;
+            return `<div class="scraper-card" style="border-left:4px solid ${h.border};">
+              <div class="scraper-card-top">
+                <h3>${(COUNTRIES[r.country]||r.country||'—')} ${r.source_name||''}</h3>
+                <span class="chip ${r.health==='ok'?'chip-green':r.health==='down'?'chip-red':'chip-orange'}">${h.dot} ${h.lbl}</span>
+              </div>
+              <div class="scraper-stats">
+                <span>Dernière exéc. : <b>${fmtDT(r.last_run)}</b></span>
+                <span>Collectés : <b>${r.last_items_collected??'—'}</b> · Nouveaux : <b>${r.last_items_new??'—'}</b></span>
+                <span style="color:${(r.failures_24h||0)>0?'#dc2626':'#94a3b8'};">Échecs 24h : <b>${r.failures_24h||0}</b></span>
+              </div>
+              ${r.last_message?`<p style="font-size:.75rem;color:#94a3b8;margin-top:6px;">${r.last_message}</p>`:''}</div>`;
+          }).join('')
+        : '<p class="empty">Aucun robot enregistré.</p>';
+
+      const rls = d.recent_logs || [];
+      logs.innerHTML = rls.length
+        ? `<table class="data-table"><thead><tr>
+            <th>Date</th><th>Pays</th><th>Source</th><th>Statut</th><th>Collectés</th><th>Nouveaux</th></tr></thead>
+            <tbody>${rls.map(l=>`<tr>
+              <td>${fmtDT(l.ran_at)}</td>
+              <td>${COUNTRIES[l.country]||l.country||'—'}</td>
+              <td>${l.source_name||'—'}</td>
+              <td><span style="color:${l.status==='success'?'#16a34a':'#dc2626'};font-weight:600;">${l.status==='success'?'✓':'✕'} ${l.status==='success'?'Succès':'Échec'}</span></td>
+              <td>${l.items_collected??'—'}</td>
+              <td>${l.items_new??'—'}</td>
+            </tr>`).join('')}</tbody></table>`
+        : '<p class="empty">Aucune exécution enregistrée.</p>';
+    } catch(e) { el.innerHTML='<p class="empty">Impossible de charger les scrapers.</p>'; }
+  }
+
+  /* ====================== MODALES ====================== */
+  function openModal(id) {
+    document.getElementById('modalOverlay').style.display = 'flex';
+    document.querySelectorAll('.modal-box').forEach(m => m.style.display = 'none');
+    const m = document.getElementById(id); if (m) m.style.display = 'block';
+  }
+  function closeModal(id) {
+    const m = document.getElementById(id); if (m) m.style.display = 'none';
+    const allHidden = [...document.querySelectorAll('.modal-box')].every(m => m.style.display === 'none');
+    if (allHidden) document.getElementById('modalOverlay').style.display = 'none';
+  }
+  function handleOverlayClick(e) { if (e.target === e.currentTarget) closeAllModals(); }
+  function closeAllModals() {
+    document.getElementById('modalOverlay').style.display = 'none';
+    document.querySelectorAll('.modal-box').forEach(m => m.style.display = 'none');
+  }
+  function showResult(title, bodyHtml) {
+    document.getElementById('resultTitle').textContent = title;
+    document.getElementById('resultBody').innerHTML = bodyHtml;
+    openModal('modalResult');
+  }
+
+  /* ====================== INIT ====================== */
+  document.addEventListener('DOMContentLoaded', () => {
+    // Écouter les tabs de la sidebar
+    document.querySelectorAll('.admin-nav a[data-tab]').forEach(a => {
+      a.addEventListener('click', e => { e.preventDefault(); switchTab(a.dataset.tab); });
+    });
+    // Touche Entrée pour la connexion
+    ['lUsername','lPassword'].forEach(id => {
+      document.getElementById(id)?.addEventListener('keydown', e => { if (e.key === 'Enter') doAdminLogin(); });
+    });
+    // Déjà connecté ?
+    if (adminToken()) {
+      document.getElementById('loginScreen').style.display = 'none';
+      showApp();
+    }
+  });
+</script>
 </body>
 </html>

@@ -8,7 +8,7 @@
   <meta name="description" content="Consultations des ONG, agences des Nations Unies et organismes internationaux au Bénin : recevez les appels d'offres privés en temps réel par WhatsApp et Email.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=202607221200">
+  <link rel="stylesheet" href="css/style.css?v=202607232100">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RRXKSCN05J"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RRXKSCN05J');</script>
 </head>
@@ -20,8 +20,8 @@
       <div class="breadcrumb"><a href="/index">Accueil</a><span class="sep">›</span>Appels d'offres privés</div>
       <div class="page-title">
         <div>
-          <h1>Appels d'offres privés</h1>
-          <p>Consultations des ONG, agences des Nations Unies et organismes internationaux au Bénin</p>
+          <h1 id="pageTitle">Appels d'offres privés</h1>
+          <p id="pageSubtitle">Consultations des ONG, agences des Nations Unies et organismes internationaux au Bénin</p>
         </div>
         <div class="official-note" style="background:var(--purple-050);border-color:#e5d9fb;color:#6d28d9;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 21v-1.5A4.5 4.5 0 0 1 6.5 15h5a4.5 4.5 0 0 1 4.5 4.5V21"/></svg>
@@ -73,7 +73,7 @@
 
         <div class="tenders-grid" id="tendersGrid"></div>
 
-        <div class="market-showing">Chargement des consultations privées au Bénin…</div>
+        <div class="market-showing">Chargement des consultations privées…</div>
       </div>
     </div>
   </section>
@@ -90,7 +90,7 @@
     </div>
   </section>
 
-  <script src="js/app.js?v=202607231600"></script>
+  <script src="js/app.js?v=202607232100"></script>
   <script>
     const COUNTRIES = {
       BJ: { flag: '🇧🇯', name: 'Bénin' },
@@ -150,6 +150,7 @@
     }
 
     function initPage() {
+      if (window.amMeta) { var _m = amMeta(); var _t = document.getElementById('pageTitle'); if (_t) _t.textContent = "Appels d'offres privés — " + _m.name; var _st = document.getElementById("pageSubtitle"); if (_st) _st.textContent = "Consultations des ONG, agences des Nations Unies et organismes internationaux " + _m.heroTitle; document.title = "Appels d'offres privés " + _m.heroTitle + " — AlerteMarché"; }
       const grid = document.getElementById('tendersGrid');
       let data = [];
 
@@ -195,7 +196,7 @@
 
       // Hydratation depuis l'API réelle : UNIQUEMENT les appels d'offres PRIVÉS
       // (ONG, agences des Nations Unies, organismes internationaux — type=prive).
-      api('/tenders?country=BJ&type=prive&per_page=200').then(res => {
+      api('/tenders?country=' + (window.amCode ? amCode() : 'BJ') + '&type=prive&per_page=200').then(res => {
         const items = (res.data || res || []);
         if (Array.isArray(items) && items.length) {
           const now = Date.now();
@@ -207,7 +208,7 @@
               isNew,
               title: t.title || 'Consultation',
               inst: t.institution || 'Organisme international',
-              loc: t.location || 'Bénin',
+              loc: t.location || (window.amMeta ? amMeta().name : 'Bénin'),
               reference: t.reference || null,
               url: t.source_url || null,
               _deadline: t.deadline || null,
@@ -222,7 +223,7 @@
           ['fLocation', 'fLocation2'].forEach(id => { const s = document.getElementById(id); s.length = 1; rLocs.forEach(i => { const o = document.createElement('option'); o.textContent = i; s.appendChild(o); }); });
           applyFilters();
           const showEl = document.querySelector('.market-showing');
-          if (showEl) showEl.textContent = `Affichage de ${data.length} consultations privées au Bénin`;
+          if (showEl) showEl.textContent = `Affichage de ${data.length} consultations privées — ${(window.amMeta?amMeta().name:"Bénin")}`;
           document.getElementById('updatedAt').textContent = "Mis à jour à l'instant";
         } else {
           render([]);

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <title>Choisissez votre pays — AlerteMarché</title>
+  <meta name="description" content="Sélectionnez votre pays pour accéder aux appels d'offres publics et privés : Bénin, Togo, Côte d'Ivoire.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: radial-gradient(1200px 600px at 50% -10%, #125e34 0%, transparent 60%), linear-gradient(160deg, #0a3d20 0%, #072b16 100%);
+      background-color: #0a3d20;
+      min-height: 100vh; color: #fff;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 40px 20px;
+    }
+    .cs-brand {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 8px;
+    }
+    .cs-brand .mark {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: #16a34a; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 8px 20px rgba(22,163,74,.4);
+    }
+    .cs-brand .mark svg { width: 24px; height: 24px; color: #fff; }
+    .cs-brand .name { font-size: 1.5rem; font-weight: 800; letter-spacing: -.02em; }
+    .cs-brand .name b { color: #4ade80; font-weight: 900; }
+    .cs-tag { color: #a7f3d0; font-size: .9rem; margin-bottom: 40px; letter-spacing: .04em; }
+    .cs-head { text-align: center; margin-bottom: 8px; }
+    .cs-head h1 { font-size: 2.1rem; font-weight: 900; letter-spacing: -.02em; }
+    .cs-head p { color: #cbe9d6; font-size: 1.05rem; margin-top: 10px; max-width: 560px; }
+    .cs-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+      margin-top: 46px; width: 100%; max-width: 980px;
+    }
+    .cs-card {
+      background: #fff; color: #0f172a; border-radius: 20px; padding: 32px 24px;
+      text-align: center; cursor: pointer; border: 3px solid transparent;
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+      box-shadow: 0 12px 30px rgba(0,0,0,.22); text-decoration: none;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .cs-card:hover {
+      transform: translateY(-8px); border-color: #16a34a;
+      box-shadow: 0 22px 48px rgba(0,0,0,.32);
+    }
+    .cs-flag {
+      width: 96px; height: 68px; object-fit: cover; border-radius: 10px;
+      box-shadow: 0 6px 16px rgba(0,0,0,.18); margin-bottom: 20px;
+    }
+    .cs-card h2 { font-size: 1.4rem; font-weight: 800; margin-bottom: 8px; }
+    .cs-card p { color: #64748b; font-size: .92rem; line-height: 1.5; }
+    .cs-card .cs-go {
+      margin-top: 18px; display: inline-flex; align-items: center; gap: 8px;
+      color: #16a34a; font-weight: 700; font-size: .95rem;
+    }
+    .cs-card .cs-go svg { width: 18px; height: 18px; transition: transform .2s; }
+    .cs-card:hover .cs-go svg { transform: translateX(4px); }
+    .cs-foot { margin-top: 44px; color: #86c9a1; font-size: .85rem; text-align: center; }
+    @media (max-width: 760px) {
+      .cs-grid { grid-template-columns: 1fr; max-width: 420px; gap: 18px; }
+      .cs-head h1 { font-size: 1.6rem; }
+      .cs-card { padding: 26px 20px; }
+    }
+  </style>
+</head>
+<body data-no-chrome="1">
+
+  <div class="cs-brand">
+    <span class="mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    </span>
+    <span class="name">Alerte<b>Marché</b></span>
+  </div>
+  <div class="cs-tag">Opportunités • Veille • Croissance</div>
+
+  <div class="cs-head">
+    <h1>Choisissez votre pays</h1>
+    <p>Sélectionnez votre pays pour accéder aux appels d'offres publics et privés adaptés à votre marché.</p>
+  </div>
+
+  <div class="cs-grid">
+    <a class="cs-card" href="#" data-country="BJ">
+      <img class="cs-flag" src="https://flagcdn.com/w160/bj.png" alt="Drapeau du Bénin">
+      <h2>Bénin</h2>
+      <p>Appels d'offres publics et privés au Bénin.</p>
+      <span class="cs-go">Continuer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+    </a>
+    <a class="cs-card" href="#" data-country="TG">
+      <img class="cs-flag" src="https://flagcdn.com/w160/tg.png" alt="Drapeau du Togo">
+      <h2>Togo</h2>
+      <p>Appels d'offres publics et privés au Togo.</p>
+      <span class="cs-go">Continuer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+    </a>
+    <a class="cs-card" href="#" data-country="CI">
+      <img class="cs-flag" src="https://flagcdn.com/w160/ci.png" alt="Drapeau de la Côte d'Ivoire">
+      <h2>Côte d'Ivoire</h2>
+      <p>Appels d'offres publics et privés en Côte d'Ivoire.</p>
+      <span class="cs-go">Continuer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+    </a>
+  </div>
+
+  <div class="cs-foot">🌍 Bénin • Togo • Côte d'Ivoire — la veille des marchés en Afrique de l'Ouest</div>
+
+  <script>
+    document.querySelectorAll('.cs-card').forEach(function (card) {
+      card.addEventListener('click', function (e) {
+        e.preventDefault();
+        var code = card.getAttribute('data-country');
+        try { localStorage.setItem('am_country', code); } catch (_) {}
+        window.location.href = '/index';
+      });
+    });
+  </script>
+</body>
+</html>

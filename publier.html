@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <title>Publier une annonce — AlerteMarché</title>
+  <meta name="description" content="Publiez votre appel d'offres, besoin ou avis sur AlerteMarché. Touchez des milliers d'entreprises et prestataires qualifiés au Bénin et en Afrique de l'Ouest.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=202607232100">
+  <script src="https://cdn.kkiapay.me/k.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-RRXKSCN05J"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RRXKSCN05J');</script>
+  <style>
+    /* ---- Page Publier ---- */
+    .pub-hero { background: linear-gradient(135deg, #0a7d3f 0%, #064d27 100%); color: #fff; padding: 56px 0 48px; }
+    .pub-hero h1 { font-size: 2.1rem; font-weight: 800; margin: 0 0 12px; }
+    .pub-hero p  { font-size: 1.1rem; opacity: .88; max-width: 560px; margin: 0 0 32px; }
+    .pub-steps { display: flex; gap: 0; align-items: stretch; flex-wrap: wrap; margin-top: 8px; }
+    .pub-step  { flex: 1; min-width: 160px; display: flex; align-items: flex-start; gap: 12px; padding: 14px 18px; background: rgba(255,255,255,.08); border-radius: 10px; }
+    .pub-step + .pub-step { margin-left: 8px; }
+    .pub-step-num { background: #f59e0b; color: #fff; font-weight: 800; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: .95rem; }
+    .pub-step-txt b { display: block; font-weight: 700; font-size: .9rem; }
+    .pub-step-txt span { font-size: .8rem; opacity: .78; }
+
+    .pub-who { display: flex; gap: 10px; flex-wrap: wrap; margin: 24px 0 0; }
+    .pub-who-badge { background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3); border-radius: 20px; padding: 5px 14px; font-size: .85rem; }
+
+    .pub-layout { display: grid; grid-template-columns: 1fr 340px; gap: 32px; align-items: start; margin-top: 36px; }
+    @media (max-width: 900px) { .pub-layout { grid-template-columns: 1fr; } }
+
+    .pub-form-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 32px; }
+    .pub-form-card h2 { font-size: 1.3rem; font-weight: 700; margin: 0 0 24px; }
+    .pub-section-title { font-weight: 700; font-size: .85rem; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); margin: 28px 0 14px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+    .pub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 620px) { .pub-grid { grid-template-columns: 1fr; } }
+    .pub-field { display: flex; flex-direction: column; gap: 5px; }
+    .pub-field label { font-weight: 600; font-size: .9rem; }
+    .pub-field input, .pub-field select, .pub-field textarea {
+      padding: .7rem .9rem; border: 1px solid var(--line); border-radius: 6px;
+      font-size: .95rem; font-family: inherit; background: #fff; width: 100%; box-sizing: border-box;
+    }
+    .pub-field textarea { resize: vertical; min-height: 110px; }
+    .pub-field input:focus, .pub-field select:focus, .pub-field textarea:focus {
+      outline: none; border-color: var(--primary, #0a7d3f); box-shadow: 0 0 0 3px rgba(10,125,63,.1);
+    }
+    .pub-field .hint { font-size: .78rem; color: var(--muted); margin-top: 3px; }
+    .pub-full { grid-column: 1 / -1; }
+
+    /* 4 Cards type d'annonce */
+    .pub-type-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
+    @media (max-width: 560px) { .pub-type-grid { grid-template-columns: 1fr; } }
+    .pub-type-btn {
+      border: 2px solid var(--line, #e5e7eb); background: #fff; border-radius: 10px;
+      padding: 14px 12px; text-align: left; cursor: pointer;
+      transition: border-color .15s, background .15s, box-shadow .15s;
+      display: flex; flex-direction: column; gap: 4px; width: 100%;
+    }
+    .pub-type-btn:hover { border-color: #f59e0b; background: #fffdf5; }
+    .pub-type-btn.selected { border-color: #d97706; background: #fffbeb; box-shadow: 0 0 0 3px rgba(217,119,6,.12); }
+    .pub-type-icon { font-size: 1.4rem; line-height: 1; margin-bottom: 2px; }
+    .pub-type-btn b { font-size: .88rem; font-weight: 700; color: var(--ink, #111); display: block; }
+    .pub-type-btn small { font-size: .74rem; color: var(--muted, #6b7280); line-height: 1.3; }
+
+    /* Bandeau visiteur */
+    .pub-visitor-notice {
+      background: #fffbeb; border: 1.5px solid #f59e0b; border-radius: 8px;
+      padding: 12px 16px; margin-bottom: 18px; font-size: .88rem; display: none;
+    }
+    .pub-visitor-notice a { color: #d97706; font-weight: 600; }
+
+    .pub-price-box { background: linear-gradient(135deg, #fffbeb, #fef3c7); border: 2px solid #f59e0b; border-radius: 12px; padding: 24px; margin-top: 28px; }
+    .pub-price-box h3 { font-size: 1.05rem; font-weight: 700; margin: 0 0 6px; }
+    .pub-price-big { font-size: 2rem; font-weight: 900; color: #d97706; line-height: 1; margin: 8px 0; }
+    .pub-price-big small { font-size: 1rem; font-weight: 500; color: #92400e; }
+    .pub-conds { list-style: none; padding: 0; margin: 12px 0 0; display: flex; flex-direction: column; gap: 6px; }
+    .pub-conds li { font-size: .85rem; display: flex; gap: 8px; align-items: flex-start; }
+    .pub-conds li::before { content: '✓'; color: #059669; font-weight: 700; flex-shrink: 0; }
+
+    .pub-submit-btn { width: 100%; padding: 1rem; font-size: 1.05rem; font-weight: 700; border-radius: 8px; margin-top: 20px; cursor: pointer; background: #d97706; border: none; color: #fff; transition: background .2s; }
+    .pub-submit-btn:hover { background: #b45309; }
+    .pub-submit-btn:disabled { opacity: .55; cursor: not-allowed; }
+
+    /* Sidebar */
+    .pub-sidebar { display: flex; flex-direction: column; gap: 20px; }
+    .pub-info-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
+    .pub-info-card h3 { font-size: 1rem; font-weight: 700; margin: 0 0 14px; display: flex; align-items: center; gap: 8px; }
+    .pub-guarantee { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 18px; }
+    .pub-guarantee h4 { margin: 0 0 8px; color: #065f46; font-size: .95rem; }
+    .pub-login-wall { background: #fff8f0; border: 2px solid #f59e0b; border-radius: 10px; padding: 20px; text-align: center; display: none; }
+    .pub-login-wall p { margin: 0 0 14px; font-size: .95rem; }
+
+    /* Confirmation */
+    .pub-confirm { text-align: center; padding: 40px 20px; display: none; }
+    .pub-confirm .big-check { font-size: 4rem; margin-bottom: 16px; }
+    .pub-confirm h2 { font-size: 1.5rem; font-weight: 800; color: #065f46; margin: 0 0 12px; }
+
+    .req { color: #ef4444; }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <section class="pub-hero">
+    <div class="container">
+      <h1>📢 Publiez votre annonce</h1>
+      <p>Touchez des milliers d'entreprises, prestataires et experts qualifiés au Bénin et en Afrique de l'Ouest. Votre annonce est vérifiée et diffusée après validation par notre équipe.</p>
+
+      <div class="pub-steps">
+        <div class="pub-step"><div class="pub-step-num">1</div><div class="pub-step-txt"><b>Créez votre compte</b><span>Inscription gratuite</span></div></div>
+        <div class="pub-step"><div class="pub-step-num">2</div><div class="pub-step-txt"><b>Rédigez l'annonce</b><span>Formulaire guidé</span></div></div>
+        <div class="pub-step"><div class="pub-step-num">3</div><div class="pub-step-txt"><b>Payez 20 000 FCFA</b><span>Mobile Money / carte</span></div></div>
+        <div class="pub-step"><div class="pub-step-num">4</div><div class="pub-step-txt"><b>Validation & diffusion</b><span>Sous 24–48 h ouvrées</span></div></div>
+      </div>
+
+      <div class="pub-who">
+        <span class="pub-who-badge">🏢 Entreprise privée</span>
+        <span class="pub-who-badge">🏦 Banque & institution financière</span>
+        <span class="pub-who-badge">🌍 ONG & association</span>
+        <span class="pub-who-badge">🏛️ Institution internationale</span>
+        <span class="pub-who-badge">🏗️ Administration publique</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FORMULAIRE -->
+  <section class="section" style="background:var(--bg);">
+    <div class="container">
+
+      <!-- Mur de connexion (si non connecté) -->
+      <div id="loginWall" class="pub-login-wall" style="max-width:520px;margin:0 auto 32px;">
+        <p>🔐 <strong>Connectez-vous</strong> ou <strong>créez un compte professionnel gratuit</strong> pour publier une annonce.</p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+          <a href="/connexion?next=/publier" class="btn btn--outline" style="padding:.7rem 1.4rem;border-radius:8px;">Se connecter</a>
+          <a href="/inscription?profil=prestataire" class="btn btn--primary" style="padding:.7rem 1.4rem;border-radius:8px;background:#d97706;border-color:#d97706;">Créer un compte gratuit</a>
+        </div>
+      </div>
+
+      <div id="pubContent" class="pub-layout" style="display:none;">
+
+        <!-- Formulaire principal -->
+        <div class="pub-form-card">
+
+          <!-- Confirmation après soumission -->
+          <div id="pubConfirm" class="pub-confirm">
+            <div class="big-check">✅</div>
+            <h2>Annonce soumise avec succès !</h2>
+            <p style="color:var(--muted);max-width:420px;margin:0 auto 24px;">Votre annonce est maintenant <strong>en attente de validation</strong> par notre équipe éditoriale. Vous recevrez une confirmation par email et WhatsApp sous <strong>24 à 48 heures ouvrées</strong>.</p>
+            <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:18px;max-width:380px;margin:0 auto 24px;text-align:left;">
+              <p style="margin:0 0 8px;"><strong>Prochaines étapes :</strong></p>
+              <ul style="margin:0;padding-left:18px;font-size:.9rem;line-height:1.8;">
+                <li>Notre équipe vérifie la conformité de votre annonce</li>
+                <li>Validation et mise en ligne sous 24–48 h</li>
+                <li>Diffusion automatique aux abonnés concernés par WhatsApp et email</li>
+              </ul>
+            </div>
+            <a href="/dashboard" class="btn btn--primary" style="padding:.8rem 2rem;border-radius:8px;">Voir mon tableau de bord</a>
+          </div>
+
+          <!-- Le formulaire -->
+          <div id="pubFormWrap">
+            <h2>Votre annonce</h2>
+
+            <!-- Bandeau visiteur (non connecté) -->
+            <div id="visitorNotice" class="pub-visitor-notice">
+              📋 Vous naviguez en mode aperçu. <a href="/connexion?next=/publier">Connectez-vous</a> ou <a href="/inscription?profil=prestataire">créez un compte</a> pour soumettre votre annonce.
+            </div>
+
+            <form id="pubForm" novalidate>
+
+              <!-- 4 boutons type d'annonce -->
+              <div class="pub-section-title">Type d'annonce <span class="req">*</span></div>
+              <div class="pub-type-grid">
+                <button type="button" class="pub-type-btn" data-type="appel_offres">
+                  <span class="pub-type-icon">📋</span>
+                  <b>Appel d'offres</b>
+                  <small>Sélection de prestataires ou fournisseurs</small>
+                </button>
+                <button type="button" class="pub-type-btn" data-type="besoin_prestation">
+                  <span class="pub-type-icon">🔧</span>
+                  <b>Besoin de prestation</b>
+                  <small>Recherche de service ou d'expertise</small>
+                </button>
+                <button type="button" class="pub-type-btn" data-type="partenariat">
+                  <span class="pub-type-icon">🤝</span>
+                  <b>Partenariat</b>
+                  <small>Collaboration ou joint-venture</small>
+                </button>
+                <button type="button" class="pub-type-btn" data-type="avis_recrutement">
+                  <span class="pub-type-icon">📣</span>
+                  <b>Avis & recrutement</b>
+                  <small>Avis de recrutement ou avis général</small>
+                </button>
+              </div>
+              <!-- Champ caché pour le type sélectionné -->
+              <input type="hidden" name="type" id="typeSelect">
+              <p id="typeError" style="color:#ef4444;font-size:.82rem;margin:-12px 0 14px;display:none;">⚠️ Veuillez sélectionner un type d'annonce.</p>
+
+              <div class="pub-section-title">Titre & secteur</div>
+              <div class="pub-grid">
+                <div class="pub-field pub-full">
+                  <label>Titre de l'annonce <span class="req">*</span></label>
+                  <input type="text" name="title" placeholder="Ex : Appel d'offres pour travaux de construction d'un bâtiment R+2" required maxlength="200">
+                  <span class="hint">Soyez précis et concis (max. 200 caractères)</span>
+                </div>
+                <div class="pub-field pub-full">
+                  <label>Secteur d'activité <span class="req">*</span></label>
+                  <select name="sector" required>
+                    <option value="">Sélectionnez</option>
+                    <option>Bâtiment / BTP</option>
+                    <option>Informatique / Numérique</option>
+                    <option>Fournitures / Équipements</option>
+                    <option>Services</option>
+                    <option>Santé</option>
+                    <option>Éducation / Formation</option>
+                    <option>Énergie</option>
+                    <option>Agriculture</option>
+                    <option>Finance / Banque</option>
+                    <option>Transport / Logistique</option>
+                    <option>Environnement</option>
+                    <option>Autre</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="pub-section-title">Votre organisation</div>
+              <div class="pub-grid">
+                <div class="pub-field">
+                  <label>Nom de l'organisation <span class="req">*</span></label>
+                  <input type="text" id="orgField" name="org_name" placeholder="Ex : Banque Atlantique, ONG CARE, SARL BTP..." required>
+                </div>
+                <div class="pub-field">
+                  <label>Type d'organisation <span class="req">*</span></label>
+                  <select name="org_type" required>
+                    <option value="">Sélectionnez</option>
+                    <option>Entreprise privée</option>
+                    <option>Banque / Institution financière</option>
+                    <option>ONG / Association</option>
+                    <option>Institution internationale</option>
+                    <option>Administration publique</option>
+                    <option>Autre</option>
+                  </select>
+                </div>
+                <div class="pub-field">
+                  <label>Site web officiel <span style="color:var(--muted);font-weight:400;">(optionnel)</span></label>
+                  <input type="url" name="official_url" placeholder="https://www.votre-organisation.bj">
+                  <span class="hint">Lien vers votre site officiel — affiché avec l'annonce</span>
+                </div>
+                <div class="pub-field">
+                  <label>Contact (email ou téléphone) <span class="req">*</span></label>
+                  <input type="text" name="contact" placeholder="Ex : appel-offres@banque.bj ou +229 01 XX XX XX" required>
+                </div>
+              </div>
+
+              <div class="pub-section-title">Détails de l'annonce</div>
+              <div class="pub-grid">
+                <div class="pub-field pub-full">
+                  <label>Description détaillée <span class="req">*</span></label>
+                  <textarea name="description" placeholder="Décrivez clairement votre besoin, les prestations attendues, les critères de sélection, les documents à fournir…" required minlength="80"></textarea>
+                  <span class="hint">Minimum 80 caractères — plus votre description est complète, plus vous recevrez de réponses pertinentes</span>
+                </div>
+                <div class="pub-field">
+                  <label>Budget estimé <span style="color:var(--muted);font-weight:400;">(optionnel)</span></label>
+                  <input type="text" name="budget" placeholder="Ex : 5 000 000 FCFA ou Sur devis">
+                </div>
+                <div class="pub-field">
+                  <label>Date limite de dépôt <span class="req">*</span></label>
+                  <input type="date" name="deadline" required>
+                </div>
+                <div class="pub-field">
+                  <label>Pays <span class="req">*</span></label>
+                  <select name="country" required>
+                    <option value="BJ" selected>🇧🇯 Bénin</option>
+                    <option value="TG">🇹🇬 Togo</option>
+                    <option value="CI">🇨🇮 Côte d'Ivoire</option>
+                  </select>
+                </div>
+                <div class="pub-field">
+                  <label>Région / Ville <span class="req">*</span></label>
+                  <input type="text" name="locality" placeholder="Ex : Cotonou, Parakou, Porto-Novo…" required>
+                </div>
+              </div>
+
+              <!-- Conditions + paiement -->
+              <div class="pub-price-box">
+                <h3>💳 Tarif de publication</h3>
+                <div class="pub-price-big">20 000 <small>FCFA / annonce</small></div>
+                <p style="margin:6px 0 0;font-size:.88rem;color:#92400e;">Paiement sécurisé par Mobile Money (MTN, Moov) ou carte bancaire via KKiaPay.</p>
+                <ul class="pub-conds">
+                  <li>Diffusion aux abonnés correspondant à votre secteur</li>
+                  <li>Alerte WhatsApp + email instantanée après validation</li>
+                  <li>Affichage sur la page Appels d'offres privés</li>
+                  <li>Lien vers votre site officiel inclus</li>
+                  <li>Visible pendant 30 jours</li>
+                  <li>Validation éditoriale sous 24–48 h ouvrées</li>
+                </ul>
+              </div>
+
+              <!-- Acceptation des conditions -->
+              <div style="margin-top:20px;display:flex;gap:10px;align-items:flex-start;">
+                <input type="checkbox" id="acceptCGU" style="margin-top:4px;flex-shrink:0;width:16px;height:16px;">
+                <label for="acceptCGU" style="font-size:.88rem;line-height:1.5;cursor:pointer;">
+                  J'ai lu et j'accepte les <a href="/cgu" target="_blank" style="color:var(--primary,#0a7d3f);">Conditions Générales d'Utilisation</a> d'AlerteMarché. Je certifie que le contenu de cette annonce est exact, légal et que mon organisation en est l'émetteur légitime. <strong>Le paiement de 20 000 FCFA est dû avant la mise en ligne et non remboursable si l'annonce est refusée pour non-conformité.</strong>
+                </label>
+              </div>
+
+              <p id="pubMsg" style="margin-top:12px;font-size:.9rem;font-weight:600;"></p>
+
+              <button type="submit" class="pub-submit-btn" id="pubSubmitBtn">
+                Payer 20 000 FCFA &amp; soumettre l'annonce
+              </button>
+
+            </form>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="pub-sidebar">
+
+          <div class="pub-info-card">
+            <h3>💡 Pourquoi publier sur AlerteMarché ?</h3>
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;font-size:.88rem;">
+              <li style="display:flex;gap:8px;"><span>📣</span><span><strong>Visibilité ciblée</strong> — vos annonces atteignent directement les entreprises et prestataires de votre secteur</span></li>
+              <li style="display:flex;gap:8px;"><span>📱</span><span><strong>Alertes WhatsApp</strong> — diffusion instantanée aux abonnés concernés</span></li>
+              <li style="display:flex;gap:8px;"><span>✅</span><span><strong>Crédibilité</strong> — toutes les annonces sont vérifiées par notre équipe éditoriale</span></li>
+              <li style="display:flex;gap:8px;"><span>🌍</span><span><strong>Couverture régionale</strong> — Bénin, Togo, Côte d'Ivoire et marchés internationaux</span></li>
+              <li style="display:flex;gap:8px;"><span>🔗</span><span><strong>Lien officiel inclus</strong> — votre site web affiché directement avec l'annonce</span></li>
+            </ul>
+          </div>
+
+          <div class="pub-info-card pub-guarantee">
+            <h4>🛡️ Validation éditoriale</h4>
+            <p style="font-size:.85rem;color:#065f46;margin:0;">Notre équipe examine chaque annonce pour garantir la qualité et la fiabilité du contenu avant mise en ligne. Sous 24–48 h ouvrées.</p>
+          </div>
+
+          <div class="pub-info-card">
+            <h3>📋 Conditions de publication</h3>
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;font-size:.82rem;color:var(--muted);">
+              <li>• L'annonce doit émaner d'une organisation légalement constituée</li>
+              <li>• Le contenu doit être réel, précis et non trompeur</li>
+              <li>• Aucun contenu discriminatoire, illégal ou contraire aux bonnes mœurs</li>
+              <li>• AlerteMarché se réserve le droit de refuser ou modifier toute annonce</li>
+              <li>• Le paiement est non remboursable en cas de refus pour non-conformité</li>
+              <li>• Durée de diffusion : 30 jours à partir de la validation</li>
+              <li>• L'annonce est supprimée automatiquement après la date limite</li>
+            </ul>
+          </div>
+
+          <div class="pub-info-card" style="background:#fffbeb;border-color:#fde68a;">
+            <h3 style="color:#92400e;">❓ Une question ?</h3>
+            <p style="font-size:.85rem;margin:0 0 10px;color:#78350f;">Notre équipe est disponible pour vous accompagner dans la publication de votre annonce.</p>
+            <a href="/contact" style="color:#d97706;font-weight:600;font-size:.88rem;">Nous contacter →</a>
+          </div>
+
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <script src="js/app.js?v=202607232100"></script>
+  <script>
+    const AMOUNT_PUB = 20000; // FCFA
+    let KK_PUB = null;
+    let currentUser = null;
+    let pendingNeedId = null;
+
+    async function initPage() {
+      const tok = localStorage.getItem('am_token');
+
+      // Toujours afficher le formulaire (mode aperçu sans connexion possible)
+      document.getElementById('loginWall').style.display = 'none';
+      document.getElementById('pubContent').style.display = 'grid';
+
+      const btn = document.getElementById('pubSubmitBtn');
+
+      if (!tok) {
+        // Non connecté : mode aperçu — formulaire visible mais soumission bloquée
+        document.getElementById('visitorNotice').style.display = 'block';
+        btn.textContent = '🔐 Se connecter pour soumettre l\'annonce';
+        btn.style.background = '#6b7280';
+      } else {
+        // Connecté : mode complet
+        document.getElementById('visitorNotice').style.display = 'none';
+        btn.textContent = 'Payer 20 000 FCFA & soumettre l\'annonce';
+        btn.style.background = '#d97706';
+        // Pré-remplir organisation
+        try {
+          currentUser = JSON.parse(localStorage.getItem('am_user') || '{}');
+          if (currentUser.organization) {
+            document.getElementById('orgField').value = currentUser.organization;
+          }
+        } catch (_) {}
+        // Charger la config KKiaPay
+        try { KK_PUB = await api('/payments/kkiapay/config'); } catch { KK_PUB = { configured: false }; }
+      }
+
+      // Gestion des 4 boutons de type d'annonce
+      document.querySelectorAll('.pub-type-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.pub-type-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          document.getElementById('typeSelect').value = btn.dataset.type;
+          document.getElementById('typeError').style.display = 'none';
+        });
+      });
+
+      // Soumission du formulaire
+      document.getElementById('pubForm').addEventListener('submit', handleSubmit);
+    }
+
+    async function handleSubmit(e) {
+      e.preventDefault();
+      const msg = document.getElementById('pubMsg');
+      const btn = document.getElementById('pubSubmitBtn');
+      msg.style.color = '#ef4444';
+
+      // Si non connecté : rediriger vers connexion
+      const tok = localStorage.getItem('am_token');
+      if (!tok) {
+        window.location.href = '/connexion?next=/publier';
+        return;
+      }
+
+      // Vérifier le type d'annonce (boutons cards)
+      const selectedType = document.getElementById('typeSelect').value;
+      if (!selectedType) {
+        document.getElementById('typeError').style.display = 'block';
+        document.querySelector('.pub-type-grid').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      // Vérifications
+      if (!document.getElementById('acceptCGU').checked) {
+        msg.textContent = '⚠️ Veuillez accepter les conditions générales d\'utilisation.';
+        return;
+      }
+      const f = new FormData(e.target);
+      if (!f.get('title') || !f.get('description') || !f.get('contact') || !f.get('locality') || !f.get('deadline')) {
+        msg.textContent = '⚠️ Veuillez remplir tous les champs obligatoires.';
+        return;
+      }
+      if ((f.get('description') || '').length < 80) {
+        msg.textContent = '⚠️ La description doit contenir au moins 80 caractères.';
+        return;
+      }
+
+      // Vérifier que la date limite est dans le futur
+      const dl = new Date(f.get('deadline'));
+      if (dl <= new Date()) {
+        msg.textContent = '⚠️ La date limite doit être dans le futur.';
+        return;
+      }
+
+      msg.textContent = '';
+      btn.disabled = true;
+      btn.textContent = 'Préparation du paiement…';
+
+      // Sauvegarder les données du formulaire en session avant le paiement
+      const formData = {
+        type: f.get('type'),
+        sector: f.get('sector'),
+        title: f.get('title'),
+        org_name: f.get('org_name'),
+        org_type: f.get('org_type'),
+        official_url: f.get('official_url') || '',
+        contact: f.get('contact'),
+        description: f.get('description'),
+        budget: f.get('budget') || '',
+        deadline: f.get('deadline'),
+        country: f.get('country'),
+        locality: f.get('locality'),
+      };
+      try { sessionStorage.setItem('am_pub_draft', JSON.stringify(formData)); } catch (_) {}
+
+      // Démarrer le paiement KKiaPay
+      if (!KK_PUB || !KK_PUB.configured || !KK_PUB.public_key) {
+        // KKiaPay non configuré : soumettre directement en attente de paiement manuel
+        await submitAnnouncement(formData, null);
+        return;
+      }
+
+      try {
+        openKkiapay({
+          amount: AMOUNT_PUB,
+          api_key: KK_PUB.public_key,
+          sandbox: !!KK_PUB.sandbox,
+          position: 'center',
+          theme: '#d97706',
+          name: currentUser?.name || '',
+          email: currentUser?.email || '',
+          phone: (currentUser?.phone || '').replace('+', ''),
+          data: JSON.stringify({ type: 'publication' }),
+        });
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = 'Payer 20 000 FCFA & soumettre l\'annonce';
+        msg.textContent = '⚠️ Impossible d\'ouvrir le formulaire de paiement. Réessayez ou contactez-nous.';
+      }
+    }
+
+    // Succès paiement KKiaPay
+    window.addEventListener('kkiapay.success', async (ev) => {
+      const transactionId = (ev.detail && (ev.detail.transactionId || ev.detail.transaction_id)) || null;
+      const draft = JSON.parse(sessionStorage.getItem('am_pub_draft') || '{}');
+      await submitAnnouncement(draft, transactionId);
+    });
+
+    window.addEventListener('kkiapay.failed', () => {
+      const btn = document.getElementById('pubSubmitBtn');
+      const msg = document.getElementById('pubMsg');
+      btn.disabled = false;
+      btn.textContent = 'Payer 20 000 FCFA & soumettre l\'annonce';
+      msg.style.color = '#ef4444';
+      msg.textContent = '⚠️ Le paiement n\'a pas abouti. Veuillez réessayer.';
+    });
+
+    async function submitAnnouncement(data, transactionId) {
+      const msg = document.getElementById('pubMsg');
+      const btn = document.getElementById('pubSubmitBtn');
+      try {
+        msg.style.color = 'var(--primary,#0a7d3f)';
+        msg.textContent = '⏳ Soumission de l\'annonce en cours…';
+
+        await api('/needs', {
+          method: 'POST',
+          auth: true,
+          body: {
+            trade: data.title,
+            employer_name: data.org_name,
+            description: [
+              'Type : ' + (data.type || ''),
+              'Secteur : ' + (data.sector || ''),
+              'Organisation : ' + (data.org_name || '') + (data.org_type ? ' (' + data.org_type + ')' : ''),
+              data.official_url ? 'Site officiel : ' + data.official_url : '',
+              'Budget : ' + (data.budget || 'Non précisé'),
+              '',
+              data.description || '',
+            ].filter(Boolean).join('\n'),
+            locality: data.locality,
+            country: data.country,
+            contact: data.contact,
+            estimated_budget: data.budget || '',
+            start_date: null,
+            duration: '30 jours',
+            people_needed: null,
+            region: '',
+            // transaction_id pour traçabilité
+            ...(transactionId ? { payment_ref: transactionId } : {}),
+          }
+        });
+
+        // Succès : afficher la confirmation
+        sessionStorage.removeItem('am_pub_draft');
+        document.getElementById('pubFormWrap').style.display = 'none';
+        document.getElementById('pubConfirm').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = 'Payer 20 000 FCFA & soumettre l\'annonce';
+        msg.style.color = '#ef4444';
+        msg.textContent = '⚠️ ' + (err.message || 'Erreur lors de la soumission. Veuillez réessayer.');
+      }
+    }
+
+    // initPage() est appelée par app.js après le chargement du DOM
+  </script>
+</body>
+</html>

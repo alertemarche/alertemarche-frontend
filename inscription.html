@@ -8,7 +8,7 @@
   <meta name="description" content="Créez gratuitement votre compte AlerteMarché en 3 étapes et recevez les opportunités du Bénin par WhatsApp et Email.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=202607221800">
+  <link rel="stylesheet" href="css/style.css?v=202607232100">
 </head>
 <body>
 
@@ -36,23 +36,17 @@
         <!-- Choix du profil -->
         <div class="form-section">
           <div class="form-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Type de compte <span class="req">*</span></div>
-          <div class="psel-grid" id="profileSelect">
+          <div class="psel-grid" id="profileSelect" style="grid-template-columns:1fr 1fr;">
             <button type="button" class="psel-card selected" data-profile="prestataire">
               <span class="psel-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01"/></svg></span>
-              <b>Entreprise</b>
-              <span class="psel-desc">Marchés publics &amp; appels d'offres privés</span>
+              <b>Professionnel</b>
+              <span class="psel-desc">Entreprise, ONG, Banque, Institution, Administration</span>
               <span class="psel-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
             </button>
-            <button type="button" class="psel-card" data-profile="admin_public">
-              <span class="psel-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/></svg></span>
-              <b>Administration</b>
-              <span class="psel-desc">Publiez des avis et communiqués officiels</span>
-              <span class="psel-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
-            </button>
-            <button type="button" class="psel-card" data-profile="ong">
-              <span class="psel-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 21v-1.5A4.5 4.5 0 0 1 6.5 15h5a4.5 4.5 0 0 1 4.5 4.5V21"/></svg></span>
-              <b>ONG / Association</b>
-              <span class="psel-desc">Trouvez des prestataires pour vos projets</span>
+            <button type="button" class="psel-card" data-profile="particulier">
+              <span class="psel-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
+              <b>Particulier</b>
+              <span class="psel-desc">Recevez les opportunités adaptées à votre profil</span>
               <span class="psel-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
             </button>
           </div>
@@ -67,7 +61,7 @@
             <div class="field"><label>Email <span class="req">*</span></label><input type="email" name="email" placeholder="Ex: jean.dossou@email.com" required></div>
             <div class="field"><label>Numéro WhatsApp <span class="req">*</span></label>
               <div class="phone-field">
-                <select class="cc" name="cc"><option>🇧🇯 +229</option></select>
+                <select class="cc" name="cc"><option value="+229" data-cc="BJ">🇧🇯 +229</option><option value="+228" data-cc="TG">🇹🇬 +228</option><option value="+225" data-cc="CI">🇨🇮 +225</option></select>
                 <input type="tel" name="phone" placeholder="97 12 34 56" required>
               </div>
             </div>
@@ -80,14 +74,25 @@
           </div>
         </div>
 
-        <!-- Structure & localisation -->
-        <div class="form-section">
-          <div class="form-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M12 6h.01"/></svg> <span id="orgSectionTitle">Votre structure</span></div>
+        <!-- Structure & localisation (visible uniquement pour Professionnel) -->
+        <div class="form-section" id="orgSection">
+          <div class="form-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M12 6h.01"/></svg> <span id="orgSectionTitle">Votre organisation</span></div>
           <div class="form-grid">
-            <div class="field"><label id="orgLabel">Nom de l'entreprise / Structure <span class="req">*</span></label><input type="text" name="org_name" placeholder="Ex: Entreprise BTP SARL" required></div>
-            <div class="field"><label>Secteur principal <span class="req">*</span></label><select name="sector" required><option value="">Sélectionnez votre secteur</option><option>Bâtiment / BTP</option><option>Informatique</option><option>Fournitures</option><option>Services</option><option>Santé</option><option>Éducation</option><option>Énergie</option><option>Hydraulique</option><option>Transport</option><option>Agriculture</option></select></div>
-            <div class="field"><label>Région <span class="req">*</span></label><select name="region" required><option value="">Sélectionnez votre région</option><option>Alibori</option><option>Atacora</option><option>Atlantique</option><option>Borgou</option><option>Collines</option><option>Couffo</option><option>Donga</option><option>Littoral</option><option>Mono</option><option>Ouémé</option><option>Plateau</option><option>Zou</option></select></div>
-            <div class="field"><label>Ville <span class="req">*</span></label><select name="city" required><option value="">Sélectionnez votre ville</option><option>Cotonou</option><option>Porto-Novo</option><option>Parakou</option><option>Abomey-Calavi</option><option>Bohicon</option><option>Natitingou</option><option>Djougou</option><option>Ouidah</option><option>Lokossa</option><option>Kandi</option></select></div>
+            <div class="field"><label id="orgLabel">Nom de l'organisation / Structure <span class="req">*</span></label><input type="text" id="orgNameInput" name="org_name" placeholder="Ex: Banque XYZ, ONG ABC, SARL BTP…"></div>
+            <div class="field"><label>Type d'organisation <span class="req">*</span></label>
+              <select name="org_type" id="orgTypeSelect">
+                <option value="">Sélectionnez le type</option>
+                <option>Entreprise privée</option>
+                <option>Banque / Institution financière</option>
+                <option>ONG / Association</option>
+                <option>Institution internationale</option>
+                <option>Administration publique</option>
+                <option>Autre</option>
+              </select>
+            </div>
+            <div class="field"><label>Secteur principal <span class="req">*</span></label><select name="sector" id="sectorSelect"><option value="">Sélectionnez votre secteur</option><option>Bâtiment / BTP</option><option>Informatique</option><option>Fournitures</option><option>Services</option><option>Santé</option><option>Éducation</option><option>Énergie</option><option>Hydraulique</option><option>Transport</option><option>Agriculture</option><option>Finance / Banque</option><option>Autre</option></select></div>
+            <div class="field"><label>Région <span class="req">*</span></label><select name="region" id="regionSelect"><option value="">Sélectionnez votre région</option><option>Alibori</option><option>Atacora</option><option>Atlantique</option><option>Borgou</option><option>Collines</option><option>Couffo</option><option>Donga</option><option>Littoral</option><option>Mono</option><option>Ouémé</option><option>Plateau</option><option>Zou</option></select></div>
+            <div class="field"><label>Ville <span class="req">*</span></label><select name="city" id="citySelect"><option value="">Sélectionnez votre ville</option><option>Cotonou</option><option>Porto-Novo</option><option>Parakou</option><option>Abomey-Calavi</option><option>Bohicon</option><option>Natitingou</option><option>Djougou</option><option>Ouidah</option><option>Lokossa</option><option>Kandi</option></select></div>
           </div>
         </div>
 
@@ -140,17 +145,27 @@
     </div>
   </section>
 
-  <script src="js/app.js?v=202607231600"></script>
+  <script src="js/app.js?v=202607232100"></script>
   <script>
     const PROFILE_META = {
-      prestataire:  { name: 'Entreprise', desc: "Recevez les marchés publics et les appels d'offres privés adaptés à votre activité.", orgLabel: "Nom de l'entreprise / Structure", orgTitle: "Votre entreprise" },
-      admin_public: { name: 'Administration', desc: "Publiez des avis et orientez les entreprises vers les appels d'offres officiels.", orgLabel: "Nom de l'administration / Structure", orgTitle: "Votre administration" },
-      ong:          { name: 'ONG / Association', desc: "Recherchez des fournisseurs ou prestataires pour vos projets et publiez vos demandes.", orgLabel: "Nom de l'ONG / Association", orgTitle: "Votre organisation" },
+      prestataire: {
+        name: 'Professionnel',
+        desc: "Entreprise, Banque, ONG, Institution internationale, Administration — recevez et publiez des appels d'offres.",
+        orgTitle: 'Votre organisation',
+        showOrg: true,
+      },
+      particulier: {
+        name: 'Particulier',
+        desc: "Recevez les opportunités (marchés, appels d'offres, annonces) adaptées à votre profil et votre secteur.",
+        orgTitle: '',
+        showOrg: false,
+      },
     };
     let currentProfile = 'prestataire';
 
     function initPage() {
-      // Profil pré-sélectionné via ?profil=
+      // Pré-sélectionne l'indicatif téléphonique du pays choisi (BJ/TG/CI).
+      (function(){ var dc = { BJ:'+229', TG:'+228', CI:'+225' }[(window.amCode?amCode():'BJ')] || '+229'; var sel = document.querySelector('select.cc[name="cc"]'); if (sel) sel.value = dc; })();
       const urlP = new URLSearchParams(location.search).get('profil');
       if (urlP && PROFILE_META[urlP]) currentProfile = urlP;
       applyProfile(currentProfile);
@@ -172,9 +187,9 @@
         inp.type = inp.type === 'password' ? 'text' : 'password';
       }));
 
-      // Soumission → étape 2 (préférences). Le compte n'est PAS créé ici.
+      // Soumission
       const form = document.getElementById('signupForm');
-      const msg = document.getElementById('formMsg');
+      const msg  = document.getElementById('formMsg');
       form.addEventListener('submit', (e) => {
         e.preventDefault();
         msg.style.color = '';
@@ -185,18 +200,25 @@
         if (f.get('password') !== f.get('password_confirmation')) {
           msg.style.color = '#ef4444'; msg.textContent = 'Les mots de passe ne correspondent pas.'; return;
         }
+        // Pour les professionnels : org_name obligatoire
+        if (currentProfile === 'prestataire' && !(f.get('org_name') || '').trim()) {
+          msg.style.color = '#ef4444'; msg.textContent = 'Veuillez renseigner le nom de votre organisation.'; return;
+        }
+        // Mappe 'particulier' sur 'artisan' côté backend (profile existant)
+        const backendProfile = currentProfile === 'particulier' ? 'artisan' : 'prestataire';
         const signup = {
-          profile_type: currentProfile,
+          profile_type: backendProfile,
           primary_sector: f.get('sector') || '',
           payload: {
             name: (f.get('first_name') + ' ' + f.get('last_name')).trim(),
             email: (f.get('email') || '').trim(),
-            phone: '+229' + (f.get('phone') || '').replace(/\s/g, ''),
+            phone: (f.get('cc') || '+229') + (f.get('phone') || '').replace(/\s/g, ''),
             password: f.get('password'),
             password_confirmation: f.get('password_confirmation'),
-            profile_type: currentProfile,
-            primary_country: 'BJ',
-            organization: f.get('org_name'),
+            profile_type: backendProfile,
+            primary_country: ({ '+229':'BJ', '+228':'TG', '+225':'CI' }[f.get('cc')] || (window.amCode ? amCode() : 'BJ')),
+            organization: currentProfile === 'prestataire' ? (f.get('org_name') || '') : '',
+            org_type: f.get('org_type') || '',
             region: f.get('region') || '',
             city: f.get('city') || '',
           },
@@ -204,7 +226,7 @@
         try { sessionStorage.setItem('am_signup', JSON.stringify(signup)); } catch (_) {}
         msg.style.color = 'var(--green)';
         msg.textContent = '✓ Informations enregistrées. Configuration de vos alertes…';
-        setTimeout(() => location.href="preferences-alertes", 400);
+        setTimeout(() => location.href = 'preferences-alertes', 400);
       });
     }
 
@@ -212,8 +234,14 @@
       const meta = PROFILE_META[p] || PROFILE_META.prestataire;
       document.getElementById('sumProfile').textContent = meta.name;
       document.getElementById('sumProfileDesc').textContent = meta.desc;
-      document.getElementById('orgLabel').innerHTML = meta.orgLabel + ' <span class="req">*</span>';
-      document.getElementById('orgSectionTitle').textContent = meta.orgTitle;
+      // Afficher / masquer la section organisation
+      const orgSec = document.getElementById('orgSection');
+      orgSec.style.display = meta.showOrg ? '' : 'none';
+      // Rendre les champs org obligatoires seulement si professionnel
+      ['orgNameInput','orgTypeSelect','sectorSelect','regionSelect','citySelect'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.required = meta.showOrg;
+      });
     }
   </script>
 </body>

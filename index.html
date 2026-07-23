@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>(function(){try{var c=localStorage.getItem('am_country');if(!c||['BJ','TG','CI'].indexOf(c)===-1){window.location.replace('/country-select.html');}}catch(e){}})();</script>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <title>AlerteMarché — Recevez les meilleures opportunités au Bénin en temps réel</title>
   <meta name="description" content="AlerteMarché surveille 24h/24 les sources officielles du Bénin et vous envoie chaque appel d'offres correspondant à vos activités par WhatsApp et Email.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=202607221200">
+  <link rel="stylesheet" href="css/style.css?v=202607232100">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RRXKSCN05J"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RRXKSCN05J');</script>
 </head>
@@ -16,12 +17,12 @@
 
   <!-- HERO -->
   <section class="hero">
-    <div class="hero-bg" style="background-image:url('img/amazone.jpg')"></div>
+    <div class="hero-bg" id="heroBg" style="background-image:url('img/amazone.jpg')"></div>
     <div class="container hero-inner">
       <div>
-        <span class="hero-badge">🇧🇯 BÉNIN — Ne manquez aucune opportunité</span>
-        <h1>Recevez les meilleures opportunités <span class="green">au Bénin</span> en temps réel</h1>
-        <p class="lead">Soyez alerté instantanément par <b>WhatsApp</b> et <b>Email</b> dès qu'un appel d'offres correspondant à vos activités est publié.</p>
+        <span class="hero-badge" id="heroBadge">🇧🇯 BÉNIN — Ne manquez aucune opportunité</span>
+        <h1 id="heroTitle">Recevez les meilleures opportunités <span class="green">au Bénin</span> en temps réel</h1>
+        <p class="lead" id="heroLead">Soyez alerté instantanément par <b>WhatsApp</b> et <b>Email</b> dès qu'un appel d'offres correspondant à vos activités est publié.</p>
 
         <div class="hero-channels">
           <div class="channel-card">
@@ -113,7 +114,7 @@
       <div class="features-band">
         <div class="section-head" style="margin-bottom:34px;">
           <span class="eyebrow">Pourquoi nous choisir</span>
-          <h2>Pourquoi choisir AlerteMarché au Bénin ?</h2>
+          <h2 id="whyTitle">Pourquoi choisir AlerteMarché au Bénin ?</h2>
         </div>
         <div class="feature-grid">
           <div class="feature">
@@ -146,7 +147,7 @@
     <div class="container">
       <div class="section-head">
         <span class="eyebrow">Explorez les opportunités</span>
-        <h2>Toutes les opportunités de marchés au Bénin</h2>
+        <h2 id="catTitle">Toutes les opportunités de marchés au Bénin</h2>
         <p class="muted">Publics, privés, avis d'appel à concurrence, avis généraux et plans de passation — tout au même endroit.</p>
       </div>
       <div class="cat-grid" style="margin-bottom:22px;">
@@ -224,7 +225,7 @@
     <div class="container">
       <div class="cta-banner">
         <div>
-          <h2>Ne ratez plus aucune opportunité au Bénin !</h2>
+          <h2 id="ctaTitle">Ne ratez plus aucune opportunité au Bénin !</h2>
           <p>Rejoignez des milliers d'entreprises qui reçoivent déjà leurs alertes par WhatsApp et Email.</p>
           <div class="cta-hand">C'est gratuit et sans engagement !</div>
         </div>
@@ -248,10 +249,30 @@
     </div>
   </section>
 
-  <script src="js/app.js?v=202607231600"></script>
+  <script src="js/app.js?v=202607232100"></script>
   <script>
     // Compteurs dynamiques des catégories (appel API par type de marché).
     function initPage() {
+      // --- Adaptation dynamique selon le pays choisi (BJ/TG/CI) ---
+      var cc = (window.amCode ? amCode() : 'BJ');
+      var m = (window.amMeta ? amMeta() : null);
+      if (m) {
+        var bg = document.getElementById('heroBg');
+        if (bg) bg.style.backgroundImage = "url('" + m.hero + "')";
+        var badge = document.getElementById('heroBadge');
+        if (badge) badge.innerHTML = flagImg(m.cc, m.name) + ' ' + m.name.toUpperCase() + ' — Ne manquez aucune opportunité';
+        var ht = document.getElementById('heroTitle');
+        if (ht) ht.innerHTML = 'Recevez les meilleures opportunités <span class="green">' + m.heroTitle + '</span> en temps réel';
+        var hl = document.getElementById('heroLead');
+        if (hl) hl.innerHTML = m.heroLead;
+        var wt = document.getElementById('whyTitle');
+        if (wt) wt.textContent = 'Pourquoi choisir AlerteMarché ' + m.heroTitle + ' ?';
+        var ct = document.getElementById('catTitle');
+        if (ct) ct.textContent = 'Toutes les opportunités de marchés ' + m.heroTitle;
+        var cta = document.getElementById('ctaTitle');
+        if (cta) cta.textContent = 'Ne ratez plus aucune opportunité ' + m.heroTitle + ' !';
+        document.title = 'AlerteMarché — Recevez les meilleures opportunités ' + m.heroTitle + ' en temps réel';
+      }
       // Récupère le total depuis meta.total si dispo, sinon la longueur du tableau.
       function totalOf(res) {
         // Le paginator Laravel expose « total » à la racine de la réponse.
@@ -267,11 +288,11 @@
         el.innerHTML = `${new Intl.NumberFormat('fr-FR').format(n)} <small>${label}</small>`;
       }
       const cfg = [
-        ['countPublic', '/tenders?country=BJ&type=public&active=1&per_page=1', 'avis'],
-        ['countPrive', '/tenders?country=BJ&type=prive&active=1&per_page=1', 'avis'],
-        ['countAac', '/tenders?country=BJ&type=aac&active=1&per_page=1', 'avis'],
-        ['countAvisGen', '/tenders?country=BJ&type=avis_general&active=1&per_page=1', 'avis'],
-        ['countPlan', '/tenders?country=BJ&type=plan_passation&active=1&per_page=1', 'plans'],
+        ['countPublic', '/tenders?country='+cc+'&type=public&active=1&per_page=1', 'avis'],
+        ['countPrive', '/tenders?country='+cc+'&type=prive&active=1&per_page=1', 'avis'],
+        ['countAac', '/tenders?country='+cc+'&type=aac&active=1&per_page=1', 'avis'],
+        ['countAvisGen', '/tenders?country='+cc+'&type=avis_general&active=1&per_page=1', 'avis'],
+        ['countPlan', '/tenders?country='+cc+'&type=plan_passation&active=1&per_page=1', 'plans'],
       ];
       cfg.forEach(([id, path, label]) => {
         api(path)

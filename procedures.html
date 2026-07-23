@@ -8,7 +8,7 @@
   <meta name="description" content="Marchés publics au Bénin par type de procédure de passation : demande de cotation, DRP, appel d'offres national et international, manifestation d'intérêt. Marchés en cours et planifiés, sources officielles.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=202607221200">
+  <link rel="stylesheet" href="css/style.css?v=202607232100">
 </head>
 <body>
 
@@ -57,7 +57,7 @@
     </div>
   </section>
 
-  <script src="js/app.js?v=202607231600"></script>
+  <script src="js/app.js?v=202607232100"></script>
   <script>
     // Métadonnées d'affichage par procédure (paramètre ?p=).
     const PROC = {
@@ -176,7 +176,7 @@
       }));
 
       // Hydratation depuis l'API réelle, filtrée par type de procédure.
-      api('/tenders?country=BJ&procedure_type=' + encodeURIComponent(p) + '&per_page=500').then(res => {
+      api('/tenders?country=' + (window.amCode ? amCode() : 'BJ') + '&procedure_type=' + encodeURIComponent(p) + '&per_page=500').then(res => {
         const items = (res.data || res || []);
         if (Array.isArray(items)) {
           const now = Date.now();

@@ -8,7 +8,7 @@
   <meta name="description" content="Trouvez les meilleures opportunités de marchés publics au Bénin en temps réel. Sources officielles du gouvernement, résumés IA, alertes WhatsApp et Email.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=202607221200">
+  <link rel="stylesheet" href="css/style.css?v=202607232100">
 </head>
 <body>
 
@@ -18,8 +18,8 @@
       <div class="breadcrumb"><a href="/index">Accueil</a><span class="sep">›</span>Marchés publics</div>
       <div class="page-title">
         <div>
-          <h1>Marchés publics</h1>
-          <p>Trouvez les meilleures opportunités au Bénin en temps réel</p>
+          <h1 id="pageTitle">Marchés publics</h1>
+          <p id="pageSubtitle">Trouvez les meilleures opportunités au Bénin en temps réel</p>
         </div>
         <div class="official-note">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
@@ -79,7 +79,7 @@
 
         <div class="tenders-grid" id="tendersGrid"></div>
 
-        <div class="market-showing" id="marketShowing">Chargement des avis officiels du Bénin…</div>
+        <div class="market-showing" id="marketShowing">Chargement des avis officiels…</div>
         <div style="text-align:center;margin:18px 0 40px;">
           <button class="btn btn-primary btn-lg" id="loadMoreBtn" style="display:none;">Voir plus d'avis</button>
         </div>
@@ -117,7 +117,7 @@
     </div>
   </section>
 
-  <script src="js/app.js?v=202607231600"></script>
+  <script src="js/app.js?v=202607232100"></script>
   <script>
     const SAMPLE_TENDERS = [
       { sector:'Travaux', badge:'travaux', time:'Il y a 2 heures', isNew:true, title:"Construction d'un bâtiment scolaire (6 salles de classe) à Adjohoun", inst:"Ministère des Enseignements Maternel et Primaire", loc:"Adjohoun, Ouémé", budget:null, deadline:"12 Août 2024", tags:["Bâtiment","Éducation"] },
@@ -172,6 +172,8 @@
     }
 
     function initPage() {
+      // Adapte le titre au pays choisi (Bénin/Togo/Côte d'Ivoire).
+      if (window.amMeta) { var _m = amMeta(); var _t = document.getElementById('pageTitle'); if (_t) _t.textContent = 'Marchés publics — ' + _m.name; var _st = document.getElementById('pageSubtitle'); if (_st) _st.textContent = 'Trouvez les meilleures opportunités ' + _m.heroTitle + ' en temps réel'; document.title = 'Marchés publics ' + _m.heroTitle + ' — AlerteMarché'; }
       const grid = document.getElementById('tendersGrid');
       const showEl = document.getElementById('marketShowing');
       const moreBtn = document.getElementById('loadMoreBtn');
@@ -284,7 +286,7 @@
         state.loading = true;
         moreBtn.textContent = 'Chargement…';
         if (reset) { state.page = 1; state.all = []; grid.innerHTML = '<p class="muted" style="grid-column:1/-1;padding:30px;text-align:center;">Chargement…</p>'; }
-        const p = new URLSearchParams({ country: 'BJ', active: '1', type: state.types, per_page: String(state.perPage), page: String(state.page) });
+        const p = new URLSearchParams({ country: (window.amCode ? amCode() : 'BJ'), active: '1', type: state.types, per_page: String(state.perPage), page: String(state.page) });
         if (state.q) p.set('q', state.q);
         try {
           const r = await api('/tenders?' + p.toString());
