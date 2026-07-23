@@ -228,10 +228,10 @@ function renderFooter() {
           </div>
           <div class="footer-col">
             <h4>Informations</h4>
+            <a href="/contact">Contact</a>
             <a href="/mentions-legales">Mentions légales</a>
             <a href="/confidentialite">Confidentialité</a>
             <a href="/cgu">CGU</a>
-            <a href="mailto:info@alertemarche.com">info@alertemarche.com</a>
           </div>
         </div>
         <div class="footer-bottom">

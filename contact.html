@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — AlerteMarché</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=202607231600">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-RRXKSCN05J"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RRXKSCN05J');</script>
+</head>
+<body>
+
+  <section class="section section--tight" style="background:linear-gradient(180deg,#fff,var(--bg));">
+    <div class="container" style="max-width:800px;">
+      <h1>Contactez-nous</h1>
+      <p class="muted">Une question, une suggestion ou un problème ? Nous sommes là pour vous aider.</p>
+    </div>
+  </section>
+
+  <section class="section" style="background:#fff;">
+    <div class="container" style="max-width:800px;">
+      <div class="card" style="padding:2rem;">
+        
+        <div style="background:var(--bg);padding:1.5rem;border-radius:8px;margin-bottom:2rem;border-left:4px solid var(--primary,#0a7d3f);">
+          <h3 style="margin:0 0 0.8rem;">📧 Email direct</h3>
+          <p style="margin:0 0 0.5rem;font-size:1.1rem;"><strong><a href="mailto:info@alertemarche.com" style="color:var(--primary,#0a7d3f);">info@alertemarche.com</a></strong></p>
+          <p style="margin:0;color:var(--muted);">Nous vous répondons généralement sous 24 heures (jours ouvrés).</p>
+        </div>
+
+        <h2>Formulaire de contact</h2>
+        <form id="contactForm" style="margin-top:1.5rem;">
+          
+          <div style="margin-bottom:1.2rem;">
+            <label for="name" style="display:block;margin-bottom:0.4rem;font-weight:600;">Nom complet <span style="color:red;">*</span></label>
+            <input type="text" id="name" name="name" required style="width:100%;padding:0.8rem;border:1px solid var(--line);border-radius:6px;font-size:1rem;font-family:inherit;">
+          </div>
+
+          <div style="margin-bottom:1.2rem;">
+            <label for="email" style="display:block;margin-bottom:0.4rem;font-weight:600;">Email <span style="color:red;">*</span></label>
+            <input type="email" id="email" name="email" required style="width:100%;padding:0.8rem;border:1px solid var(--line);border-radius:6px;font-size:1rem;font-family:inherit;">
+          </div>
+
+          <div style="margin-bottom:1.2rem;">
+            <label for="phone" style="display:block;margin-bottom:0.4rem;font-weight:600;">Téléphone WhatsApp <span style="color:var(--muted);font-weight:400;">(optionnel)</span></label>
+            <input type="tel" id="phone" name="phone" placeholder="+229 01 XX XX XX XX" style="width:100%;padding:0.8rem;border:1px solid var(--line);border-radius:6px;font-size:1rem;font-family:inherit;">
+          </div>
+
+          <div style="margin-bottom:1.2rem;">
+            <label for="subject" style="display:block;margin-bottom:0.4rem;font-weight:600;">Objet <span style="color:red;">*</span></label>
+            <select id="subject" name="subject" required style="width:100%;padding:0.8rem;border:1px solid var(--line);border-radius:6px;font-size:1rem;font-family:inherit;background:#fff;">
+              <option value="">-- Sélectionnez un sujet --</option>
+              <option value="question">Question générale</option>
+              <option value="abonnement">Abonnement et tarifs</option>
+              <option value="technique">Problème technique</option>
+              <option value="donnees">Suggestion d'amélioration</option>
+              <option value="partenariat">Partenariat</option>
+              <option value="autre">Autre</option>
+            </select>
+          </div>
+
+          <div style="margin-bottom:1.5rem;">
+            <label for="message" style="display:block;margin-bottom:0.4rem;font-weight:600;">Message <span style="color:red;">*</span></label>
+            <textarea id="message" name="message" required rows="6" style="width:100%;padding:0.8rem;border:1px solid var(--line);border-radius:6px;font-size:1rem;font-family:inherit;resize:vertical;"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn--primary" style="padding:0.9rem 2rem;font-size:1rem;border-radius:8px;">
+            Envoyer le message
+          </button>
+
+          <p id="formStatus" style="margin-top:1rem;font-weight:600;"></p>
+        </form>
+
+        <hr style="margin:2.5rem 0;border:none;border-top:1px solid var(--line);">
+
+        <h2>Informations pratiques</h2>
+        <div style="background:var(--bg);padding:1.5rem;border-radius:8px;margin-top:1rem;">
+          <p style="margin:0 0 0.8rem;"><strong>PRO BENIN</strong> — enseigne AlerteMarché</p>
+          <p style="margin:0 0 0.5rem;">N° RCCM : <strong>RB/COT/26 B 43723</strong> (Cotonou)</p>
+          <p style="margin:0 0 0.5rem;">Siège social : Îlot 942, Quartier Suru-Léré, Cotonou, 🇧🇯 République du Bénin</p>
+          <p style="margin:0;">Directeur : Monsieur Salim MOUTAIROU</p>
+        </div>
+
+        <div style="margin-top:1.5rem;padding:1rem;background:#fff3cd;border-left:4px solid #ffc107;border-radius:6px;">
+          <p style="margin:0;color:#856404;">💡 <strong>Besoin d'aide immédiate ?</strong> Consultez notre <a href="/tarifs#faq" style="color:#856404;text-decoration:underline;">FAQ</a> ou connectez-vous à votre <a href="/dashboard" style="color:#856404;text-decoration:underline;">tableau de bord</a> pour gérer votre abonnement.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <script src="js/app.js?v=202607221100b"></script>
+  <script>
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const phone = document.getElementById('phone').value;
+      const subject = document.getElementById('subject').value;
+      const message = document.getElementById('message').value;
+      
+      // Construction du corps de l'email
+      const body = `Nom: ${name}%0D%0AEmail: ${email}%0D%0ATéléphone: ${phone || 'Non renseigné'}%0D%0AObjet: ${subject}%0D%0A%0D%0AMessage:%0D%0A${encodeURIComponent(message)}`;
+      
+      // Ouverture du client email
+      window.location.href = `mailto:info@alertemarche.com?subject=${encodeURIComponent('Contact AlerteMarché - ' + subject)}&body=${body}`;
+      
+      // Message de confirmation
+      const status = document.getElementById('formStatus');
+      status.textContent = '✓ Votre client email va s\'ouvrir. Si rien ne se passe, écrivez-nous directement à info@alertemarche.com';
+      status.style.color = 'var(--primary,#0a7d3f)';
+      
+      // Reset form après 3 secondes
+      setTimeout(() => {
+        this.reset();
+        status.textContent = '';
+      }, 3000);
+    });
+  </script>
+</body>
+</html>
