@@ -9,7 +9,7 @@
   <meta name="description" content="AlerteMarché surveille 24h/24 les sources officielles du Bénin et vous envoie chaque appel d'offres correspondant à vos activités par WhatsApp et Email.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=202607232100">
+  <link rel="stylesheet" href="css/style.css?v=202607240900">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RRXKSCN05J"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RRXKSCN05J');</script>
 </head>
@@ -55,9 +55,9 @@
               <h5>Nouvelle opportunité correspondant à vos activités</h5>
               <p>Bonjour <b>Entreprise BTP SARL</b>,<br>Un nouvel appel d'offres a été publié et correspond à vos critères de recherche.</p>
               <div class="card-inline">
-                <div class="row"><b>Travaux de construction d'un bâtiment R+2</b></div>
-                <div class="row">🏛 Ministère des Infrastructures</div>
-                <div class="row">📍 Cotonou, Bénin</div>
+                <div class="row"><b id="mockEmailObject">Travaux de construction d'un bâtiment R+2</b></div>
+                <div class="row">🏛 <span id="mockEmailInst">Ministère des Infrastructures</span></div>
+                <div class="row">📍 <span id="mockEmailLoc">Cotonou, Bénin</span></div>
                 <div class="row">💰 Budget : 150.000.000 FCFA</div>
                 <div class="row">📅 Date limite : 15 Août 2024</div>
                 <div class="doc-btn">Voir les détails</div>
@@ -79,9 +79,9 @@
             </div>
             <div class="wa-msg">
               <div class="tt">🔔 Nouvelle opportunité !</div>
-              <h5>Travaux de construction d'un bâtiment R+2</h5>
-              <div class="row">🏛 Ministère des Infrastructures</div>
-              <div class="row">📍 Cotonou, Bénin</div>
+              <h5 id="mockPhoneObject">Travaux de construction d'un bâtiment R+2</h5>
+              <div class="row">🏛 <span id="mockPhoneInst">Ministère des Infrastructures</span></div>
+              <div class="row">📍 <span id="mockPhoneLoc">Cotonou, Bénin</span></div>
               <div class="row">💰 Budget : 150.000.000 FCFA</div>
               <div class="row">📅 Date limite : 15 Août 2024</div>
               <div class="btnlink">Voir les détails</div>
@@ -249,7 +249,7 @@
     </div>
   </section>
 
-  <script src="js/app.js?v=202607232100"></script>
+  <script src="js/app.js?v=202607240900"></script>
   <script>
     // Compteurs dynamiques des catégories (appel API par type de marché).
     function initPage() {
@@ -272,6 +272,15 @@
         var cta = document.getElementById('ctaTitle');
         if (cta) cta.textContent = 'Ne ratez plus aucune opportunité ' + m.heroTitle + ' !';
         document.title = 'AlerteMarché — Recevez les meilleures opportunités ' + m.heroTitle + ' en temps réel';
+        // --- Maquettes d'alerte (email + WhatsApp) adaptées au pays courant ---
+        var mLoc = (m.mockLoc ? m.mockLoc + ', ' + m.name : m.name);
+        function setMock(id, txt) { var e = document.getElementById(id); if (e) e.textContent = txt; }
+        setMock('mockEmailObject', m.mockObject);
+        setMock('mockEmailInst', m.mockInst);
+        setMock('mockEmailLoc', mLoc);
+        setMock('mockPhoneObject', m.mockObject);
+        setMock('mockPhoneInst', m.mockInst);
+        setMock('mockPhoneLoc', mLoc);
       }
       // Récupère le total depuis meta.total si dispo, sinon la longueur du tableau.
       function totalOf(res) {

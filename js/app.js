@@ -58,24 +58,36 @@ async function api(path, { method = 'GET', body = null, auth = false } = {}) {
 const AM_COUNTRIES = [
     {
         code: 'BJ', name: 'Bénin', cc: 'bj', available: true,
+        color: '#008751',
         hero: 'img/amazone.jpg',
         heroTitle: 'au Bénin',
         heroLead: "Soyez alerté instantanément par <b>WhatsApp</b> et <b>Email</b> dès qu'un appel d'offres correspondant à vos activités est publié.",
         armp: 'ARMP Bénin',
+        mockInst: 'Autorité de Régulation des Marchés Publics - Bénin',
+        mockObject: "Travaux de construction d'un bâtiment R+2",
+        mockLoc: 'Cotonou',
     },
     {
         code: 'TG', name: 'Togo', cc: 'tg', available: true,
+        color: '#006A4E',
         hero: 'img/hero-tg.jpg',
         heroTitle: 'au Togo',
         heroLead: "Accédez en temps réel aux marchés publics et privés du Togo. Recevez vos alertes par <b>WhatsApp</b> et <b>Email</b>.",
         armp: 'ARMP Togo',
+        mockInst: 'ARCOP Togo - Marchés Publics',
+        mockObject: "Fourniture d'équipements informatiques",
+        mockLoc: 'Lomé',
     },
     {
         code: 'CI', name: "Côte d'Ivoire", cc: 'ci', available: true,
+        color: '#F77F00',
         hero: 'img/hero-ci.jpg',
         heroTitle: "en Côte d'Ivoire",
         heroLead: "Accédez en temps réel aux marchés publics et privés de Côte d'Ivoire. Recevez vos alertes par <b>WhatsApp</b> et <b>Email</b>.",
         armp: 'ANRMP Côte d\'Ivoire',
+        mockInst: 'DGMP Côte d\'Ivoire',
+        mockObject: "Réhabilitation de voirie urbaine",
+        mockLoc: 'Abidjan',
     },
 ];
 const flagImg = (cc, alt) =>
@@ -92,6 +104,18 @@ const amMeta = () => currentCountry();
 window.amCode = amCode;
 window.amMeta = amMeta;
 window.AM_COUNTRIES = AM_COUNTRIES;
+/* Retourne l'entrée pays correspondant à un code (BJ/TG/CI), défaut Bénin. */
+const amByCode = (code) =>
+    AM_COUNTRIES.find((c) => c.code === (code || '').toUpperCase()) || AM_COUNTRIES[0];
+/* Génère le badge pays (pastille colorée + drapeau) affiché sur les cartes d'appels d'offres. */
+const countryBadge = (code) => {
+    const c = amByCode(code);
+    return `<span class="country-pill" style="background:${c.color}">` +
+        `<img src="https://flagcdn.com/w20/${c.cc}.png" srcset="https://flagcdn.com/w40/${c.cc}.png 2x" width="16" height="11" alt="" loading="lazy">` +
+        `${c.name}</span>`;
+};
+window.amByCode = amByCode;
+window.countryBadge = countryBadge;
 function countrySelector() {
     const cur = currentCountry();
     const opts = AM_COUNTRIES.map((c) => `
@@ -229,7 +253,21 @@ function renderNav() {
 }
 
 /* -------- Footer -------- */
+/* Change le pays courant et recharge la page (utilisé par le pied de page). */
+function amSetCountry(code) {
+    const c = amByCode(code);
+    localStorage.setItem('am_country', c.code);
+    location.reload();
+}
+window.amSetCountry = amSetCountry;
+
 function renderFooter() {
+    const cur = amCode();
+    const countryLinks = AM_COUNTRIES.map((c) =>
+        `<a href="#" class="footer-country${c.code === cur ? ' active' : ''}" data-country="${c.code}" ` +
+        `onclick="amSetCountry('${c.code}');return false;">` +
+        `<img src="https://flagcdn.com/w20/${c.cc}.png" srcset="https://flagcdn.com/w40/${c.cc}.png 2x" width="18" height="12" alt="">` +
+        `${c.name}</a>`).join('');
     const f = document.createElement('footer');
     f.className = 'site-footer';
     f.innerHTML = `
@@ -237,8 +275,7 @@ function renderFooter() {
         <div class="footer-grid">
           <div>
             <div class="footer-brand"><span class="brand-mark">${IC.bell}</span> Alerte<b style="color:#fff">Marché</b></div>
-            <p>La plateforme de référence pour la veille des appels d'offres au Bénin. Recevez les meilleures opportunités par WhatsApp et Email, en temps réel.</p>
-            <p class="footer-flags"><img src="https://flagcdn.com/w40/bj.png" width="20" height="14" alt="Bénin" style="border-radius:2px;vertical-align:middle;margin-right:6px"> Bénin</p>
+            <p>La plateforme de référence pour la veille des appels d'offres en Afrique de l'Ouest. Recevez les meilleures opportunités par WhatsApp et Email, en temps réel.</p>
           </div>
           <div class="footer-col">
             <h4>Plateforme</h4>
@@ -261,6 +298,10 @@ function renderFooter() {
             <a href="/confidentialite">Confidentialité</a>
             <a href="/cgu">CGU</a>
           </div>
+        </div>
+        <div class="footer-countries">
+          <span class="footer-countries-label">🌍 Nos pays couverts :</span>
+          ${countryLinks}
         </div>
         <div class="footer-bottom">
           <span>© 2026 AlerteMarché. Tous droits réservés.</span>

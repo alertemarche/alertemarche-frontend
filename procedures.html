@@ -8,7 +8,7 @@
   <meta name="description" content="Marchés publics au Bénin par type de procédure de passation : demande de cotation, DRP, appel d'offres national et international, manifestation d'intérêt. Marchés en cours et planifiés, sources officielles.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=202607232100">
+  <link rel="stylesheet" href="css/style.css?v=202607240900">
 </head>
 <body>
 
@@ -57,7 +57,7 @@
     </div>
   </section>
 
-  <script src="js/app.js?v=202607232100"></script>
+  <script src="js/app.js?v=202607240900"></script>
   <script>
     // Métadonnées d'affichage par procédure (paramètre ?p=).
     const PROC = {
@@ -92,6 +92,7 @@
       return `<article class="tender-card">
         <div class="tc-top">
           <span class="sector-badge ${t.badge}">${esc(t.sector)}</span>
+          ${window.countryBadge ? countryBadge(t.country || (window.amCode ? amCode() : 'BJ')) : ''}
           <span class="tc-time">${esc(t.time)}${statut}</span>
         </div>
         <h3>${esc(t.title)}</h3>
@@ -186,6 +187,7 @@
             // Statut : à venir si le lancement est postérieur à aujourd'hui, sinon en cours.
             const statut = (t.publication_date && t.publication_date > today) ? 'avenir' : 'encours';
             return {
+              country: t.country || null,
               sector: ds.sector, badge: ds.badge,
               time: relTime(t.publication_date), statut,
               title: t.title, inst: t.institution || 'Institution publique',

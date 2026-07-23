@@ -143,6 +143,14 @@
     .scraper-card-top h3{font-weight:700;font-size:.9rem;}
     .scraper-stats{font-size:.8rem;color:#64748b;display:flex;flex-direction:column;gap:3px;}
 
+    /* ---- Filtre pays du tableau de bord ---- */
+    .stats-country-filter{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+    .stats-country-filter .scf-label{font-size:.85rem;color:#64748b;font-weight:600;margin-right:4px;}
+    .scf-btn{border:1px solid #cbd5e1;background:#fff;color:#334155;padding:6px 14px;border-radius:999px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s;}
+    .scf-btn:hover{border-color:#0a7d3f;color:#0a7d3f;}
+    .scf-btn.active{background:#0a7d3f;border-color:#0a7d3f;color:#fff;}
+    .country-row-active{background:#f0fdf4;border-radius:8px;padding:4px 8px;font-weight:700;}
+
     /* ---- TOPBAR (mobile) ---- */
     .admin-topbar{display:none;background:#0f1f14;color:#fff;padding:12px 16px;align-items:center;justify-content:space-between;}
     .admin-topbar h1{font-size:1rem;font-weight:800;}
@@ -263,6 +271,13 @@
           <button class="btn-a btn-ghost" onclick="loadStats()">↻ Rafraîchir</button>
           <button class="btn-a btn-ghost" onclick="printPanel('stats')">🖨️ Imprimer / PDF</button>
         </div>
+      </div>
+      <div class="stats-country-filter" id="statsCountryFilter">
+        <span class="scf-label">Filtrer par pays :</span>
+        <button type="button" class="scf-btn active" data-cc="" onclick="setStatsCountry('')">Tous</button>
+        <button type="button" class="scf-btn" data-cc="BJ" onclick="setStatsCountry('BJ')">🇧🇯 Bénin</button>
+        <button type="button" class="scf-btn" data-cc="TG" onclick="setStatsCountry('TG')">🇹🇬 Togo</button>
+        <button type="button" class="scf-btn" data-cc="CI" onclick="setStatsCountry('CI')">🇨🇮 Côte d'Ivoire</button>
       </div>
       <div class="kpi-grid" id="statsKpi">
         <div class="kpi-card"><div class="kv" id="kUsers">—</div><div class="kl">👥 Utilisateurs inscrits</div></div>
@@ -775,13 +790,16 @@
   }
 
   /* ====================== STATS ====================== */
+  let statsData = null;      // Dernières statistiques chargées
+  let statsCountry = '';     // Pays sélectionné dans le filtre du tableau de bord ('' = Tous)
+
   async function loadStats() {
     try {
       const d = await adminApi('/admin/stats');
+      statsData = d;
       document.getElementById('kUsers').textContent = fmtN(d.users_total);
       document.getElementById('kSubs').textContent = fmtN(d.active_subscriptions);
       document.getElementById('kRev').textContent = fmtN(d.revenue_active);
-      document.getElementById('kTenders').textContent = fmtN(d.tenders_total);
       document.getElementById('kAlerts').textContent = fmtN(d.alerts_sent);
       document.getElementById('kNeeds').textContent = fmtN(d.needs_pending);
 
@@ -798,15 +816,55 @@
           }).join('')
         : '<p style="color:#94a3b8;font-size:.85rem;">Aucune donnée.</p>';
 
-      // Pays
-      const byC = d.users_by_country || {};
-      document.getElementById('statsCountries').innerHTML = Object.keys(byC).length
-        ? Object.entries(byC).map(([k,v]) => `
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-              <div style="min-width:120px;font-size:.85rem;">${COUNTRIES[k]||k}</div>
-              <div style="font-weight:700;">${fmtN(v)}</div></div>`).join('')
-        : '<p style="color:#94a3b8;font-size:.85rem;">Aucune donnée.</p>';
+      // Applique le filtre pays courant (compteur d'appels d'offres + répartition)
+      applyStatsCountry();
     } catch(e) { console.error(e); }
+  }
+
+  // Récupère le nombre d'appels d'offres pour un pays (ou tous si cc vide)
+  // via l'API publique des appels d'offres (compteur cohérent avec le site).
+  async function fetchTendersCount(cc) {
+    try {
+      const res = await fetch(API_BASE + '/tenders?per_page=1' + (cc ? '&country=' + cc : ''), {
+        headers: { 'Accept': 'application/json' },
+      });
+      const d = await res.json();
+      if (typeof d.total === 'number') return d.total;
+      if (d.meta && typeof d.meta.total === 'number') return d.meta.total;
+      const items = d.data || d || [];
+      return Array.isArray(items) ? items.length : 0;
+    } catch(e) { return null; }
+  }
+
+  // Met à jour le tableau de bord en fonction du pays sélectionné.
+  async function applyStatsCountry() {
+    if (!statsData) return;
+    // Boutons actifs
+    document.querySelectorAll('#statsCountryFilter .scf-btn').forEach(b =>
+      b.classList.toggle('active', (b.dataset.cc || '') === statsCountry));
+
+    // Compteur d'appels d'offres (filtré par pays via l'API publique)
+    const kt = document.getElementById('kTenders');
+    kt.textContent = '…';
+    const n = await fetchTendersCount(statsCountry);
+    kt.textContent = (n === null) ? fmtN(statsData.tenders_total) : fmtN(n);
+
+    // Répartition par pays — met en évidence le pays sélectionné
+    const byC = statsData.users_by_country || {};
+    document.getElementById('statsCountries').innerHTML = Object.keys(byC).length
+      ? Object.entries(byC).map(([k,v]) => {
+          const hl = (statsCountry && k === statsCountry) ? ' country-row-active' : '';
+          return `<div class="country-stat-row${hl}" style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+              <div style="min-width:120px;font-size:.85rem;">${COUNTRIES[k]||k}</div>
+              <div style="font-weight:700;">${fmtN(v)}</div></div>`;
+        }).join('')
+      : '<p style="color:#94a3b8;font-size:.85rem;">Aucune donnée.</p>';
+  }
+
+  // Change le pays du filtre du tableau de bord.
+  function setStatsCountry(cc) {
+    statsCountry = cc || '';
+    applyStatsCountry();
   }
 
   /* ====================== UTILISATEURS ====================== */

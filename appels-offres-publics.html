@@ -8,7 +8,7 @@
   <meta name="description" content="Trouvez les meilleures opportunités de marchés publics au Bénin en temps réel. Sources officielles du gouvernement, résumés IA, alertes WhatsApp et Email.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=202607232100">
+  <link rel="stylesheet" href="css/style.css?v=202607240900">
 </head>
 <body>
 
@@ -117,7 +117,7 @@
     </div>
   </section>
 
-  <script src="js/app.js?v=202607232100"></script>
+  <script src="js/app.js?v=202607240900"></script>
   <script>
     const SAMPLE_TENDERS = [
       { sector:'Travaux', badge:'travaux', time:'Il y a 2 heures', isNew:true, title:"Construction d'un bâtiment scolaire (6 salles de classe) à Adjohoun", inst:"Ministère des Enseignements Maternel et Primaire", loc:"Adjohoun, Ouémé", budget:null, deadline:"12 Août 2024", tags:["Bâtiment","Éducation"] },
@@ -153,6 +153,7 @@
       return `<article class="tender-card">
         <div class="tc-top">
           <span class="sector-badge ${t.badge}">${esc(t.sector)}</span>
+          ${window.countryBadge ? countryBadge(t.country || (window.amCode ? amCode() : 'BJ')) : ''}
           <span class="tc-time">${esc(t.time)}${t.isNew ? '<span class="tc-new">Nouveau</span>' : ''}</span>
         </div>
         <h3>${esc(t.title)}</h3>
@@ -218,6 +219,7 @@
         const ds = deriveSector(t.market_type);
         const isNew = t.publication_date ? (Date.now() - new Date(t.publication_date).getTime()) < 2 * 864e5 : false;
         return {
+          country: t.country || null,
           sector: ds.sector, badge: ds.badge, type: tp,
           time: relTime(t.publication_date), isNew,
           title: t.title, inst: t.institution || 'Institution publique', loc: t.location || 'Bénin',
