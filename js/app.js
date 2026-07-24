@@ -209,8 +209,8 @@ function renderNav() {
         ${countrySelector()}
         <nav class="main-nav" id="mainNav">
           <a href="/index" class="${isActive('/index')}">Accueil</a>
-          <a href="/appels-offres-publics" class="${isActive('/appels-offres-publics')}">Marchés publics</a>
-          <a href="/appels-offres-prives" class="${isActive('/appels-offres-prives')}">Marchés privés</a>
+          <a href="/marches-publics" class="${isActive('/marches-publics')}">Marchés publics</a>
+          <a href="/marches-prives" class="${isActive('/marches-prives')}">Marchés privés</a>
           <a href="/publier" class="nav-publier ${isActive('/publier')}">📢 Publier une annonce</a>
           <a href="/tarifs" class="${isActive('/tarifs')}">Abonnement</a>
           <a href="/inscription" class="nav-auth-mobile ${isActive('/inscription')}">Créer un compte</a>
@@ -285,8 +285,8 @@ function renderFooter() {
           </div>
           <div class="footer-col">
             <h4>Plateforme</h4>
-            <a href="/appels-offres-publics">Marchés publics</a>
-            <a href="/appels-offres-prives">Marchés privés</a>
+            <a href="/marches-publics">Marchés publics</a>
+            <a href="/marches-prives">Marchés privés</a>
             <a href="/tarifs">Abonnement</a>
           </div>
           <div class="footer-col">
