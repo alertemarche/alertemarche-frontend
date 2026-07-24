@@ -9,7 +9,7 @@
   <meta name="description" content="AlerteMarché surveille 24h/24 les sources officielles du Bénin et vous envoie chaque appel d'offres correspondant à vos activités par e-mail.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=202607242030">
+  <link rel="stylesheet" href="css/style.css?v=202607242100">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RRXKSCN05J"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RRXKSCN05J');</script>
 </head>
@@ -147,40 +147,20 @@
       <div class="section-head">
         <span class="eyebrow">Explorez les opportunités</span>
         <h2 id="catTitle">Toutes les opportunités de marchés au Bénin</h2>
-        <p class="muted">Publics, privés, avis d'appel à concurrence, avis généraux et plans de passation — tout au même endroit.</p>
+        <p class="muted">Marchés publics et marchés privés actifs — tout au même endroit.</p>
       </div>
-      <div class="cat-grid" style="margin-bottom:22px;">
+      <div class="cat-grid cat-grid-2">
         <a href="/appels-offres-publics" class="cat-card green">
           <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11"/></svg></span>
-          <h3>Appels d'offres publics</h3>
-          <p>Marchés publics des ministères, institutions et structures de l'État béninois.</p>
+          <h3>Marchés publics</h3>
+          <p>Marchés publics des ministères, institutions et structures de l'État.</p>
           <div class="cat-foot"><span class="cat-count" id="countPublic">— <small>avis</small></span><span class="cat-go">Explorer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
         </a>
         <a href="/appels-offres-prives" class="cat-card" style="border-top-color:var(--purple);">
           <span class="cat-ic" style="background:var(--purple-050);color:var(--purple);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 21v-1.5A4.5 4.5 0 0 1 6.5 15h5a4.5 4.5 0 0 1 4.5 4.5V21"/></svg></span>
-          <h3>Appels d'offres privés</h3>
+          <h3>Marchés privés</h3>
           <p>Consultations des ONG, agences des Nations Unies et organismes internationaux.</p>
           <div class="cat-foot"><span class="cat-count" id="countPrive" style="color:var(--purple);">— <small>avis</small></span><span class="cat-go" style="color:var(--purple);">Explorer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
-        </a>
-        <a href="/appels-concurrence" class="cat-card green">
-          <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></span>
-          <h3>Avis d'Appel à Concurrence</h3>
-          <p>Appels d'offres et avis d'appel à concurrence des marchés publics béninois.</p>
-          <div class="cat-foot"><span class="cat-count" id="countAac">— <small>avis</small></span><span class="cat-go">Explorer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
-        </a>
-      </div>
-      <div class="cat-grid">
-        <a href="/avis-generaux" class="cat-card orange">
-          <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
-          <h3>Avis Généraux</h3>
-          <p>Annonces et plans annuels d'achats publics pour anticiper les marchés à venir.</p>
-          <div class="cat-foot"><span class="cat-count" id="countAvisGen">— <small>avis</small></span><span class="cat-go">Explorer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
-        </a>
-        <a href="/plan-passation" class="cat-card indigo">
-          <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
-          <h3>Plans de Passation</h3>
-          <p>Plans de passation de marchés (PPM) des autorités contractantes du Bénin.</p>
-          <div class="cat-foot"><span class="cat-count" id="countPlan">— <small>plans</small></span><span class="cat-go">Explorer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
         </a>
       </div>
     </div>
@@ -246,7 +226,7 @@
     </div>
   </section>
 
-  <script src="js/app.js?v=202607242030"></script>
+  <script src="js/app.js?v=202607242100"></script>
   <script>
     // Compteurs dynamiques des catégories (appel API par type de marché).
     function initPage() {
@@ -296,9 +276,6 @@
       const cfg = [
         ['countPublic', '/tenders?country='+cc+'&type=public&active=1&per_page=1', 'avis'],
         ['countPrive', '/tenders?country='+cc+'&type=prive&active=1&per_page=1', 'avis'],
-        ['countAac', '/tenders?country='+cc+'&type=aac&active=1&per_page=1', 'avis'],
-        ['countAvisGen', '/tenders?country='+cc+'&type=avis_general&active=1&per_page=1', 'avis'],
-        ['countPlan', '/tenders?country='+cc+'&type=plan_passation&active=1&per_page=1', 'plans'],
       ];
       cfg.forEach(([id, path, label]) => {
         api(path)

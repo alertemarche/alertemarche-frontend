@@ -560,6 +560,7 @@ p { color: var(--text); }
 
 /* ---------------- Grille catégories (accueil) ---------------- */
 .cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+.cat-grid-2 { grid-template-columns: repeat(2, 1fr); max-width: 760px; margin-left: auto; margin-right: auto; }
 .cat-card {
   background: #fff; border: 1.5px solid var(--line); border-radius: var(--radius-lg);
   padding: 26px 24px; display: flex; flex-direction: column; transition: all .2s;
