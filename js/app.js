@@ -130,6 +130,31 @@ const AM_COUNTRIES = [
             },
         ],
     },
+    {
+        code: 'SN', name: 'Sénégal', cc: 'sn', available: true,
+        color: '#00853F',
+        hero: 'img/hero-sn.jpg',
+        heroTitle: 'au Sénégal',
+        heroLead: "Recevez par <b>e-mail</b> des alertes instantanées sur les opportunités de votre secteur.",
+        armp: 'ARMP Sénégal',
+        mockInst: 'DCMP Sénégal - Marchés Publics',
+        mockObject: "Fourniture de matériel médical",
+        mockLoc: 'Dakar',
+        testimonials: [
+            {
+                name: 'Abdoulaye Diop', role: 'Directeur Général, Dakar BTP Services', city: 'Dakar',
+                text: "AlerteMarché a révolutionné notre veille commerciale. Nous recevons les appels d'offres des bailleurs internationaux dès leur publication. Un outil stratégique pour notre développement.",
+            },
+            {
+                name: 'Fatou Sall', role: 'Gérante, Teranga Fournitures', city: 'Thiès',
+                text: "Une plateforme professionnelle qui répond à nos besoins. Les alertes sont précises et nous permettent de répondre rapidement aux marchés. Le service client est excellent.",
+            },
+            {
+                name: 'Ousmane Ndiaye', role: 'Directeur commercial, Sénégal Équipements', city: 'Saint-Louis',
+                text: "Grâce à AlerteMarché, nous suivons efficacement les opportunités au Sénégal. La qualité des données et la réactivité des alertes nous donnent un avantage compétitif réel.",
+            },
+        ],
+    },
 ];
 const flagImg = (cc, alt) =>
     `<img class="flag-img" src="https://flagcdn.com/w40/${cc}.png" srcset="https://flagcdn.com/w80/${cc}.png 2x" width="22" height="16" alt="${alt}" loading="lazy">`;
