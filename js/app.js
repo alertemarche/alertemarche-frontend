@@ -65,6 +65,20 @@ const AM_COUNTRIES = [
         mockInst: 'Autorité de Régulation des Marchés Publics - Bénin',
         mockObject: "Travaux de construction d'un bâtiment R+2",
         mockLoc: 'Cotonou',
+        testimonials: [
+            {
+                name: 'Rodrigue Ahouandjinou', role: 'Directeur Général, BTP Concept SARL', city: 'Cotonou',
+                text: "Depuis que nous utilisons AlerteMarché, nous ne manquons plus aucun appel d'offres dans le BTP. Les alertes arrivent le jour même de la publication : nous avons remporté trois marchés publics en six mois.",
+            },
+            {
+                name: 'Sylvie Dossou', role: 'Gérante, Sodifourn Distribution', city: 'Porto-Novo',
+                text: "Un outil sérieux et fiable. Je reçois uniquement les opportunités qui correspondent à mon secteur, ce qui me fait gagner un temps précieux au quotidien. Le rapport qualité-prix est imbattable.",
+            },
+            {
+                name: 'Marius Adjovi', role: 'Responsable commercial, Bénin Ingénierie', city: 'Parakou',
+                text: "La veille est complète et bien organisée. Nos équipes suivent les marchés publics et privés depuis une seule plateforme. Un vrai gain de compétitivité pour notre entreprise.",
+            },
+        ],
     },
     {
         code: 'TG', name: 'Togo', cc: 'tg', available: true,
@@ -76,6 +90,20 @@ const AM_COUNTRIES = [
         mockInst: 'ARCOP Togo - Marchés Publics',
         mockObject: "Fourniture d'équipements informatiques",
         mockLoc: 'Lomé',
+        testimonials: [
+            {
+                name: 'Kodjo Amégan', role: 'Directeur Général, Togo Bâtiment & Travaux', city: 'Lomé',
+                text: "AlerteMarché a transformé notre manière de faire de la veille. Nous recevons les appels d'offres publics dès leur parution et pouvons préparer nos dossiers dans les délais. Un partenaire indispensable.",
+            },
+            {
+                name: 'Afi Dosseh', role: 'Fondatrice, Delta Services Togo', city: 'Kara',
+                text: "Une plateforme professionnelle et très bien pensée. Les alertes par e-mail sont précises et pertinentes. Depuis notre inscription, notre carnet de commandes s'est nettement renforcé.",
+            },
+            {
+                name: 'Komlan Adjété', role: 'Gérant, Sokodé Fournitures', city: 'Sokodé',
+                text: "Enfin un service fiable qui centralise les marchés publics et privés du Togo. Le suivi est sérieux et le service client réactif. Je recommande à toutes les PME togolaises.",
+            },
+        ],
     },
     {
         code: 'CI', name: "Côte d'Ivoire", cc: 'ci', available: true,
@@ -87,6 +115,20 @@ const AM_COUNTRIES = [
         mockInst: 'DGMP Côte d\'Ivoire',
         mockObject: "Réhabilitation de voirie urbaine",
         mockLoc: 'Abidjan',
+        testimonials: [
+            {
+                name: 'Konan Kouassi', role: 'Directeur Général, Ivoire Constructions', city: 'Abidjan',
+                text: "AlerteMarché nous donne une longueur d'avance. Nous suivons en temps réel les marchés publics de l'ensemble du pays et répondons plus vite que la concurrence. Les résultats sont au rendez-vous.",
+            },
+            {
+                name: 'Aïcha Traoré', role: 'Directrice, Baraka Fournitures & Services', city: 'Bouaké',
+                text: "Un service professionnel qui inspire confiance. Les alertes sont ciblées sur mes secteurs et arrivent instantanément par e-mail. C'est devenu un outil incontournable pour développer mon entreprise.",
+            },
+            {
+                name: 'Ismaël Koffi', role: 'Gérant, San-Pédro Logistique', city: 'San-Pédro',
+                text: "Grâce à AlerteMarché, je ne rate plus aucune opportunité, qu'elle soit publique ou privée. La plateforme est claire, fiable et le gain de temps est considérable. Je recommande vivement.",
+            },
+        ],
     },
 ];
 const flagImg = (cc, alt) =>

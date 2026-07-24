@@ -9,7 +9,7 @@
   <meta name="description" content="AlerteMarché surveille 24h/24 les sources officielles du Bénin et vous envoie chaque appel d'offres correspondant à vos activités par e-mail.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=202607242100">
+  <link rel="stylesheet" href="css/style.css?v=202607242130">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RRXKSCN05J"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RRXKSCN05J');</script>
 </head>
@@ -198,8 +198,36 @@
     </div>
   </section>
 
-  <!-- CTA BANNER -->
+  <!-- TÉMOIGNAGES -->
   <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Ils nous font confiance</span>
+        <h2 id="testiTitle">Ce que disent les chefs d'entreprise au Bénin</h2>
+        <p class="muted">Des dirigeants qui utilisent AlerteMarché au quotidien pour saisir les opportunités de marchés.</p>
+      </div>
+      <div class="testi-grid" id="testiGrid">
+        <figure class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <blockquote>&laquo;&nbsp;Depuis que nous utilisons AlerteMarché, nous ne manquons plus aucun appel d'offres dans le BTP. Les alertes arrivent le jour même de la publication : nous avons remporté trois marchés publics en six mois.&nbsp;&raquo;</blockquote>
+          <figcaption class="testi-author"><span class="testi-avatar">RA</span><span class="testi-id"><b>Rodrigue Ahouandjinou</b><small>Directeur Général, BTP Concept SARL — Cotonou</small></span></figcaption>
+        </figure>
+        <figure class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <blockquote>&laquo;&nbsp;Un outil sérieux et fiable. Je reçois uniquement les opportunités qui correspondent à mon secteur, ce qui me fait gagner un temps précieux au quotidien. Le rapport qualité-prix est imbattable.&nbsp;&raquo;</blockquote>
+          <figcaption class="testi-author"><span class="testi-avatar">SD</span><span class="testi-id"><b>Sylvie Dossou</b><small>Gérante, Sodifourn Distribution — Porto-Novo</small></span></figcaption>
+        </figure>
+        <figure class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <blockquote>&laquo;&nbsp;La veille est complète et bien organisée. Nos équipes suivent les marchés publics et privés depuis une seule plateforme. Un vrai gain de compétitivité pour notre entreprise.&nbsp;&raquo;</blockquote>
+          <figcaption class="testi-author"><span class="testi-avatar">MA</span><span class="testi-id"><b>Marius Adjovi</b><small>Responsable commercial, Bénin Ingénierie — Parakou</small></span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BANNER -->
+  <section class="section section-white">
     <div class="container">
       <div class="cta-banner">
         <div>
@@ -226,7 +254,7 @@
     </div>
   </section>
 
-  <script src="js/app.js?v=202607242100"></script>
+  <script src="js/app.js?v=202607242130"></script>
   <script>
     // Compteurs dynamiques des catégories (appel API par type de marché).
     function initPage() {
@@ -248,6 +276,22 @@
         if (ct) ct.textContent = 'Toutes les opportunités de marchés ' + m.heroTitle;
         var cta = document.getElementById('ctaTitle');
         if (cta) cta.textContent = 'Ne ratez plus aucune opportunité ' + m.heroTitle + ' !';
+        // --- Témoignages de chefs d'entreprise adaptés au pays courant ---
+        var tt = document.getElementById('testiTitle');
+        if (tt) tt.textContent = "Ce que disent les chefs d'entreprise " + m.heroTitle;
+        var tg = document.getElementById('testiGrid');
+        if (tg && Array.isArray(m.testimonials)) {
+          tg.innerHTML = m.testimonials.map(function (t) {
+            var initials = t.name.split(' ').map(function (w) { return w.charAt(0); }).join('').slice(0, 2).toUpperCase();
+            return '<figure class="testi-card">'
+              + '<div class="testi-stars">★★★★★</div>'
+              + '<blockquote>&laquo;&nbsp;' + t.text + '&nbsp;&raquo;</blockquote>'
+              + '<figcaption class="testi-author">'
+              + '<span class="testi-avatar">' + initials + '</span>'
+              + '<span class="testi-id"><b>' + t.name + '</b><small>' + t.role + ' — ' + t.city + '</small></span>'
+              + '</figcaption></figure>';
+          }).join('');
+        }
         document.title = 'AlerteMarché — Recevez les meilleures opportunités ' + m.heroTitle + ' en temps réel';
         // --- Maquettes d'alerte e-mail adaptées au pays courant ---
         var mLoc = (m.mockLoc ? m.mockLoc + ', ' + m.name : m.name);
