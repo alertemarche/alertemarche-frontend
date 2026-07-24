@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=3"><link rel="icon" type="image/x-icon" href="/favicon.ico?v=3"><link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png?v=3">
   <title>Choisissez votre pays — AlerteMarché</title>
   <meta name="description" content="Sélectionnez votre pays pour accéder aux appels d'offres publics et privés : Bénin, Togo, Côte d'Ivoire.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -61,6 +61,30 @@
     .cs-card .cs-go svg { width: 18px; height: 18px; transition: transform .2s; }
     .cs-card:hover .cs-go svg { transform: translateX(4px); }
     .cs-foot { margin-top: 44px; color: #86c9a1; font-size: .85rem; text-align: center; }
+    /* Carte du pays détecté automatiquement par géolocalisation IP */
+    .cs-card.detected { border-color: #16a34a; box-shadow: 0 18px 42px rgba(22,163,74,.34); }
+    .cs-detect-badge {
+      display: none; align-items: center; gap: 6px; margin-bottom: 14px;
+      background: #dcfce7; color: #15803d; font-weight: 700; font-size: .78rem;
+      padding: 5px 12px; border-radius: 999px;
+    }
+    .cs-card.detected .cs-detect-badge { display: inline-flex; }
+    /* Overlay de détection du pays (première visite) */
+    .cs-loader {
+      position: fixed; inset: 0; z-index: 50;
+      background: radial-gradient(1200px 600px at 50% -10%, #125e34 0%, transparent 60%), linear-gradient(160deg, #0a3d20 0%, #072b16 100%);
+      background-color: #0a3d20;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;
+      color: #fff; text-align: center; padding: 20px;
+    }
+    .cs-loader .spinner {
+      width: 54px; height: 54px; border-radius: 50%;
+      border: 5px solid rgba(255,255,255,.18); border-top-color: #4ade80;
+      animation: csspin .8s linear infinite;
+    }
+    @keyframes csspin { to { transform: rotate(360deg); } }
+    .cs-loader h2 { font-size: 1.25rem; font-weight: 800; }
+    .cs-loader p { color: #a7f3d0; font-size: .95rem; margin-top: 4px; }
     @media (max-width: 760px) {
       .cs-grid { grid-template-columns: 1fr; max-width: 420px; gap: 18px; }
       .cs-head h1 { font-size: 1.6rem; }
@@ -69,6 +93,15 @@
   </style>
 </head>
 <body data-no-chrome="1">
+
+  <!-- Overlay de détection automatique du pays (première visite) -->
+  <div class="cs-loader" id="csLoader">
+    <div class="spinner"></div>
+    <div>
+      <h2>Détection de votre pays…</h2>
+      <p>Nous préparons les appels d'offres de votre région.</p>
+    </div>
+  </div>
 
   <div class="cs-brand">
     <span class="mark">
@@ -85,18 +118,21 @@
 
   <div class="cs-grid">
     <a class="cs-card" href="#" data-country="BJ">
+      <span class="cs-detect-badge">📍 Votre position</span>
       <img class="cs-flag" src="https://flagcdn.com/w160/bj.png" alt="Drapeau du Bénin">
       <h2>Bénin</h2>
       <p>Appels d'offres publics et privés au Bénin.</p>
       <span class="cs-go">Continuer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
     </a>
     <a class="cs-card" href="#" data-country="TG">
+      <span class="cs-detect-badge">📍 Votre position</span>
       <img class="cs-flag" src="https://flagcdn.com/w160/tg.png" alt="Drapeau du Togo">
       <h2>Togo</h2>
       <p>Appels d'offres publics et privés au Togo.</p>
       <span class="cs-go">Continuer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
     </a>
     <a class="cs-card" href="#" data-country="CI">
+      <span class="cs-detect-badge">📍 Votre position</span>
       <img class="cs-flag" src="https://flagcdn.com/w160/ci.png" alt="Drapeau de la Côte d'Ivoire">
       <h2>Côte d'Ivoire</h2>
       <p>Appels d'offres publics et privés en Côte d'Ivoire.</p>
@@ -107,14 +143,92 @@
   <div class="cs-foot">🌍 Bénin • Togo • Côte d'Ivoire — la veille des marchés en Afrique de l'Ouest</div>
 
   <script>
-    document.querySelectorAll('.cs-card').forEach(function (card) {
-      card.addEventListener('click', function (e) {
-        e.preventDefault();
-        var code = card.getAttribute('data-country');
-        try { localStorage.setItem('am_country', code); } catch (_) {}
-        window.location.href = '/index';
+    (function () {
+      var COVERED = ['BJ', 'TG', 'CI'];
+      var loader = document.getElementById('csLoader');
+
+      // Clic manuel sur une carte : enregistre le pays et va à l'accueil.
+      document.querySelectorAll('.cs-card').forEach(function (card) {
+        card.addEventListener('click', function (e) {
+          e.preventDefault();
+          var code = card.getAttribute('data-country');
+          try { localStorage.setItem('am_country', code); } catch (_) {}
+          window.location.href = '/index';
+        });
       });
-    });
+
+      function hideLoader() { if (loader) { loader.style.display = 'none'; } }
+
+      function highlight(cc) {
+        var card = document.querySelector('.cs-card[data-country="' + cc + '"]');
+        if (card) {
+          card.classList.add('detected');
+          // Placer la carte détectée en premier pour la mettre en avant.
+          var grid = card.parentNode;
+          if (grid && grid.firstChild !== card) grid.insertBefore(card, grid.firstChild);
+        }
+      }
+
+      // Détection du pays via géolocalisation IP (plusieurs fournisseurs de secours).
+      function detectCountryCode() {
+        var providers = [
+          { url: 'https://ipapi.co/json/', pick: function (d) { return d && d.country_code; } },
+          { url: 'https://ipwho.is/', pick: function (d) { return d && d.country_code; } },
+          { url: 'https://get.geojs.io/v1/ip/country.json', pick: function (d) { return d && d.country; } }
+        ];
+        var i = 0;
+        function tryNext() {
+          if (i >= providers.length) return Promise.resolve(null);
+          var p = providers[i++];
+          var ctrl = new AbortController();
+          var timer = setTimeout(function () { ctrl.abort(); }, 3000);
+          return fetch(p.url, { signal: ctrl.signal })
+            .then(function (r) { clearTimeout(timer); return r.ok ? r.json() : null; })
+            .then(function (d) {
+              var cc = d ? (p.pick(d) || '') : '';
+              cc = String(cc).toUpperCase();
+              return cc ? cc : tryNext();
+            })
+            .catch(function () { clearTimeout(timer); return tryNext(); });
+        }
+        return tryNext();
+      }
+
+      var params = new URLSearchParams(location.search);
+      var forceChoose = params.has('choose');       // ?choose=1 => changement manuel
+      var saved = localStorage.getItem('am_country');
+      var hasValid = saved && COVERED.indexOf(saved) !== -1;
+
+      if (forceChoose || hasValid) {
+        // L'utilisateur veut choisir manuellement (ou a déjà un pays) :
+        // on affiche le sélecteur et on surligne le pays courant / détecté.
+        hideLoader();
+        if (hasValid) {
+          highlight(saved);
+        } else {
+          detectCountryCode().then(function (cc) {
+            if (cc && COVERED.indexOf(cc) !== -1) highlight(cc);
+          });
+        }
+        return;
+      }
+
+      // Première visite (aucun pays enregistré) : détection auto + redirection.
+      var safety = setTimeout(hideLoader, 5000); // filet de sécurité
+      detectCountryCode().then(function (cc) {
+        clearTimeout(safety);
+        if (cc && COVERED.indexOf(cc) !== -1) {
+          try { localStorage.setItem('am_country', cc); } catch (_) {}
+          window.location.replace('/index');
+        } else {
+          // Pays non couvert ou détection impossible : afficher le sélecteur.
+          hideLoader();
+        }
+      }).catch(function () {
+        clearTimeout(safety);
+        hideLoader();
+      });
+    })();
   </script>
 </body>
 </html>

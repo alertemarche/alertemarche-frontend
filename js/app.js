@@ -135,7 +135,7 @@ function countrySelector() {
         <div class="country-menu" id="countryMenu">
           <div class="country-menu-head">Choisissez votre pays</div>
           ${opts}
-          <a href="/country-select.html" class="country-menu-more">Voir la page de sélection →</a>
+          <a href="/country-select.html?choose=1" class="country-menu-more">Voir la page de sélection →</a>
         </div>
       </div>`;
 }
