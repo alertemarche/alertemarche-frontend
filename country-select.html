@@ -43,10 +43,12 @@
       transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
       box-shadow: 0 12px 30px rgba(0,0,0,.22); text-decoration: none;
       display: flex; flex-direction: column; align-items: center;
+      position: relative; z-index: 1;
     }
     .cs-card:hover {
       transform: translateY(-8px); border-color: #16a34a;
       box-shadow: 0 22px 48px rgba(0,0,0,.32);
+      z-index: 2;
     }
     .cs-flag {
       width: 96px; height: 68px; object-fit: cover; border-radius: 10px;
@@ -85,10 +87,17 @@
     @keyframes csspin { to { transform: rotate(360deg); } }
     .cs-loader h2 { font-size: 1.25rem; font-weight: 800; }
     .cs-loader p { color: #a7f3d0; font-size: .95rem; margin-top: 4px; }
-    @media (max-width: 760px) {
+    /* Tablettes : 2 colonnes */
+    @media (max-width: 1024px) {
+      .cs-grid { grid-template-columns: repeat(2, 1fr); max-width: 720px; gap: 20px; }
+    }
+    /* Mobile : 1 colonne */
+    @media (max-width: 640px) {
       .cs-grid { grid-template-columns: 1fr; max-width: 420px; gap: 18px; }
       .cs-head h1 { font-size: 1.6rem; }
+      .cs-head p { font-size: 0.95rem; }
       .cs-card { padding: 26px 20px; }
+      .cs-flag { width: 80px; height: 57px; }
     }
   </style>
 </head>
