@@ -61,7 +61,7 @@
             <div class="field"><label>Email <span class="req">*</span></label><input type="email" name="email" placeholder="Ex: jean.dossou@email.com" required></div>
             <div class="field"><label>Numéro de téléphone <span style="color:var(--muted);font-weight:400;">(optionnel)</span></label>
               <div class="phone-field">
-                <select class="cc" name="cc"><option value="+229" data-cc="BJ">🇧🇯 +229</option><option value="+228" data-cc="TG">🇹🇬 +228</option><option value="+225" data-cc="CI">🇨🇮 +225</option></select>
+                <select class="cc" name="cc"><option value="+229" data-cc="BJ">🇧🇯 +229</option><option value="+228" data-cc="TG">🇹🇬 +228</option><option value="+225" data-cc="CI">🇨🇮 +225</option><option value="+221" data-cc="SN">🇸🇳 +221</option></select>
                 <input type="tel" name="phone" placeholder="97 12 34 56">
               </div>
             </div>
@@ -165,7 +165,7 @@
 
     function initPage() {
       // Pré-sélectionne l'indicatif téléphonique du pays choisi (BJ/TG/CI).
-      (function(){ var dc = { BJ:'+229', TG:'+228', CI:'+225' }[(window.amCode?amCode():'BJ')] || '+229'; var sel = document.querySelector('select.cc[name="cc"]'); if (sel) sel.value = dc; })();
+      (function(){ var dc = { BJ:'+229', TG:'+228', CI:'+225', SN:'+221' }[(window.amCode?amCode():'BJ')] || '+229'; var sel = document.querySelector('select.cc[name="cc"]'); if (sel) sel.value = dc; })();
       const urlP = new URLSearchParams(location.search).get('profil');
       if (urlP && PROFILE_META[urlP]) currentProfile = urlP;
       applyProfile(currentProfile);
@@ -216,7 +216,7 @@
             password: f.get('password'),
             password_confirmation: f.get('password_confirmation'),
             profile_type: backendProfile,
-            primary_country: ({ '+229':'BJ', '+228':'TG', '+225':'CI' }[f.get('cc')] || (window.amCode ? amCode() : 'BJ')),
+            primary_country: ({ '+229':'BJ', '+228':'TG', '+225':'CI', '+221':'SN' }[f.get('cc')] || (window.amCode ? amCode() : 'BJ')),
             organization: currentProfile === 'prestataire' ? (f.get('org_name') || '') : '',
             org_type: f.get('org_type') || '',
             region: f.get('region') || '',
