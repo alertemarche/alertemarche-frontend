@@ -290,6 +290,7 @@
         if (reset) { state.page = 1; state.all = []; grid.innerHTML = '<p class="muted" style="grid-column:1/-1;padding:30px;text-align:center;">Chargement…</p>'; }
         const p = new URLSearchParams({ country: (window.amCode ? amCode() : 'BJ'), active: '1', type: state.types, per_page: String(state.perPage), page: String(state.page) });
         if (state.q) p.set('q', state.q);
+        const sortVal = val('fSort'); if (sortVal) p.set('sort', sortVal);
         try {
           const r = await api('/tenders?' + p.toString());
           const items = (r.data || []).map(mapTender);
@@ -321,7 +322,10 @@
       });
 
       // --- Filtres secondaires (raffinement client) ---
-      ['fSector', 'fSector2', 'fInstitution', 'fInstitution2', 'fLocation', 'fLocation2', 'fSort'].forEach(id => { const el = document.getElementById(id); if (el) el.addEventListener('change', renderAll); });
+      ['fSector', 'fSector2', 'fInstitution', 'fInstitution2', 'fLocation', 'fLocation2'].forEach(id => { const el = document.getElementById(id); if (el) el.addEventListener('change', renderAll); });
+      // Le tri est effectué côté serveur : il porte sur l'ensemble des résultats
+      // (et pas seulement sur les avis déjà chargés). On recharge donc la liste.
+      { const s = document.getElementById('fSort'); if (s) s.addEventListener('change', () => fetchPage(true)); }
       const applyBtn = document.getElementById('applyFilters'); if (applyBtn) applyBtn.addEventListener('click', renderAll);
 
       document.getElementById('resetFilters').addEventListener('click', () => {
