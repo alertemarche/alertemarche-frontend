@@ -8,7 +8,7 @@
   <meta name="description" content="Appels d'offres et avis d'appel à concurrence des marchés publics au Bénin. Sources officielles du gouvernement, résumés IA, alertes WhatsApp et Email.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=202607241000">
+  <link rel="stylesheet" href="css/style.css?v=202607241100">
 </head>
 <body>
 
@@ -19,7 +19,7 @@
       <div class="page-title">
         <div>
           <h1>Avis d'Appel à Concurrence</h1>
-          <p>Appels d'offres et avis d'appel à concurrence des marchés publics — Bénin</p>
+          <p id="pageSubtitle">Appels d'offres et avis d'appel à concurrence des marchés publics — Bénin</p>
         </div>
         <div class="official-note">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
@@ -74,7 +74,7 @@
 
         <div class="tenders-grid" id="tendersGrid"></div>
 
-        <div class="market-showing">Chargement des avis d'appel à concurrence du Bénin…</div>
+        <div class="market-showing">Chargement des avis d'appel à concurrence…</div>
       </div>
     </div>
   </section>
@@ -91,7 +91,7 @@
     </div>
   </section>
 
-  <script src="js/app.js?v=202607241000"></script>
+  <script src="js/app.js?v=202607241100"></script>
   <script>
     const svg = {
       inst:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11"/></svg>',
@@ -136,6 +136,8 @@
     }
 
     function initPage() {
+      // Adapte le sous-titre au pays sélectionné (Bénin/Togo/Côte d'Ivoire).
+      if (window.amMeta) { var _m = amMeta(); var _st = document.getElementById('pageSubtitle'); if (_st) _st.textContent = "Appels d'offres et avis d'appel à concurrence des marchés publics — " + _m.name; }
       const grid = document.getElementById('tendersGrid');
       let data = [];
 
@@ -210,7 +212,7 @@
               sector,
               time: relTime(t.publication_date), isNew,
               title: t.title, inst: t.institution || 'Institution publique',
-              loc: t.location || 'Bénin',
+              loc: t.location || (window.amByCode ? amByCode(t.country).name : ''),
               reference: t.reference || null,
               nbLots: t.nb_lots || null,
               url: t.source_url || null,
@@ -226,7 +228,7 @@
           ['fLocation','fLocation2'].forEach(id => { const s=document.getElementById(id); s.length=1; rLocs.forEach(i=>{const o=document.createElement('option');o.textContent=i;s.appendChild(o);}); });
           render(data);
           const showEl = document.querySelector('.market-showing');
-          if (showEl) showEl.textContent = `Affichage de ${data.length} avis d'appel à concurrence du Bénin`;
+          if (showEl) showEl.textContent = `Affichage de ${data.length} avis d'appel à concurrence — ${window.amMeta ? amMeta().name : ''}`;
           document.getElementById('updatedAt').textContent = "Mis à jour à l'instant";
         } else {
           render([]);

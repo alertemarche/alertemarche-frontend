@@ -8,7 +8,7 @@
   <meta name="description" content="Plans de passation de marchés (PPM) des autorités contractantes au Bénin. Anticipez les marchés à venir grâce aux sources officielles du gouvernement.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=202607241000">
+  <link rel="stylesheet" href="css/style.css?v=202607241100">
 </head>
 <body>
 
@@ -19,7 +19,7 @@
       <div class="page-title">
         <div>
           <h1>Plans de Passation</h1>
-          <p>Plans de passation de marchés des autorités contractantes — Bénin</p>
+          <p id="pageSubtitle">Plans de passation de marchés des autorités contractantes — Bénin</p>
         </div>
         <div class="official-note" style="background:var(--indigo-050);border-color:#c9cbfb;color:#4338ca;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
@@ -71,7 +71,7 @@
 
         <div class="tenders-grid" id="tendersGrid"></div>
 
-        <div class="market-showing">Chargement des plans de passation du Bénin…</div>
+        <div class="market-showing">Chargement des plans de passation…</div>
       </div>
     </div>
   </section>
@@ -88,7 +88,7 @@
     </div>
   </section>
 
-  <script src="js/app.js?v=202607241000"></script>
+  <script src="js/app.js?v=202607241100"></script>
   <script>
     const svg = {
       inst:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11"/></svg>',
@@ -159,6 +159,8 @@
     }
 
     function initPage() {
+      // Adapte le sous-titre au pays sélectionné (Bénin/Togo/Côte d'Ivoire).
+      if (window.amMeta) { var _m = amMeta(); var _st = document.getElementById('pageSubtitle'); if (_st) _st.textContent = 'Plans de passation de marchés des autorités contractantes — ' + _m.name; }
       const grid = document.getElementById('tendersGrid');
       let data = [];
 
@@ -233,7 +235,7 @@
           ['fInstitution','fInstitution2'].forEach(id => { const s=document.getElementById(id); s.length=1; rInsts.forEach(i=>{const o=document.createElement('option');o.textContent=i;s.appendChild(o);}); });
           render(data);
           const showEl = document.querySelector('.market-showing');
-          if (showEl) showEl.textContent = `Affichage de ${data.length} plans de passation du Bénin`;
+          if (showEl) showEl.textContent = `Affichage de ${data.length} plans de passation — ${window.amMeta ? amMeta().name : ''}`;
           document.getElementById('updatedAt').textContent = "Mis à jour à l'instant";
         } else {
           render([]);

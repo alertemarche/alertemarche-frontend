@@ -8,7 +8,7 @@
   <meta name="description" content="Marchés publics au Bénin par type de procédure de passation : demande de cotation, DRP, appel d'offres national et international, manifestation d'intérêt. Marchés en cours et planifiés, sources officielles.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=202607241000">
+  <link rel="stylesheet" href="css/style.css?v=202607241100">
 </head>
 <body>
 
@@ -53,11 +53,11 @@
 
       <div class="tenders-grid" id="tendersGrid"></div>
 
-      <div class="market-showing" id="marketShowing">Chargement des opportunités officielles du Bénin…</div>
+      <div class="market-showing" id="marketShowing">Chargement des opportunités officielles…</div>
     </div>
   </section>
 
-  <script src="js/app.js?v=202607241000"></script>
+  <script src="js/app.js?v=202607241100"></script>
   <script>
     // Métadonnées d'affichage par procédure (paramètre ?p=).
     const PROC = {
@@ -191,7 +191,7 @@
               sector: ds.sector, badge: ds.badge,
               time: relTime(t.publication_date), statut,
               title: t.title, inst: t.institution || 'Institution publique',
-              loc: t.location || 'Bénin',
+              loc: t.location || (window.amByCode ? amByCode(t.country).name : ''),
               reference: t.reference || null,
               url: t.source_url || null,
               _deadline: t.deadline || null,
