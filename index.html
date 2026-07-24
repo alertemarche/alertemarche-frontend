@@ -9,7 +9,7 @@
   <meta name="description" content="AlerteMarché surveille 24h/24 les sources officielles du Bénin et vous envoie chaque appel d'offres correspondant à vos activités par e-mail.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=202607241600">
+  <link rel="stylesheet" href="css/style.css?v=202607242030">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RRXKSCN05J"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RRXKSCN05J');</script>
 </head>
@@ -21,8 +21,8 @@
     <div class="container hero-inner">
       <div>
         <span class="hero-badge" id="heroBadge">🇧🇯 BÉNIN — Ne manquez aucune opportunité</span>
-        <h1 id="heroTitle">Recevez les meilleures opportunités <span class="green">au Bénin</span> en temps réel</h1>
-        <p class="lead" id="heroLead">Soyez alerté instantanément par <b>e-mail</b> dès qu'un appel d'offres correspondant à vos activités est publié.</p>
+        <h1 id="heroTitle">Inscrivez-vous gratuitement, consultez les marchés publics et privés actifs <span class="green">au Bénin</span></h1>
+        <p class="lead" id="heroLead">Recevez par <b>e-mail</b> des alertes instantanées sur les opportunités de votre secteur.</p>
 
         <div class="hero-channels">
           <div class="channel-card">
@@ -246,7 +246,7 @@
     </div>
   </section>
 
-  <script src="js/app.js?v=202607241600"></script>
+  <script src="js/app.js?v=202607242030"></script>
   <script>
     // Compteurs dynamiques des catégories (appel API par type de marché).
     function initPage() {
@@ -259,7 +259,7 @@
         var badge = document.getElementById('heroBadge');
         if (badge) badge.innerHTML = flagImg(m.cc, m.name) + ' ' + m.name.toUpperCase() + ' — Ne manquez aucune opportunité';
         var ht = document.getElementById('heroTitle');
-        if (ht) ht.innerHTML = 'Recevez les meilleures opportunités <span class="green">' + m.heroTitle + '</span> en temps réel';
+        if (ht) ht.innerHTML = 'Inscrivez-vous gratuitement, consultez les marchés publics et privés actifs <span class="green">' + m.heroTitle + '</span>';
         var hl = document.getElementById('heroLead');
         if (hl) hl.innerHTML = m.heroLead;
         var wt = document.getElementById('whyTitle');
