@@ -833,7 +833,7 @@ p { color: var(--text); }
 .ab-msg b { display:block; font-size:.94rem; line-height:1.3; margin-bottom:8px; color:var(--ink); }
 .ab-msg-meta { font-size:.78rem; color:#4b5563; margin-bottom:3px; }
 .ab-msg-btn { display:inline-block; margin-top:10px; background:var(--green); color:#fff; font-weight:700; font-size:.78rem; padding:7px 14px; border-radius:8px; }
-.ab-wa { position:absolute; top:-8px; left:0; width:52px; height:52px; border-radius:50%; background:#25D366; color:#fff; display:grid; place-items:center; box-shadow:var(--shadow); }
+.ab-wa { position:absolute; top:-8px; left:0; width:52px; height:52px; border-radius:50%; background:var(--green,#0a7d3f); color:#fff; display:grid; place-items:center; box-shadow:var(--shadow); }
 .ab-wa svg { width:28px; height:28px; }
 .ab-mail { position:absolute; bottom:-6px; left:6px; max-width:280px; background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow); padding:14px 16px; }
 .ab-mail-hd { display:flex; align-items:center; gap:8px; font-weight:800; font-size:.82rem; color:var(--ink); margin-bottom:8px; }

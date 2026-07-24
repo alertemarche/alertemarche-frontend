@@ -8,7 +8,7 @@
   <meta name="description" content="Tableau de bord AlerteMarché : vos alertes, centres d'intérêt, abonnements et paramètres.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=202607241100">
+  <link rel="stylesheet" href="css/style.css?v=202607241600">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RRXKSCN05J"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RRXKSCN05J');</script>
 </head>
@@ -100,9 +100,8 @@
           <div class="form-section-title" style="display:flex;align-items:center;gap:8px;font-weight:700;margin-bottom:12px;">
             <span style="color:var(--green);">🔔</span> Canaux de notification
           </div>
-          <label style="display:flex;gap:10px;align-items:center;font-weight:500;margin-bottom:10px;"><input type="checkbox" id="iEmail"> Recevoir mes alertes par <b>e-mail</b></label>
-          <label style="display:flex;gap:10px;align-items:center;font-weight:500;"><input type="checkbox" id="iWhatsapp"> Recevoir mes alertes par <b>WhatsApp</b> <span class="chip" style="background:#fef3c7;color:#92400e;">Premium</span></label>
-          <p class="muted" style="font-size:.82rem;margin-top:8px;" id="waHint">WhatsApp nécessite un abonnement payant actif.</p>
+          <label style="display:flex;gap:10px;align-items:center;font-weight:500;margin-bottom:10px;"><input type="checkbox" id="iEmail" checked disabled> Recevoir mes alertes par <b>e-mail</b></label>
+          <p class="muted" style="font-size:.82rem;margin-top:8px;">Les alertes sont envoyées exclusivement par e-mail à l'adresse de votre compte.</p>
         </div>
 
         <div class="mt-2" style="display:flex;gap:12px;align-items:center;">
@@ -134,7 +133,7 @@
           <div class="field"><label>Structure / Organisation</label><input class="input" id="sOrg" placeholder="Nom de votre structure"></div>
           <div class="grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
             <div class="field"><label>Adresse e-mail</label><input class="input" id="sEmail" type="email" disabled style="background:#f9fafb;color:#6b7280;"></div>
-            <div class="field"><label>Téléphone / WhatsApp</label><input class="input" id="sPhone" placeholder="+229…"></div>
+            <div class="field"><label>Téléphone <span style="color:var(--muted);font-weight:400;font-size:.85rem;">(optionnel)</span></label><input class="input" id="sPhone" placeholder="+229…"></div>
           </div>
           <div class="field"><label>Type de compte</label><input class="input" id="sProfile" disabled style="background:#f9fafb;color:#6b7280;"></div>
           <button class="btn btn--primary" id="saveProfile">💾 Enregistrer mon profil</button>
@@ -145,7 +144,6 @@
           <p class="muted" style="font-size:.9rem;margin-bottom:12px;">Besoin d'aide ou de modifier votre mot de passe ? Notre équipe est disponible.</p>
           <div style="display:flex;gap:12px;flex-wrap:wrap;">
             <a class="btn btn--ghost btn--sm" href="mailto:info@alertemarche.com?subject=Assistance%20AlerteMarché">✉️ Contacter le support</a>
-            <a class="btn btn--ghost btn--sm" href="https://wa.me/2290198524949" target="_blank" rel="noopener">💬 WhatsApp support</a>
           </div>
         </div>
 
@@ -159,7 +157,7 @@
     </main>
   </div>
 
-  <script src="js/app.js?v=202607241100"></script>
+  <script src="js/app.js?v=202607241600"></script>
   <script>
     if (!token()) location.href="connexion";
 
@@ -225,11 +223,6 @@
             <div class="mt-2"><a href="/tarifs" class="btn btn--primary">Choisir un abonnement</a></div>`;
         }
 
-        // Canaux WhatsApp : disponible seulement si abonnement actif
-        const wa = document.getElementById('iWhatsapp');
-        const waHint = document.getElementById('waHint');
-        if (!active) { wa.disabled = true; }
-        else { waHint.textContent = 'WhatsApp est disponible avec votre abonnement actif.'; }
       } catch (e) {
         console.error('Erreur chargement compte:', e);
         localStorage.removeItem('am_token');
@@ -287,8 +280,6 @@
 
       // Canaux
       document.getElementById('iEmail').checked = ME ? !!ME.notify_email : true;
-      document.getElementById('iWhatsapp').checked = ME ? !!ME.notify_whatsapp : false;
-
       interestsReady = true;
     }
 
@@ -324,7 +315,7 @@
           sectors: Array.from(selectedSectors),
           keywords: keywords,
           notify_email: document.getElementById('iEmail').checked,
-          notify_whatsapp: document.getElementById('iWhatsapp').checked,
+          notify_whatsapp: false,
         }});
         if (d.user) { ME = d.user; }
         document.getElementById('kSectors').textContent = selectedSectors.size;

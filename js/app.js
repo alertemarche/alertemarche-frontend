@@ -9,7 +9,6 @@ const API_BASE = (location.hostname === 'localhost' || location.hostname === '12
 /* -------- Icônes SVG (stroke currentColor) -------- */
 const IC = {
   bell: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>',
-  whatsapp: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm0 18.15h-.01a8.2 8.2 0 0 1-4.18-1.14l-.3-.18-3.11.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.39c0-4.54 3.7-8.23 8.24-8.23 2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 0 1 2.41 5.82c0 4.54-3.69 8.23-8.23 8.23Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.8-.79.97-.14.16-.29.18-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.16.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.42l-.48-.01c-.16 0-.43.06-.66.31-.22.25-.87.85-.87 2.07 0 1.22.89 2.4 1.01 2.56.13.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.47-.07 1.47-.6 1.68-1.18.2-.58.2-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z"/></svg>',
   mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>',
   bolt: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
   target: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
@@ -61,7 +60,7 @@ const AM_COUNTRIES = [
         color: '#008751',
         hero: 'img/amazone.jpg',
         heroTitle: 'au Bénin',
-        heroLead: "Soyez alerté instantanément par <b>WhatsApp</b> et <b>Email</b> dès qu'un appel d'offres correspondant à vos activités est publié.",
+        heroLead: "Soyez alerté instantanément par <b>e-mail</b> dès qu'un appel d'offres correspondant à vos activités est publié.",
         armp: 'ARMP Bénin',
         mockInst: 'Autorité de Régulation des Marchés Publics - Bénin',
         mockObject: "Travaux de construction d'un bâtiment R+2",
@@ -72,7 +71,7 @@ const AM_COUNTRIES = [
         color: '#006A4E',
         hero: 'img/hero-tg.jpg',
         heroTitle: 'au Togo',
-        heroLead: "Accédez en temps réel aux marchés publics et privés du Togo. Recevez vos alertes par <b>WhatsApp</b> et <b>Email</b>.",
+        heroLead: "Accédez en temps réel aux marchés publics et privés du Togo. Recevez vos alertes par <b>e-mail</b>.",
         armp: 'ARMP Togo',
         mockInst: 'ARCOP Togo - Marchés Publics',
         mockObject: "Fourniture d'équipements informatiques",
@@ -83,7 +82,7 @@ const AM_COUNTRIES = [
         color: '#F77F00',
         hero: 'img/hero-ci.jpg',
         heroTitle: "en Côte d'Ivoire",
-        heroLead: "Accédez en temps réel aux marchés publics et privés de Côte d'Ivoire. Recevez vos alertes par <b>WhatsApp</b> et <b>Email</b>.",
+        heroLead: "Accédez en temps réel aux marchés publics et privés de Côte d'Ivoire. Recevez vos alertes par <b>e-mail</b>.",
         armp: 'ANRMP Côte d\'Ivoire',
         mockInst: 'DGMP Côte d\'Ivoire',
         mockObject: "Réhabilitation de voirie urbaine",
@@ -149,28 +148,11 @@ function renderNav() {
     const current = path + (path === '/procedures' && params.get('p') ? '?p=' + params.get('p') : '');
     const isActive = (h) => (h === current || h === path) ? 'active' : '';
 
-    // Header conservé à l'identique : « Appels d'offres publics » et « Appels d'offres
-    // privés » restent des liens directs visibles. Les nouvelles rubriques sont proposées
-    // en sous-catégories de « Appels d'offres publics » (menu déroulant), afin de laisser
-    // le choix à l'utilisateur sans modifier la structure du header.
-    // Les 5 procédures de passation (cotation, DRP, AAON, AAOI, AMI) couvrent
-    // l'ensemble des marchés publics en cours ET planifiés (plans de passation),
-    // ce qui élargit fortement le nombre de marchés remontés.
-    const publicSub = [
-        ['/appels-offres-publics', "Appels d'offres publics", 'var(--green)'],
-        ['/procedures?p=cotation', 'Demande de cotation', 'var(--green)'],
-        ['/procedures?p=drp', 'Demande de renseignement et de prix (DRP)', 'var(--green)'],
-        ['/procedures?p=aaon', "Avis d'appel d'offres national (AAON)", 'var(--green)'],
-        ['/procedures?p=aaoi', "Avis d'appel d'offres international (AAOI)", 'var(--green)'],
-        ['/procedures?p=ami', 'Avis à manifestation d\'intérêt (AMI)', 'var(--green)'],
-        ['/appels-concurrence', "Avis d'Appel à Concurrence", 'var(--green)'],
-        ['/avis-generaux', 'Avis Généraux', 'var(--orange)'],
-        ['/plan-passation', 'Plans de Passation', 'var(--indigo)'],
-    ];
-    const ddItems = (items) => items.map(([h, t, c]) =>
-        `<a href="${h}" class="${isActive(h)}"><span class="dot" style="background:${c}"></span>${t}</a>`).join('');
-    const groupActive = (items) => items.some(([h]) => h.split('?')[0] === path) ? 'has-active' : '';
-
+    // Menu simplifié : « Marchés publics » et « Marchés privés » sont des liens
+    // directs. En cliquant sur « Marchés publics », l'utilisateur accède
+    // directement à la page regroupant l'ENSEMBLE des marchés publics, qu'il
+    // peut ensuite affiner grâce aux filtres (catégories, mots-clés, type,
+    // institution, localisation, budget, dates). Plus de sous-catégories.
     const header = document.createElement('header');
     header.className = 'site-header';
     header.innerHTML = `
@@ -185,12 +167,8 @@ function renderNav() {
         ${countrySelector()}
         <nav class="main-nav" id="mainNav">
           <a href="/index" class="${isActive('/index')}">Accueil</a>
-          <div class="nav-dropdown ${groupActive(publicSub)}">
-            <a href="/appels-offres-publics" class="nav-dd-link ${isActive('/appels-offres-publics')}">Appels d'offres publics</a>
-            <button type="button" class="nav-dd-caret" aria-label="Sous-catégories des appels d'offres publics"><span class="caret">▾</span></button>
-            <div class="nav-dd-menu">${ddItems(publicSub)}</div>
-          </div>
-          <a href="/appels-offres-prives" class="${isActive('/appels-offres-prives')}">Appels d'offres privés</a>
+          <a href="/appels-offres-publics" class="${isActive('/appels-offres-publics')}">Marchés publics</a>
+          <a href="/appels-offres-prives" class="${isActive('/appels-offres-prives')}">Marchés privés</a>
           <a href="/publier" class="nav-publier ${isActive('/publier')}">📢 Publier une annonce</a>
           <a href="/tarifs" class="${isActive('/tarifs')}">Abonnement</a>
           <a href="/inscription" class="nav-auth-mobile ${isActive('/inscription')}">Créer un compte</a>
@@ -204,20 +182,6 @@ function renderNav() {
       </div>`;
     document.body.prepend(header);
     $('#navToggle')?.addEventListener('click', () => $('#mainNav').classList.toggle('open'));
-    // Ouverture/fermeture du sous-menu au clic sur le chevron (utile sur mobile / tactile).
-    // Le libellé « Appels d'offres publics » reste un lien direct ; seul le chevron ouvre
-    // la liste des sous-catégories.
-    $$('.nav-dropdown .nav-dd-caret').forEach((btn) => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            const dd = btn.closest('.nav-dropdown');
-            const wasOpen = dd.classList.contains('open');
-            $$('.nav-dropdown').forEach((d) => d.classList.remove('open'));
-            if (!wasOpen) dd.classList.add('open');
-        });
-    });
-    document.addEventListener('click', () => $$('.nav-dropdown').forEach((d) => d.classList.remove('open')));
 
     // -------- Sélecteur de pays --------
     const cBadge = $('#countryBadge');
@@ -275,15 +239,12 @@ function renderFooter() {
         <div class="footer-grid">
           <div>
             <div class="footer-brand"><span class="brand-mark">${IC.bell}</span> Alerte<b style="color:#fff">Marché</b></div>
-            <p>La plateforme de référence pour la veille des appels d'offres en Afrique de l'Ouest. Recevez les meilleures opportunités par WhatsApp et Email, en temps réel.</p>
+            <p>La plateforme de référence pour la veille des appels d'offres en Afrique de l'Ouest. Recevez les meilleures opportunités par e-mail, en temps réel.</p>
           </div>
           <div class="footer-col">
             <h4>Plateforme</h4>
-            <a href="/appels-offres-publics">Appels d'offres publics</a>
-            <a href="/appels-offres-prives">Appels d'offres privés</a>
-            <a href="/appels-concurrence">Avis d'Appel à Concurrence</a>
-            <a href="/avis-generaux">Avis Généraux</a>
-            <a href="/plan-passation">Plans de Passation</a>
+            <a href="/appels-offres-publics">Marchés publics</a>
+            <a href="/appels-offres-prives">Marchés privés</a>
             <a href="/tarifs">Abonnement</a>
           </div>
           <div class="footer-col">
