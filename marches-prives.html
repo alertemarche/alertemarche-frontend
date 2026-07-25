@@ -90,7 +90,7 @@
     </div>
   </section>
 
-  <script src="js/app.js?v=202607252030"></script>
+  <script src="js/app.js?v=202607252200"></script>
   <script>
     const COUNTRIES = {
       BJ: { flag: '🇧🇯', name: 'Bénin' },
@@ -177,7 +177,9 @@
     }
 
     function initPage() {
-      if (window.amMeta) { var _m = amMeta(); var _t = document.getElementById('pageTitle'); if (_t) _t.textContent = "Marchés privés — " + _m.name; var _st = document.getElementById("pageSubtitle"); if (_st) _st.textContent = "Consultations des ONG, agences des Nations Unies et organismes internationaux " + _m.heroTitle; document.title = "Marchés privés " + _m.heroTitle + " — AlerteMarché"; }
+      if (window.amMeta) { var _m = amMeta(); var _t = document.getElementById('pageTitle'); if (_t) _t.textContent = "Marchés privés — " + _m.name; var _st = document.getElementById("pageSubtitle"); if (_st) _st.textContent = "Consultations des ONG, agences des Nations Unies et organismes internationaux " + _m.heroTitle; }
+      // SEO : mise à jour des meta tags selon le pays
+      if (window.updateSeoMeta) updateSeoMeta('prive');
       // Bannière paywall (verte = anonyme, orange = gratuit, rien = abonné).
       if (window.renderPaywallBanner) renderPaywallBanner(window.AM_USER_STATUS);
       const grid = document.getElementById('tendersGrid');

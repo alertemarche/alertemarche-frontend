@@ -1,0 +1,43 @@
+# AlerteMarché - Robots.txt optimisé pour le référencement multi-pays
+# Plateforme d'appels d'offres : Bénin, Togo, Côte d'Ivoire, Sénégal
+
+User-agent: *
+Allow: /
+Allow: /marches-publics
+Allow: /marches-prives
+Allow: /tarifs
+Allow: /contact
+Allow: /index
+Allow: /css/
+Allow: /js/
+Allow: /img/
+
+# Pages non indexables (authentification, admin, actions utilisateur)
+Disallow: /connexion
+Disallow: /inscription
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /preferences-alertes
+Disallow: /verification
+Disallow: /compte-cree
+Disallow: /publier
+
+# Assets et fichiers techniques
+Disallow: /*.json$
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://alertemarche.com/sitemap.xml
+
+# Instructions spécifiques pour les principaux moteurs
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+# Fréquence de crawl (éviter la surcharge serveur)
+Crawl-delay: 1

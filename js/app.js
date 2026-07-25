@@ -54,6 +54,118 @@ async function api(path, { method = 'GET', body = null, auth = false } = {}) {
    ne s'affichent PAS sur Windows/Chrome (rendus en lettres « BJ », « TG »…).
    Le Bénin est actif ; Togo et Côte d'Ivoire sont proposés (« Bientôt »)
    pour les visiteurs de ces pays. Le choix est mémorisé dans localStorage. */
+/* ============================================================
+   Configuration SEO par pays pour le référencement Google
+   ============================================================ */
+const SEO_CONFIG = {
+    BJ: {
+        keywords: 'appels d\'offres Bénin, marchés publics Bénin, DNCMP, ARMP Bénin, soumission Bénin, appel à concurrence Bénin, marché public Cotonou, opportunités Bénin',
+        homeTitle: 'Appels d\'Offres Bénin 🇧🇯 | Marchés Publics & DNCMP | AlerteMarché',
+        homeDesc: 'Recevez TOUS les appels d\'offres publics et privés du Bénin en temps réel. Surveillance 24/7 de la DNCMP, ARMP et bailleurs. Plus de 4000 marchés actifs.',
+        publicTitle: 'Marchés Publics Bénin 🇧🇯 | DNCMP & ARMP | 4000+ Appels d\'Offres',
+        publicDesc: 'Tous les appels d\'offres publics du Bénin : DNCMP, ministères, agences. Alertes email automatiques sur les opportunités qui vous concernent.',
+        priveTitle: 'Marchés Privés Bénin 🇧🇯 | ONG & Bailleurs Internationaux',
+        priveDesc: 'Appels d\'offres privés au Bénin : PNUD, Banque Mondiale, BAD, UE. Consultations d\'ONG et organismes internationaux en temps réel.',
+        schema: { region: 'BJ', city: 'Cotonou' }
+    },
+    TG: {
+        keywords: 'appels d\'offres Togo, marchés publics Togo, DNCCP Togo, ARCOP Togo, soumission Togo, appel à concurrence Togo, marché public Lomé, opportunités Togo',
+        homeTitle: 'Appels d\'Offres Togo 🇹🇬 | Marchés Publics & DNCCP | AlerteMarché',
+        homeDesc: 'Recevez tous les appels d\'offres publics et privés du Togo en temps réel. Surveillance 24/7 de la DNCCP, ARCOP et bailleurs internationaux.',
+        publicTitle: 'Marchés Publics Togo 🇹🇬 | DNCCP & ARCOP | Appels d\'Offres',
+        publicDesc: 'Tous les appels d\'offres publics du Togo : DNCCP, ministères, agences publiques. Alertes email automatiques personnalisées.',
+        priveTitle: 'Marchés Privés Togo 🇹🇬 | ONG & Bailleurs Internationaux',
+        priveDesc: 'Appels d\'offres privés au Togo : PNUD, Banque Mondiale, BAD, UE. Consultations d\'ONG et organismes internationaux.',
+        schema: { region: 'TG', city: 'Lomé' }
+    },
+    CI: {
+        keywords: 'appels d\'offres Côte d\'Ivoire, marchés publics CI, ARCOP, ANRMP, DGMP, soumission Côte d\'Ivoire, marché public Abidjan, opportunités CI',
+        homeTitle: 'Appels d\'Offres Côte d\'Ivoire 🇨🇮 | Marchés Publics & ARCOP',
+        homeDesc: 'Recevez tous les appels d\'offres publics et privés de Côte d\'Ivoire en temps réel. Surveillance 24/7 de l\'ARCOP, DGMP et bailleurs internationaux.',
+        publicTitle: 'Marchés Publics Côte d\'Ivoire 🇨🇮 | ARCOP & ANRMP',
+        publicDesc: 'Tous les appels d\'offres publics de Côte d\'Ivoire : ARCOP (ex-ANRMP), ministères, agences. Alertes email automatiques.',
+        priveTitle: 'Marchés Privés Côte d\'Ivoire 🇨🇮 | ONG & Bailleurs',
+        priveDesc: 'Appels d\'offres privés en Côte d\'Ivoire : PNUD, Banque Mondiale, BAD, UE. Consultations d\'ONG et organismes internationaux.',
+        schema: { region: 'CI', city: 'Abidjan' }
+    },
+    SN: {
+        keywords: 'appels d\'offres Sénégal, marchés publics Sénégal, DCMP Sénégal, ARMP Sénégal, soumission Sénégal, appel à concurrence Sénégal, marché public Dakar, opportunités Sénégal',
+        homeTitle: 'Appels d\'Offres Sénégal 🇸🇳 | Marchés Publics & DCMP | AlerteMarché',
+        homeDesc: 'Recevez tous les appels d\'offres publics et privés du Sénégal en temps réel. Surveillance 24/7 de la DCMP, ARMP et bailleurs internationaux.',
+        publicTitle: 'Marchés Publics Sénégal 🇸🇳 | DCMP & ARMP | Appels d\'Offres',
+        publicDesc: 'Tous les appels d\'offres publics du Sénégal : DCMP, ministères, agences publiques. Alertes email automatiques personnalisées.',
+        priveTitle: 'Marchés Privés Sénégal 🇸🇳 | ONG & Bailleurs Internationaux',
+        priveDesc: 'Appels d\'offres privés au Sénégal : PNUD, Banque Mondiale, BAD, UE. Consultations d\'ONG et organismes internationaux.',
+        schema: { region: 'SN', city: 'Dakar' }
+    }
+};
+
+/* Met à jour dynamiquement les meta tags SEO selon le pays */
+function updateSeoMeta(page = 'home') {
+    const cc = amCode();
+    const seo = SEO_CONFIG[cc];
+    if (!seo) return;
+    
+    // Title
+    const titles = { home: seo.homeTitle, public: seo.publicTitle, prive: seo.priveTitle };
+    const title = titles[page] || seo.homeTitle;
+    document.title = title;
+    
+    // Description
+    const descs = { home: seo.homeDesc, public: seo.publicDesc, prive: seo.priveDesc };
+    const desc = descs[page] || seo.homeDesc;
+    let metaDesc = document.querySelector('meta[name="description"]');
+    if (!metaDesc) {
+        metaDesc = document.createElement('meta');
+        metaDesc.name = 'description';
+        document.head.appendChild(metaDesc);
+    }
+    metaDesc.content = desc;
+    
+    // Keywords
+    let metaKeys = document.querySelector('meta[name="keywords"]');
+    if (!metaKeys) {
+        metaKeys = document.createElement('meta');
+        metaKeys.name = 'keywords';
+        document.head.appendChild(metaKeys);
+    }
+    metaKeys.content = seo.keywords;
+    
+    // Open Graph
+    updateOgTag('og:title', title);
+    updateOgTag('og:description', desc);
+    updateOgTag('og:url', window.location.href);
+    updateOgTag('og:type', 'website');
+    updateOgTag('og:locale', 'fr_FR');
+    
+    // Twitter Card
+    updateMetaTag('twitter:card', 'summary_large_image');
+    updateMetaTag('twitter:title', title);
+    updateMetaTag('twitter:description', desc);
+}
+
+function updateOgTag(property, content) {
+    let tag = document.querySelector(`meta[property="${property}"]`);
+    if (!tag) {
+        tag = document.createElement('meta');
+        tag.setAttribute('property', property);
+        document.head.appendChild(tag);
+    }
+    tag.content = content;
+}
+
+function updateMetaTag(name, content) {
+    let tag = document.querySelector(`meta[name="${name}"]`);
+    if (!tag) {
+        tag = document.createElement('meta');
+        tag.name = name;
+        document.head.appendChild(tag);
+    }
+    tag.content = content;
+}
+
+window.updateSeoMeta = updateSeoMeta;
+
 const AM_COUNTRIES = [
     {
         code: 'BJ', name: 'Bénin', cc: 'bj', available: true,

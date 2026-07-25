@@ -254,7 +254,7 @@
     </div>
   </section>
 
-  <script src="js/app.js?v=202607252030"></script>
+  <script src="js/app.js?v=202607252200"></script>
   <script>
     // Compteurs dynamiques des catégories (appel API par type de marché).
     function initPage() {
@@ -330,6 +330,8 @@
           .then(res => setCount(id, res, label))
           .catch(() => { const el = document.getElementById(id); if (el) el.innerHTML = `— <small>${label}</small>`; });
       });
+      // SEO : mise à jour des meta tags selon le pays
+      if (window.updateSeoMeta) updateSeoMeta('home');
     }
   </script>
 </body>

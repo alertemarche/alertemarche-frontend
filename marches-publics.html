@@ -99,7 +99,7 @@
     </div>
   </section>
 
-  <script src="js/app.js?v=202607252030"></script>
+  <script src="js/app.js?v=202607252200"></script>
   <script>
     const SAMPLE_TENDERS = [
       { sector:'Travaux', badge:'travaux', time:'Il y a 2 heures', isNew:true, title:"Construction d'un bâtiment scolaire (6 salles de classe) à Adjohoun", inst:"Ministère des Enseignements Maternel et Primaire", loc:"Adjohoun, Ouémé", budget:null, deadline:"12 Août 2024", tags:["Bâtiment","Éducation"] },
@@ -185,7 +185,9 @@
 
     function initPage() {
       // Adapte le titre au pays choisi (Bénin/Togo/Côte d'Ivoire).
-      if (window.amMeta) { var _m = amMeta(); var _t = document.getElementById('pageTitle'); if (_t) _t.textContent = 'Marchés publics — ' + _m.name; var _st = document.getElementById('pageSubtitle'); if (_st) _st.textContent = 'Trouvez les meilleures opportunités ' + _m.heroTitle + ' en temps réel'; document.title = 'Marchés publics ' + _m.heroTitle + ' — AlerteMarché'; }
+      if (window.amMeta) { var _m = amMeta(); var _t = document.getElementById('pageTitle'); if (_t) _t.textContent = 'Marchés publics — ' + _m.name; var _st = document.getElementById('pageSubtitle'); if (_st) _st.textContent = 'Trouvez les meilleures opportunités ' + _m.heroTitle + ' en temps réel'; }
+      // SEO : mise à jour des meta tags selon le pays
+      if (window.updateSeoMeta) updateSeoMeta('public');
       // Bannière paywall (verte = anonyme, orange = gratuit, rien = abonné).
       if (window.renderPaywallBanner) renderPaywallBanner(window.AM_USER_STATUS);
       const grid = document.getElementById('tendersGrid');

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <!-- Page d'accueil (dynamique selon le pays) -->
+  <url>
+    <loc>https://alertemarche.com/</loc>
+    <lastmod>2026-07-25</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  
+  <url>
+    <loc>https://alertemarche.com/index</loc>
+    <lastmod>2026-07-25</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Sélection du pays -->
+  <url>
+    <loc>https://alertemarche.com/country-select</loc>
+    <lastmod>2026-07-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Marchés publics (page principale indexable) -->
+  <url>
+    <loc>https://alertemarche.com/marches-publics</loc>
+    <lastmod>2026-07-25</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="fr-BJ" href="https://alertemarche.com/marches-publics"/>
+    <xhtml:link rel="alternate" hreflang="fr-TG" href="https://alertemarche.com/marches-publics"/>
+    <xhtml:link rel="alternate" hreflang="fr-CI" href="https://alertemarche.com/marches-publics"/>
+    <xhtml:link rel="alternate" hreflang="fr-SN" href="https://alertemarche.com/marches-publics"/>
+  </url>
+
+  <!-- Marchés privés (page principale indexable) -->
+  <url>
+    <loc>https://alertemarche.com/marches-prives</loc>
+    <lastmod>2026-07-25</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="fr-BJ" href="https://alertemarche.com/marches-prives"/>
+    <xhtml:link rel="alternate" hreflang="fr-TG" href="https://alertemarche.com/marches-prives"/>
+    <xhtml:link rel="alternate" hreflang="fr-CI" href="https://alertemarche.com/marches-prives"/>
+    <xhtml:link rel="alternate" hreflang="fr-SN" href="https://alertemarche.com/marches-prives"/>
+  </url>
+
+  <!-- Tarifs & Abonnement -->
+  <url>
+    <loc>https://alertemarche.com/tarifs</loc>
+    <lastmod>2026-07-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Pages institutionnelles -->
+  <url>
+    <loc>https://alertemarche.com/contact</loc>
+    <lastmod>2026-07-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://alertemarche.com/mentions-legales</loc>
+    <lastmod>2026-07-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://alertemarche.com/confidentialite</loc>
+    <lastmod>2026-07-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://alertemarche.com/cgu</loc>
+    <lastmod>2026-07-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+</urlset>
