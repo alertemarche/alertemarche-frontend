@@ -317,8 +317,12 @@
         const n = totalOf(res);
         el.innerHTML = `${new Intl.NumberFormat('fr-FR').format(n)} <small>${label}</small>`;
       }
+      // IMPORTANT : le compteur « Marchés publics » doit refléter EXACTEMENT
+      // les mêmes catégories que la page /marches-publics (public + avis d'appel
+      // à concurrence + avis généraux + plans de passation), sinon on n'affiche
+      // qu'une fraction du total (ex. 53 au lieu de 4 000+).
       const cfg = [
-        ['countPublic', '/tenders?country='+cc+'&type=public&active=1&per_page=1', 'avis'],
+        ['countPublic', '/tenders?country='+cc+'&type=public,aac,avis_general,plan_passation&active=1&per_page=1', 'avis'],
         ['countPrive', '/tenders?country='+cc+'&type=prive&active=1&per_page=1', 'avis'],
       ];
       cfg.forEach(([id, path, label]) => {
