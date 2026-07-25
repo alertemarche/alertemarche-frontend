@@ -299,6 +299,7 @@
         <button type="button" class="scf-btn" data-cc="BJ" onclick="setStatsCountry('BJ')">🇧🇯 Bénin</button>
         <button type="button" class="scf-btn" data-cc="TG" onclick="setStatsCountry('TG')">🇹🇬 Togo</button>
         <button type="button" class="scf-btn" data-cc="CI" onclick="setStatsCountry('CI')">🇨🇮 Côte d'Ivoire</button>
+        <button type="button" class="scf-btn" data-cc="SN" onclick="setStatsCountry('SN')">🇸🇳 Sénégal</button>
       </div>
       <div class="kpi-grid" id="statsKpi">
         <div class="kpi-card"><div class="kv" id="kUsers">—</div><div class="kl">👥 Utilisateurs inscrits</div></div>
@@ -333,6 +334,7 @@
         <button type="button" class="scf-btn" data-calcc="BJ" onclick="setCalCountry('BJ')">🇧🇯 Bénin</button>
         <button type="button" class="scf-btn" data-calcc="TG" onclick="setCalCountry('TG')">🇹🇬 Togo</button>
         <button type="button" class="scf-btn" data-calcc="CI" onclick="setCalCountry('CI')">🇨🇮 Côte d'Ivoire</button>
+        <button type="button" class="scf-btn" data-calcc="SN" onclick="setCalCountry('SN')">🇸🇳 Sénégal</button>
       </div>
       <div class="cal-toolbar" style="display:flex;align-items:center;gap:14px;margin:16px 0;flex-wrap:wrap;">
         <button class="btn-a btn-ghost" onclick="calShiftMonth(-1)">‹ Mois précédent</button>
@@ -377,6 +379,7 @@
             <option value="BJ">🇧🇯 Bénin</option>
             <option value="TG">🇹🇬 Togo</option>
             <option value="CI">🇨🇮 Côte d'Ivoire</option>
+            <option value="SN">🇸🇳 Sénégal</option>
           </select>
         </div>
         <div id="usersList" class="table-wrap"><p class="loading">Chargement…</p></div>
@@ -507,6 +510,7 @@
             <option value="BJ">🇧🇯 Bénin</option>
             <option value="TG">🇹🇬 Togo</option>
             <option value="CI">🇨🇮 Côte d'Ivoire</option>
+            <option value="SN">🇸🇳 Sénégal</option>
           </select>
         </div>
       </div>
@@ -667,7 +671,7 @@
     ong:          'ONG / Projet',
     artisan:      'Artisan',
   };
-  const COUNTRIES = { BJ: '🇧🇯 Bénin', TG: '🇹🇬 Togo', CI: "🇨🇮 Côte d'Ivoire" };
+  const COUNTRIES = { BJ: '🇧🇯 Bénin', TG: '🇹🇬 Togo', CI: "🇨🇮 Côte d'Ivoire", SN: '🇸🇳 Sénégal' };
   const PLANS = { mensuel: 'Mensuel', trimestriel: 'Trimestriel', semestriel: 'Semestriel', annuel: 'Annuel' };
   const SUB_STATUS = {
     active:    { label: 'Actif',      cls: 'chip-green' },
