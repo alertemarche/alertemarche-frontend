@@ -318,6 +318,76 @@ function countrySelector() {
       </div>`;
 }
 
+/* -------- Liens d'authentification (dynamiques) --------
+   Le header reflète l'état de connexion : quand un jeton est présent, on
+   affiche « Tableau de bord » + « Déconnexion » au lieu de « Se connecter »
+   / « S'inscrire ». La présence du jeton suffit pour un premier rendu ;
+   refreshAuthUI() ré-affine l'affichage après résolution du statut réel
+   (un jeton expiré est purgé par fetchUserStatus → on repasse en anonyme). */
+function isLoggedIn() {
+    return !!token();
+}
+
+/* Actions du header (version bureau, boutons à droite). */
+function authActions() {
+    if (isLoggedIn()) {
+        return `
+          <a href="/dashboard" class="btn btn-outline btn-sm">${IC.user}<span>Tableau de bord</span></a>
+          <a href="#" class="btn btn-primary btn-sm am-logout">Déconnexion</a>`;
+    }
+    return `
+          <a href="/connexion" class="btn btn-outline btn-sm">${IC.user}<span>Se connecter</span></a>
+          <a href="/inscription" class="btn btn-primary btn-sm">S'inscrire gratuitement</a>`;
+}
+
+/* Liens d'authentification dans le menu mobile (dans la nav déroulante). */
+function authLinksMobile() {
+    const path = location.pathname.split('/').pop() || '/index';
+    const isActive = (h) => (('/' + path) === h) ? 'active' : '';
+    if (isLoggedIn()) {
+        return `
+          <a href="/dashboard" class="nav-auth-mobile ${isActive('/dashboard')}">Tableau de bord</a>
+          <a href="#" class="nav-auth-mobile am-logout">Déconnexion</a>`;
+    }
+    return `
+          <a href="/inscription" class="nav-auth-mobile ${isActive('/inscription')}">Créer un compte</a>
+          <a href="/connexion" class="nav-auth-mobile ${isActive('/connexion')}">Se connecter</a>`;
+}
+
+/* Déconnexion : invalide le jeton côté serveur (best effort), le purge en
+   local, puis renvoie vers l'accueil. */
+async function amLogout(e) {
+    if (e) e.preventDefault();
+    try { await api('/auth/logout', { method: 'POST', auth: true }); } catch (_) {}
+    try { localStorage.removeItem('am_token'); } catch (_) {}
+    window.AM_USER_STATUS = 'anonymous';
+    location.href = '/index';
+}
+window.amLogout = amLogout;
+
+/* (Re)lie les boutons de déconnexion présents dans le header. */
+function bindLogoutButtons() {
+    $$('.am-logout').forEach((b) => {
+        b.removeEventListener('click', amLogout);
+        b.addEventListener('click', amLogout);
+    });
+}
+
+/* Ré-affiche les zones d'authentification du header selon l'état courant.
+   Appelée après fetchUserStatus() pour corriger le cas d'un jeton expiré. */
+function refreshAuthUI() {
+    const actions = document.getElementById('headerActions');
+    if (actions) {
+        const toggle = actions.querySelector('#navToggle');
+        actions.innerHTML = authActions() + (toggle ? toggle.outerHTML : '<button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>');
+        actions.querySelector('#navToggle')?.addEventListener('click', () => $('#mainNav').classList.toggle('open'));
+    }
+    const mob = document.getElementById('navAuthMobile');
+    if (mob) mob.innerHTML = authLinksMobile();
+    bindLogoutButtons();
+}
+window.refreshAuthUI = refreshAuthUI;
+
 /* -------- Header -------- */
 function renderNav() {
     const path = location.pathname.split('/').pop() || '/index';
@@ -351,17 +421,16 @@ function renderNav() {
           <a href="/blog" class="${isActive('/blog')}">Blog</a>
           <a href="/publier" class="nav-publier ${isActive('/publier')}">📢 Publier une annonce</a>
           <a href="/tarifs" class="${isActive('/tarifs')}">Abonnement</a>
-          <a href="/inscription" class="nav-auth-mobile ${isActive('/inscription')}">Créer un compte</a>
-          <a href="/connexion" class="nav-auth-mobile ${isActive('/connexion')}">Se connecter</a>
+          <span id="navAuthMobile">${authLinksMobile()}</span>
         </nav>
-        <div class="header-actions">
-          <a href="/connexion" class="btn btn-outline btn-sm">${IC.user}<span>Se connecter</span></a>
-          <a href="/inscription" class="btn btn-primary btn-sm">S'inscrire gratuitement</a>
+        <div class="header-actions" id="headerActions">
+          ${authActions()}
           <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
         </div>
       </div>`;
     document.body.prepend(header);
     $('#navToggle')?.addEventListener('click', () => $('#mainNav').classList.toggle('open'));
+    bindLogoutButtons();
 
     // -------- Sélecteur de pays --------
     const cBadge = $('#countryBadge');
@@ -633,5 +702,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // On mémorise la promesse pour que amLockedDetailsAction puisse l'attendre.
     window.AM_STATUS_READY = fetchUserStatus();
     await window.AM_STATUS_READY;
+    // Corrige l'affichage du header une fois le statut réel connu
+    // (ex. jeton expiré purgé → on rebascule sur Se connecter/S'inscrire).
+    if (typeof refreshAuthUI === 'function') refreshAuthUI();
     if (typeof initPage === 'function') initPage();
 });
