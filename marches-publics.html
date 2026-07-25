@@ -121,12 +121,41 @@
 
     function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
+    const lockIcon = '<svg class="am-lock-ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+
     function tenderCard(t) {
+      const locked = (window.amIsLocked ? amIsLocked(t) : (window.AM_USER_STATUS !== 'subscribed'));
+      const lots = (t.nbLots && t.nbLots > 1) ? `<span class="tag">${t.nbLots} lots</span>` : '';
+
+      if (locked) {
+        // Avis verrouillé : champs sensibles masqués, bouton officiel caché,
+        // « Voir les détails » grisé (inscription pour anonyme, modale pour gratuit).
+        return `<article class="tender-card">
+          <div class="tc-top">
+            <span class="sector-badge ${t.badge}">${esc(t.sector)}</span>
+            ${window.countryBadge ? countryBadge(t.country || (window.amCode ? amCode() : 'BJ')) : ''}
+            <span class="tc-time">${esc(t.time)}${t.isNew ? '<span class="tc-new">Nouveau</span>' : ''}</span>
+          </div>
+          <h3>${esc(t.title)}</h3>
+          <div class="tc-meta">
+            <div class="m">${svg.inst}<span>${esc(t.inst)}</span></div>
+            <div class="m">${svg.inst}<span>Référence : ${lockIcon}<span class="am-lock-val">•••••••••</span></span></div>
+            <div class="m">${svg.pin}<span>${esc(t.loc)}</span></div>
+            <div class="m"><span class="tc-budget">Budget : ${lockIcon}<span class="am-lock-val">••••••• FCFA</span></span></div>
+            <div class="m">${svg.cal}<span>Date limite : ${lockIcon}<span class="am-lock-val">••/••/••••</span></span></div>
+          </div>
+          <div class="tc-tags">${t.tags.map(x => `<span class="tag">${esc(x)}</span>`).join('')}${lots}</div>
+          <div class="tc-actions">
+            <button type="button" class="btn btn-ghost am-locked-details" style="opacity:.75;">${lockIcon} Voir les détails</button>
+          </div>
+        </article>`;
+      }
+
+      // Avis débloqué (abonné actif) : affichage complet.
       const budget = t.budget
         ? `<span class="tc-budget">Budget : ${new Intl.NumberFormat('fr-FR').format(t.budget)} FCFA</span>`
         : `<span class="tc-budget na" title="Le budget estimatif n'est pas publié par la source officielle pour les appels d'offres ouverts. Consultez le Dossier d'Appel d'Offres (DAO) sur le site officiel pour les détails.">Budget : Non publié par la source <span style="cursor:help; opacity:.7">ⓘ</span></span>`;
       const ref = t.reference ? `<div class="m">${svg.inst}<span>Référence : <b>${esc(t.reference)}</b></span></div>` : '';
-      const lots = (t.nbLots && t.nbLots > 1) ? `<span class="tag">${t.nbLots} lots</span>` : '';
       // Redirection vers la page officielle de l'appel d'offres (pas de téléchargement DAO).
       const officialUrl = t.url || '';
       const officialBtn = officialUrl
@@ -157,7 +186,16 @@
     function initPage() {
       // Adapte le titre au pays choisi (Bénin/Togo/Côte d'Ivoire).
       if (window.amMeta) { var _m = amMeta(); var _t = document.getElementById('pageTitle'); if (_t) _t.textContent = 'Marchés publics — ' + _m.name; var _st = document.getElementById('pageSubtitle'); if (_st) _st.textContent = 'Trouvez les meilleures opportunités ' + _m.heroTitle + ' en temps réel'; document.title = 'Marchés publics ' + _m.heroTitle + ' — AlerteMarché'; }
+      // Bannière paywall (verte = anonyme, orange = gratuit, rien = abonné).
+      if (window.renderPaywallBanner) renderPaywallBanner(window.AM_USER_STATUS);
       const grid = document.getElementById('tendersGrid');
+      // Délégation : clic sur « Voir les détails » d'un avis verrouillé.
+      grid.addEventListener('click', e => {
+        if (e.target.closest('.am-locked-details')) {
+          e.preventDefault();
+          if (window.amLockedDetailsAction) amLockedDetailsAction();
+        }
+      });
       const showEl = document.getElementById('marketShowing');
       const moreBtn = document.getElementById('loadMoreBtn');
       const countEl = document.getElementById('countNum');
@@ -202,6 +240,7 @@
         const isNew = t.publication_date ? (Date.now() - new Date(t.publication_date).getTime()) < 2 * 864e5 : false;
         return {
           country: t.country || null,
+          is_locked: (typeof t.is_locked === 'boolean') ? t.is_locked : undefined,
           sector: ds.sector, badge: ds.badge, type: tp,
           time: relTime(t.publication_date), isNew,
           title: t.title, inst: t.institution || 'Institution publique', loc: t.location || (window.amByCode ? amByCode(t.country).name : ''),
@@ -274,7 +313,7 @@
         if (state.q) p.set('q', state.q);
         const sortVal = val('fSort'); if (sortVal) p.set('sort', sortVal);
         try {
-          const r = await api('/tenders?' + p.toString());
+          const r = await api('/tenders?' + p.toString(), { auth: true });
           const items = (r.data || []).map(mapTender);
           state.total = (typeof r.total === 'number') ? r.total : items.length;
           state.lastPage = r.last_page || 1;
@@ -328,7 +367,14 @@
       fetchPage(true);
     }
 
-    document.addEventListener('DOMContentLoaded', initPage);
+    // initPage() est appelé par js/app.js APRÈS résolution du statut d'accès
+    // (fetchUserStatus). On expose la fonction ; on n'ajoute pas de 2e listener
+    // DOMContentLoaded pour éviter un double rendu avec un statut « anonymous ».
+    window.initPage = initPage;
+    if (!document.querySelector('script[src*="js/app.js"]')) {
+      // Repli : si app.js n'est pas chargé, on initialise nous-mêmes.
+      document.addEventListener('DOMContentLoaded', initPage);
+    }
   </script>
 </body>
 </html>

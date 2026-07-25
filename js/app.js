@@ -344,12 +344,158 @@ function initFaq() {
     $$('.faq-q').forEach((q) => q.addEventListener('click', () => q.parentElement.classList.toggle('open')));
 }
 
+/* ============================================================
+   PAYWALL FREEMIUM
+   Trois statuts d'accès :
+     • 'anonymous'  : visiteur non connecté
+     • 'free'       : inscrit sans abonnement payant actif
+     • 'subscribed' : abonné payant actif (accès complet)
+   Les cartes de marchés sont « verrouillées » (champs sensibles masqués)
+   pour anonymous et free. La source de vérité est le backend (is_locked).
+   ============================================================ */
+window.AM_USER_STATUS = 'anonymous';
+
+/* Interroge /auth/me pour déterminer le statut réel de l'utilisateur. */
+async function fetchUserStatus() {
+    if (!token()) { window.AM_USER_STATUS = 'anonymous'; return window.AM_USER_STATUS; }
+    try {
+        const me = await api('/auth/me', { auth: true });
+        window.AM_USER_STATUS = (me && me.has_active_subscription) ? 'subscribed' : 'free';
+    } catch (e) {
+        // Jeton invalide/expiré → traité comme visiteur anonyme.
+        window.AM_USER_STATUS = 'anonymous';
+    }
+    return window.AM_USER_STATUS;
+}
+window.fetchUserStatus = fetchUserStatus;
+
+/* Un avis est-il verrouillé pour l'utilisateur courant ?
+   Priorité au champ backend `is_locked` ; repli sur le statut client. */
+function amIsLocked(t) {
+    if (t && typeof t.is_locked === 'boolean') return t.is_locked;
+    return window.AM_USER_STATUS !== 'subscribed';
+}
+window.amIsLocked = amIsLocked;
+
+/* Injecte (une seule fois) les styles du paywall : flou, bandeau, modale. */
+function injectPaywallStyles() {
+    if (document.getElementById('am-paywall-styles')) return;
+    const css = `
+      .locked-field { filter: blur(4px); user-select: none; color: #94a3b8; }
+      .locked-icon { margin-right: 4px; }
+      .am-lock-val { color:#94a3b8; letter-spacing:2px; user-select:none; }
+      .am-lock-ic { display:inline-flex; vertical-align:-2px; margin-right:5px; color:#94a3b8; }
+      .am-paywall-banner { width:100%; }
+      .am-pb-inner { max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 20px; }
+      .am-paywall-green { background:#0f7a3d; color:#fff; }
+      .am-paywall-orange { background:#f59e0b; color:#fff; }
+      .am-pb-text { font-weight:700; font-size:.98rem; }
+      .am-pb-btn { background:#fff; color:#0f172a; font-weight:800; padding:8px 18px; border-radius:8px; text-decoration:none; white-space:nowrap; }
+      .am-paywall-orange .am-pb-btn { color:#b45309; }
+      @media(max-width:640px){ .am-pb-inner{flex-direction:column; align-items:flex-start; gap:10px;} .am-pb-text{font-size:.9rem;} .am-pb-btn{width:100%; text-align:center;} }
+      .am-modal-overlay { position:fixed; inset:0; background:rgba(15,23,42,.62); display:flex; align-items:center; justify-content:center; z-index:9999; padding:20px; }
+      .am-modal { background:#fff; border-radius:18px; max-width:840px; width:100%; padding:34px 32px; position:relative; box-shadow:0 30px 80px rgba(0,0,0,.4); max-height:92vh; overflow:auto; }
+      .am-modal-close { position:absolute; top:16px; right:16px; border:none; background:#f1f5f9; width:36px; height:36px; border-radius:50%; font-size:20px; line-height:1; cursor:pointer; color:#334155; }
+      .am-modal h2 { font-size:1.5rem; font-weight:900; text-align:center; margin-bottom:6px; color:#0f172a; }
+      .am-modal-sub { text-align:center; color:#64748b; margin-bottom:26px; }
+      .am-plans { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+      .am-plan { border:2px solid #e2e8f0; border-radius:14px; padding:24px 18px 22px; text-align:center; position:relative; }
+      .am-plan.hl { border-color:#16a34a; box-shadow:0 10px 30px rgba(22,163,74,.18); }
+      .am-plan-badge { position:absolute; top:-11px; left:50%; transform:translateX(-50%); background:#16a34a; color:#fff; font-size:.72rem; font-weight:800; padding:3px 12px; border-radius:20px; white-space:nowrap; }
+      .am-plan h3 { font-size:1.05rem; font-weight:800; margin-bottom:12px; color:#0f172a; }
+      .am-price { font-size:1.7rem; font-weight:900; color:#0f172a; line-height:1.1; }
+      .am-unit { color:#64748b; font-size:.85rem; margin-top:2px; }
+      .am-note { color:#16a34a; font-size:.8rem; font-weight:700; margin:8px 0 16px; }
+      .am-plan-btn { display:block; background:#16a34a; color:#fff; font-weight:800; padding:11px; border-radius:9px; text-decoration:none; transition:background .15s; }
+      .am-plan-btn:hover { background:#128a3d; }
+      @media(max-width:640px){ .am-plans{grid-template-columns:1fr;} .am-modal{padding:26px 18px;} }
+    `;
+    const st = document.createElement('style');
+    st.id = 'am-paywall-styles';
+    st.textContent = css;
+    document.head.appendChild(st);
+}
+window.injectPaywallStyles = injectPaywallStyles;
+
+/* Affiche le bandeau paywall en haut de page selon le statut.
+   Vert pour anonyme, orange pour inscrit gratuit, rien pour abonné. */
+function renderPaywallBanner(status) {
+    status = status || window.AM_USER_STATUS;
+    injectPaywallStyles();
+    const existing = document.getElementById('am-paywall-banner');
+    if (existing) existing.remove();
+    if (status === 'subscribed') return;
+    const banner = document.createElement('div');
+    banner.id = 'am-paywall-banner';
+    if (status === 'anonymous') {
+        banner.className = 'am-paywall-banner am-paywall-green';
+        banner.innerHTML = `<div class="am-pb-inner">` +
+            `<span class="am-pb-text">🔒 Inscrivez-vous gratuitement pour accéder aux offres complètes</span>` +
+            `<a href="/inscription" class="am-pb-btn">S'inscrire</a></div>`;
+    } else { // free
+        banner.className = 'am-paywall-banner am-paywall-orange';
+        banner.innerHTML = `<div class="am-pb-inner">` +
+            `<span class="am-pb-text">⚡ Plan gratuit · Débloquez l'accès complet à tous les marchés + alertes email automatiques dès 10 000 FCFA / mois</span>` +
+            `<a href="/tarifs" class="am-pb-btn">Passer Premium →</a></div>`;
+    }
+    const header = document.querySelector('.site-header');
+    if (header && header.parentNode) header.parentNode.insertBefore(banner, header.nextSibling);
+    else document.body.insertBefore(banner, document.body.firstChild);
+}
+window.renderPaywallBanner = renderPaywallBanner;
+
+/* Modale d'abonnement : présente les 3 formules et renvoie vers /tarifs. */
+function showSubscriptionModal() {
+    injectPaywallStyles();
+    if (document.getElementById('am-sub-modal')) return;
+    const plans = [
+        { name: 'Mensuel', price: '10 000', unit: 'FCFA / mois', note: 'Sans engagement', hl: false },
+        { name: 'Trimestriel', price: '27 000', unit: 'FCFA / 3 mois', note: 'soit 9 000 FCFA/mois', hl: true },
+        { name: 'Annuel', price: '96 000', unit: 'FCFA / an', note: 'soit 8 000 FCFA/mois', hl: false },
+    ];
+    const cards = plans.map((p) => `
+        <div class="am-plan ${p.hl ? 'hl' : ''}">
+          ${p.hl ? '<span class="am-plan-badge">★ Le plus populaire</span>' : ''}
+          <h3>${p.name}</h3>
+          <div class="am-price">${p.price}</div>
+          <div class="am-unit">${p.unit}</div>
+          <div class="am-note">${p.note}</div>
+          <a href="/tarifs" class="am-plan-btn">Choisir ce plan</a>
+        </div>`).join('');
+    const overlay = document.createElement('div');
+    overlay.className = 'am-modal-overlay';
+    overlay.id = 'am-sub-modal';
+    overlay.innerHTML = `
+        <div class="am-modal" role="dialog" aria-modal="true">
+          <button class="am-modal-close" aria-label="Fermer">&times;</button>
+          <h2>🔒 Accès Premium requis</h2>
+          <p class="am-modal-sub">Débloquez tous les marchés (budget, date limite, référence, lien officiel) et recevez des alertes automatiques par e-mail.</p>
+          <div class="am-plans">${cards}</div>
+        </div>`;
+    const close = () => overlay.remove();
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+    overlay.querySelector('.am-modal-close').addEventListener('click', close);
+    document.addEventListener('keydown', function esc(e) { if (e.key === 'Escape') { close(); document.removeEventListener('keydown', esc); } });
+    document.body.appendChild(overlay);
+}
+window.showSubscriptionModal = showSubscriptionModal;
+
+/* Action au clic sur « Voir les détails » d'un avis verrouillé :
+   visiteur anonyme → inscription ; inscrit gratuit → modale d'abonnement. */
+function amLockedDetailsAction() {
+    if (window.AM_USER_STATUS === 'anonymous') { location.href = '/inscription'; }
+    else { showSubscriptionModal(); }
+}
+window.amLockedDetailsAction = amLockedDetailsAction;
+
 /* -------- Init global -------- */
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     if (!document.body.dataset.noChrome) {
         renderNav();
         renderFooter();
     }
     initFaq();
+    // Statut d'accès résolu AVANT le rendu des pages (cartes de marchés).
+    await fetchUserStatus();
     if (typeof initPage === 'function') initPage();
 });

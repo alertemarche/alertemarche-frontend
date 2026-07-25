@@ -122,8 +122,34 @@
       return new Date(d).toLocaleDateString('fr-FR');
     }
 
+    const lockIcon = '<svg class="am-lock-ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+
     function tenderCard(t) {
       const c = COUNTRIES[t.country] || { flag: '🌍', name: t.country || '' };
+      const locked = (window.amIsLocked ? amIsLocked(t) : (window.AM_USER_STATUS !== 'subscribed'));
+
+      if (locked) {
+        // Consultation verrouillée : référence + date limite masquées,
+        // bouton officiel caché, « Voir les détails » grisé.
+        return `<article class="tender-card">
+          <div class="tc-top">
+            <span class="sector-badge" style="background:var(--purple-050);color:var(--purple);">🤝 Privé</span>
+            ${window.countryBadge ? countryBadge(t.country || (window.amCode ? amCode() : 'BJ')) : ''}
+            <span class="tc-time">${esc(t.time)}${t.isNew ? '<span class="tc-new">Nouveau</span>' : ''}</span>
+          </div>
+          <h3>${esc(t.title)}</h3>
+          <div class="tc-meta">
+            <div class="m">${svg.inst}<span>${esc(t.inst)}</span></div>
+            <div class="m">${svg.ref}<span>Référence : ${lockIcon}<span class="am-lock-val">•••••••••</span></span></div>
+            <div class="m">${svg.pin}<span>${esc(t.loc)} <span class="tag" style="margin-left:6px;">${c.flag} ${esc(c.name)}</span></span></div>
+            <div class="m">${svg.cal}<span>Date limite : ${lockIcon}<span class="am-lock-val">••/••/••••</span></span></div>
+          </div>
+          <div class="tc-actions">
+            <button type="button" class="btn btn-ghost am-locked-details" style="opacity:.75;">${lockIcon} Voir les détails</button>
+          </div>
+        </article>`;
+      }
+
       const ref = t.reference ? `<div class="m">${svg.ref}<span>Référence : <b>${esc(t.reference)}</b></span></div>` : '';
       // Redirection vers la page officielle de la consultation (pas de téléchargement DAO).
       const url = t.url || '';
@@ -152,7 +178,16 @@
 
     function initPage() {
       if (window.amMeta) { var _m = amMeta(); var _t = document.getElementById('pageTitle'); if (_t) _t.textContent = "Marchés privés — " + _m.name; var _st = document.getElementById("pageSubtitle"); if (_st) _st.textContent = "Consultations des ONG, agences des Nations Unies et organismes internationaux " + _m.heroTitle; document.title = "Marchés privés " + _m.heroTitle + " — AlerteMarché"; }
+      // Bannière paywall (verte = anonyme, orange = gratuit, rien = abonné).
+      if (window.renderPaywallBanner) renderPaywallBanner(window.AM_USER_STATUS);
       const grid = document.getElementById('tendersGrid');
+      // Délégation : clic sur « Voir les détails » d'une consultation verrouillée.
+      grid.addEventListener('click', e => {
+        if (e.target.closest('.am-locked-details')) {
+          e.preventDefault();
+          if (window.amLockedDetailsAction) amLockedDetailsAction();
+        }
+      });
       let data = [];
 
       function render(list) {
@@ -197,7 +232,7 @@
 
       // Hydratation depuis l'API réelle : UNIQUEMENT les appels d'offres PRIVÉS
       // (ONG, agences des Nations Unies, organismes internationaux — type=prive).
-      api('/tenders?country=' + (window.amCode ? amCode() : 'BJ') + '&type=prive&per_page=200').then(res => {
+      api('/tenders?country=' + (window.amCode ? amCode() : 'BJ') + '&type=prive&per_page=200', { auth: true }).then(res => {
         const items = (res.data || res || []);
         if (Array.isArray(items) && items.length) {
           const now = Date.now();
@@ -205,6 +240,7 @@
             const isNew = t.publication_date ? (now - new Date(t.publication_date).getTime()) < 3 * 864e5 : false;
             return {
               country: t.country || 'BJ',
+              is_locked: (typeof t.is_locked === 'boolean') ? t.is_locked : undefined,
               time: relTime(t.publication_date || t.collected_at),
               isNew,
               title: t.title || 'Consultation',
@@ -239,7 +275,13 @@
       });
     }
 
-    document.addEventListener('DOMContentLoaded', initPage);
+    // initPage() est appelé par js/app.js APRÈS résolution du statut d'accès
+    // (fetchUserStatus). On expose la fonction ; on n'ajoute pas de 2e listener
+    // DOMContentLoaded pour éviter un double rendu avec un statut « anonymous ».
+    window.initPage = initPage;
+    if (!document.querySelector('script[src*="js/app.js"]')) {
+      document.addEventListener('DOMContentLoaded', initPage);
+    }
   </script>
 </body>
 </html>
