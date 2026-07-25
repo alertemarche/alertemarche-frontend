@@ -5,6 +5,7 @@ User-agent: *
 Allow: /
 Allow: /marches-publics
 Allow: /marches-prives
+Allow: /blog
 Allow: /tarifs
 Allow: /contact
 Allow: /index

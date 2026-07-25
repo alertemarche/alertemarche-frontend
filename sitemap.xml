@@ -57,6 +57,38 @@
     <priority>0.8</priority>
   </url>
 
+  <!-- Blog & Guides SEO -->
+  <url>
+    <loc>https://alertemarche.com/blog</loc>
+    <lastmod>2026-07-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://alertemarche.com/blog-appels-offres-benin</loc>
+    <lastmod>2026-07-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://alertemarche.com/blog-appels-offres-togo</loc>
+    <lastmod>2026-07-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://alertemarche.com/blog-appels-offres-cote-ivoire</loc>
+    <lastmod>2026-07-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://alertemarche.com/blog-appels-offres-senegal</loc>
+    <lastmod>2026-07-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
   <!-- Pages institutionnelles -->
   <url>
     <loc>https://alertemarche.com/contact</loc>
