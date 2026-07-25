@@ -332,7 +332,7 @@ function renderFooter() {
           ${countryLinks}
         </div>
         <div class="footer-bottom">
-          <span>© 2026 AlerteMarché. Tous droits réservés.</span>
+          <span>© 2026 AlerteMarché, exploité par PRO BENIN SARL. Tous droits réservés.</span>
           <span>alertemarche.com</span>
         </div>
       </div>`;
