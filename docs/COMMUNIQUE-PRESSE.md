@@ -4,21 +4,21 @@
 
 ---
 
-## AlerteMarché lance sa plateforme de veille des marchés publics en Afrique de l'Ouest
+## AlerteMarché lance sa plateforme de veille automatisée des appels d'offres et marchés publics en Afrique de l'Ouest
 
-**Cotonou, Bénin — 25 juillet 2026** — PRO BENIN SARL annonce aujourd'hui le lancement officiel d'**AlerteMarché** (https://alertemarche.com), la première plateforme panafricaine de veille automatisée des appels d'offres et marchés publics au Bénin, Togo, Côte d'Ivoire et Sénégal.
+**Cotonou, Bénin — 25 juillet 2026** — PRO BENIN SARL annonce aujourd'hui le lancement officiel d'**AlerteMarché** (https://alertemarche.com), la première plateforme panafricaine de veille automatisée des appels d'offres et marchés publics au Bénin, Togo, Côte d'Ivoire et Sénégal. Les entreprises reçoivent désormais par e-mail les appels d'offres correspondant à leur secteur, dès leur publication sur les portails officiels (ARMP, ANRMP, DNCMP).
 
 ### Une réponse aux défis de la veille commerciale en Afrique de l'Ouest
 
 Les entreprises africaines perdent chaque année des millions de FCFA en opportunités d'affaires faute d'une veille efficace. Les appels d'offres sont éparpillés sur des dizaines de sites officiels, sans système d'alerte cohérent. **AlerteMarché** centralise l'ensemble des opportunités publiques et privées et les envoie automatiquement par e-mail aux entreprises concernées.
 
-### Fonctionnalités clés
+### Fonctionnalités clés pour les marchés publics d'Afrique de l'Ouest
 
-- **Veille automatique 24h/24** : collecte en temps réel depuis les sources officielles (ARMP, ANRMP, DNCMP, portails nationaux)
-- **Alertes e-mail personnalisées** : chaque entreprise reçoit uniquement les opportunités correspondant à son secteur
-- **Multi-pays** : couverture complète du Bénin, Togo, Côte d'Ivoire et Sénégal depuis une seule plateforme
-- **Analyse IA** : résumés structurés de chaque appel d'offres pour gagner du temps
-- **Redirection vers les sources officielles** : accès direct aux documents officiels (DAO, dossiers techniques)
+- **Veille automatique 24h/24 des appels d'offres** : collecte en temps réel depuis les sources officielles (ARMP Bénin, ARMP Togo, ARMP Sénégal, ANRMP Côte d'Ivoire, DNCMP, DNCCP, portails nationaux de marchés publics)
+- **Alertes e-mail personnalisées par secteur** : chaque entreprise reçoit uniquement les appels d'offres correspondant à son domaine d'activité
+- **Couverture multi-pays** : surveillance complète des marchés publics du Bénin (Cotonou, Porto-Novo), Togo (Lomé), Côte d'Ivoire (Abidjan) et Sénégal (Dakar) depuis une seule plateforme
+- **Analyse IA des appels d'offres** : résumés structurés de chaque opportunité pour gagner du temps
+- **Redirection vers les sources officielles** : accès direct aux documents officiels (DAO, dossiers techniques, cahiers des charges)
 
 ### Tarification accessible aux PME
 

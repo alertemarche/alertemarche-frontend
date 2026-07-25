@@ -22,16 +22,17 @@ Ce document contient les textes préparés pour les **4 fiches Google Business P
 ### Description (750 caractères max)
 
 ```
-AlerteMarché est la première plateforme de veille automatisée des appels d'offres et marchés publics au Bénin. Nous collectons 24h/24 les opportunités depuis les sources officielles (ARMP, DNCMP, marchés-publics.bj) et les envoyons par e-mail aux entreprises concernées.
+Appels d'offres Bénin — AlerteMarché centralise tous les marchés publics du Bénin (Cotonou, Porto-Novo, Parakou). Recevez par e-mail les appels d'offres correspondant à votre secteur, dès leur publication sur l'ARMP Bénin, DNCMP et marches-publics.bj.
 
-✅ Alertes e-mail personnalisées en temps réel
-✅ Marchés publics + marchés privés (PNUD, Banque Mondiale, ONG)
-✅ Résumés IA de chaque appel d'offres
-✅ Redirection vers les documents officiels (DAO)
+✅ Alertes appels d'offres Bénin en temps réel
+✅ Marchés publics + privés (PNUD, Banque Mondiale, BAD, ONG)
+✅ Veille automatique 24h/24
+✅ Résumés IA pour gagner du temps
+✅ Accès direct aux DAO officiels
 
-Idéal pour : BTP, fournitures, services, consulting. Abonnement dès 10 000 FCFA/mois sans engagement.
+Secteurs : BTP, fournitures, services, consulting. Abonnement dès 10 000 FCFA/mois.
 
-Créez votre compte gratuit sur alertemarche.com et recevez vos premières alertes en 5 minutes. Ne ratez plus aucune opportunité au Bénin !
+Ne ratez plus aucun marché public au Bénin ! Inscription gratuite sur alertemarche.com.
 ```
 
 ### Services (à cocher)
@@ -78,17 +79,17 @@ Créez votre compte gratuit sur alertemarche.com et recevez vos premières alert
 ### Description (750 caractères max)
 
 ```
-AlerteMarché centralise tous les appels d'offres et marchés publics du Togo en une seule plateforme. Recevez par e-mail uniquement les opportunités correspondant à votre secteur, dès leur publication officielle.
+Appels d'offres Togo — AlerteMarché centralise tous les marchés publics du Togo (Lomé, Kara, Sokodé). Recevez par e-mail les appels d'offres de votre secteur, dès leur publication sur l'ARMP Togo, DNCCP et ARCOP.
 
-✅ Sources officielles : ARMP Togo, DNCCP, portails nationaux
-✅ Marchés publics + privés (PNUD, BAD, Banque Mondiale, ONG)
-✅ Alertes en temps réel par e-mail
+✅ Alertes appels d'offres Togo en temps réel
+✅ Marchés publics + privés (PNUD, Banque Mondiale, BAD, ONG)
+✅ Veille automatique des marchés publics Togo
 ✅ Résumés IA pour gagner du temps
-✅ Accès direct aux documents officiels (DAO)
+✅ Accès direct aux dossiers officiels (DAO)
 
-Secteurs couverts : BTP, fournitures, services, consulting, équipements. Dès 10 000 FCFA/mois sans engagement.
+Secteurs : BTP, fournitures, services, consulting. Abonnement dès 10 000 FCFA/mois.
 
-Inscrivez-vous gratuitement sur alertemarche.com et ne manquez plus aucune opportunité au Togo. Veille automatique 24h/24 !
+Ne ratez plus aucun marché public au Togo ! Inscription gratuite sur alertemarche.com.
 ```
 
 ### Services (à cocher)
@@ -135,16 +136,17 @@ Inscrivez-vous gratuitement sur alertemarche.com et ne manquez plus aucune oppor
 ### Description (750 caractères max)
 
 ```
-AlerteMarché est la plateforme de référence pour suivre les appels d'offres en Côte d'Ivoire. Nous collectons automatiquement les opportunités des sources officielles (ANRMP, DGMP, marchés-publics.ci) et vous les envoyons par e-mail.
+Appels d'offres Côte d'Ivoire — AlerteMarché centralise tous les marchés publics de Côte d'Ivoire (Abidjan, Bouaké, San-Pédro). Recevez par e-mail les appels d'offres de votre secteur, dès leur publication sur l'ANRMP, DGMP et marches-publics.ci.
 
-✅ Alertes e-mail personnalisées selon votre secteur
-✅ Marchés publics + privés (Banque Mondiale, PNUD, BAD, ONG)
-✅ Analyse IA : résumés structurés de chaque appel d'offres
-✅ Lien direct vers les dossiers officiels (DAO)
+✅ Alertes appels d'offres Côte d'Ivoire en temps réel
+✅ Marchés publics + privés (PNUD, Banque Mondiale, BAD, ONG)
+✅ Veille automatique des marchés publics Côte d'Ivoire
+✅ Résumés IA pour gagner du temps
+✅ Accès direct aux DAO officiels
 
-Domaines : BTP, fournitures, services, consulting, infrastructures. Abonnement dès 10 000 FCFA/mois sans engagement.
+Secteurs : BTP, fournitures, services, infrastructures. Abonnement dès 10 000 FCFA/mois.
 
-Créez votre compte gratuit sur alertemarche.com. Veille 24h/24, ne ratez plus aucune opportunité en Côte d'Ivoire !
+Ne ratez plus aucun marché public en Côte d'Ivoire ! Inscription gratuite sur alertemarche.com.
 ```
 
 ### Services (à cocher)
@@ -191,17 +193,17 @@ Créez votre compte gratuit sur alertemarche.com. Veille 24h/24, ne ratez plus a
 ### Description (750 caractères max)
 
 ```
-AlerteMarché centralise tous les appels d'offres du Sénégal : marchés publics (ARMP, DCMP, marchés-publics.sn) et marchés privés (PNUD, BAD, Banque Mondiale, ONG). Recevez par e-mail uniquement les opportunités de votre secteur.
+Appels d'offres Sénégal — AlerteMarché centralise tous les marchés publics du Sénégal (Dakar, Thiès, Saint-Louis). Recevez par e-mail les appels d'offres de votre secteur, dès leur publication sur l'ARMP Sénégal, DCMP et marches-publics.sn.
 
-✅ Veille automatique 24h/24 depuis les sources officielles
-✅ Alertes e-mail personnalisées en temps réel
-✅ Marchés publics + privés (ONG, bailleurs internationaux)
-✅ Résumés IA de chaque appel d'offres
-✅ Redirection directe vers les documents officiels (DAO)
+✅ Alertes appels d'offres Sénégal en temps réel
+✅ Marchés publics + privés (PNUD, Banque Mondiale, BAD, ONG)
+✅ Veille automatique des marchés publics Sénégal
+✅ Résumés IA pour gagner du temps
+✅ Accès direct aux DAO officiels
 
-Secteurs : BTP, fournitures, services, consulting, santé, éducation. Dès 10 000 FCFA/mois sans engagement.
+Secteurs : BTP, fournitures, services, santé, éducation. Abonnement dès 10 000 FCFA/mois.
 
-Inscrivez-vous gratuitement sur alertemarche.com. Ne manquez plus aucune opportunité au Sénégal !
+Ne ratez plus aucun marché public au Sénégal ! Inscription gratuite sur alertemarche.com.
 ```
 
 ### Services (à cocher)
