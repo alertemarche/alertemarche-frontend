@@ -332,7 +332,7 @@ function renderFooter() {
           ${countryLinks}
         </div>
         <div class="footer-bottom">
-          <span>© 2026 AlerteMarché, exploité par PRO BENIN SARL. Tous droits réservés.</span>
+          <span>© 2026 AlerteMarché. Tous droits réservés.</span>
           <span>alertemarche.com</span>
         </div>
       </div>`;
@@ -354,17 +354,27 @@ function initFaq() {
    pour anonymous et free. La source de vérité est le backend (is_locked).
    ============================================================ */
 window.AM_USER_STATUS = 'anonymous';
+// Passe à true une fois le statut réellement déterminé (anti-race).
+window.AM_STATUS_RESOLVED = false;
+// Promesse partagée résolue quand le statut d'accès est connu.
+window.AM_STATUS_READY = null;
 
 /* Interroge /auth/me pour déterminer le statut réel de l'utilisateur. */
 async function fetchUserStatus() {
-    if (!token()) { window.AM_USER_STATUS = 'anonymous'; return window.AM_USER_STATUS; }
+    if (!token()) {
+        window.AM_USER_STATUS = 'anonymous';
+        window.AM_STATUS_RESOLVED = true;
+        return window.AM_USER_STATUS;
+    }
     try {
         const me = await api('/auth/me', { auth: true });
         window.AM_USER_STATUS = (me && me.has_active_subscription) ? 'subscribed' : 'free';
     } catch (e) {
-        // Jeton invalide/expiré → traité comme visiteur anonyme.
+        // Jeton invalide/expiré → on le purge et on repasse en anonyme.
+        try { localStorage.removeItem('am_token'); } catch (_) {}
         window.AM_USER_STATUS = 'anonymous';
     }
+    window.AM_STATUS_RESOLVED = true;
     return window.AM_USER_STATUS;
 }
 window.fetchUserStatus = fetchUserStatus;
@@ -482,9 +492,19 @@ window.showSubscriptionModal = showSubscriptionModal;
 
 /* Action au clic sur « Voir les détails » d'un avis verrouillé :
    visiteur anonyme → inscription ; inscrit gratuit → modale d'abonnement. */
-function amLockedDetailsAction() {
-    if (window.AM_USER_STATUS === 'anonymous') { location.href = '/inscription'; }
-    else { showSubscriptionModal(); }
+async function amLockedDetailsAction() {
+    // Anti-race : on s'assure que le statut est résolu avant de décider.
+    // Cohérent sur les 4 pays et sur toutes les pages, quel que soit le timing.
+    if (!window.AM_STATUS_RESOLVED) {
+        try { await (window.AM_STATUS_READY || fetchUserStatus()); } catch (_) {}
+    }
+    // Garde-fou : pas de jeton = visiteur anonyme → inscription gratuite d'abord.
+    if (!token() || window.AM_USER_STATUS === 'anonymous') {
+        location.href = '/inscription';
+        return;
+    }
+    // Utilisateur connecté sans abonnement → proposition d'abonnement.
+    showSubscriptionModal();
 }
 window.amLockedDetailsAction = amLockedDetailsAction;
 
@@ -496,6 +516,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     initFaq();
     // Statut d'accès résolu AVANT le rendu des pages (cartes de marchés).
-    await fetchUserStatus();
+    // On mémorise la promesse pour que amLockedDetailsAction puisse l'attendre.
+    window.AM_STATUS_READY = fetchUserStatus();
+    await window.AM_STATUS_READY;
     if (typeof initPage === 'function') initPage();
 });

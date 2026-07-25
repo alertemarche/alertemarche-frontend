@@ -91,7 +91,7 @@
     </div>
   </section>
 
-  <script src="js/app.js?v=202607251200"></script>
+  <script src="js/app.js?v=202607252030"></script>
   <script>
     const svg = {
       inst:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11"/></svg>',
@@ -129,7 +129,7 @@
         </div>
         <div class="tc-tags">${t.tags.map(x => `<span class="tag">${esc(x)}</span>`).join('')}${lots}</div>
         <div class="tc-actions">
-          <a href="/inscription" class="btn btn-ghost">Voir les détails</a>
+          <a href="/inscription" class="btn btn-ghost am-locked-details" onclick="event.preventDefault();window.amLockedDetailsAction&&window.amLockedDetailsAction();return false;">Voir les détails</a>
           ${officialBtn}
         </div>
       </article>`;

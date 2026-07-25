@@ -57,7 +57,7 @@
     </div>
   </section>
 
-  <script src="js/app.js?v=202607251200"></script>
+  <script src="js/app.js?v=202607252030"></script>
   <script>
     // Métadonnées d'affichage par procédure (paramètre ?p=).
     const PROC = {
@@ -105,7 +105,7 @@
         </div>
         <div class="tc-tags">${t.tags.map(x => `<span class="tag">${esc(x)}</span>`).join('')}</div>
         <div class="tc-actions">
-          <a href="/inscription" class="btn btn-ghost">Voir les détails</a>
+          <a href="/inscription" class="btn btn-ghost am-locked-details" onclick="event.preventDefault();window.amLockedDetailsAction&&window.amLockedDetailsAction();return false;">Voir les détails</a>
           ${officialBtn}
         </div>
       </article>`;
