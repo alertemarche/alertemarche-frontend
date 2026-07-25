@@ -169,6 +169,7 @@ window.updateSeoMeta = updateSeoMeta;
 const AM_COUNTRIES = [
     {
         code: 'BJ', name: 'Bénin', cc: 'bj', available: true,
+        dialCode: '+229',
         color: '#008751',
         hero: 'img/amazone.jpg',
         heroTitle: 'au Bénin',
@@ -194,6 +195,7 @@ const AM_COUNTRIES = [
     },
     {
         code: 'TG', name: 'Togo', cc: 'tg', available: true,
+        dialCode: '+228',
         color: '#006A4E',
         hero: 'img/hero-tg.jpg',
         heroTitle: 'au Togo',
@@ -219,6 +221,7 @@ const AM_COUNTRIES = [
     },
     {
         code: 'CI', name: "Côte d'Ivoire", cc: 'ci', available: true,
+        dialCode: '+225',
         color: '#F77F00',
         hero: 'img/hero-ci.jpg',
         heroTitle: "en Côte d'Ivoire",
@@ -244,6 +247,7 @@ const AM_COUNTRIES = [
     },
     {
         code: 'SN', name: 'Sénégal', cc: 'sn', available: true,
+        dialCode: '+221',
         color: '#00853F',
         hero: 'img/hero-sn.jpg',
         heroTitle: 'au Sénégal',

@@ -81,8 +81,32 @@
     </div>
   </section>
 
-  <script src="js/app.js?v=202607260030"></script>
+  <script src="js/app.js?v=202607260100"></script>
   <script>
+    // Mise à jour dynamique de l'indicatif téléphonique selon le pays
+    function updatePhonePlaceholder() {
+      const phoneInput = document.getElementById('phone');
+      if (phoneInput && window.amMeta) {
+        const meta = window.amMeta();
+        const dialCode = meta.dialCode || '+229';
+        phoneInput.placeholder = `${dialCode} XX XX XX XX`;
+      }
+    }
+    
+    // Mise à jour au chargement de la page
+    document.addEventListener('DOMContentLoaded', function() {
+      updatePhonePlaceholder();
+      
+      // Écoute les changements de pays (quand l'utilisateur clique sur le sélecteur)
+      document.addEventListener('click', function(e) {
+        const countryBtn = e.target.closest('.country-opt');
+        if (countryBtn) {
+          // Petit délai pour laisser le changement de pays se faire
+          setTimeout(updatePhonePlaceholder, 100);
+        }
+      });
+    });
+
     document.getElementById('contactForm').addEventListener('submit', function(e) {
       e.preventDefault();
       
