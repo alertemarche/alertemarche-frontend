@@ -1398,3 +1398,272 @@ p { color: var(--text); }
   .kpi b { font-size: 1.4rem; }
   .grid-2 { grid-template-columns: 1fr !important; }
 }
+
+
+
+/* ============================================================
+   Optimisations Mobile Safari iOS (iPhone)
+   ============================================================ */
+
+/* Corrections viewport et zoom Safari iOS */
+@media screen and (max-width: 767px) {
+  body {
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  
+  /* Fix débordement horizontal */
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
+  }
+  
+  /* Container mobile plus serré */
+  .container {
+    padding: 0 16px;
+  }
+  
+  /* Hero mobile optimisé */
+  .hero {
+    overflow: hidden;
+  }
+  
+  .hero-bg {
+    background-position: center center;
+    background-size: cover;
+    opacity: 0.25;
+    /* Fix pour Safari iOS - forcer le reflow */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+  }
+  
+  .hero-inner {
+    padding: 40px 0 50px;
+    gap: 30px;
+  }
+  
+  .hero h1 {
+    font-size: 1.85rem !important;
+    line-height: 1.2;
+    margin-bottom: 14px;
+  }
+  
+  .hero .lead {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  
+  .hero-badge {
+    font-size: 0.75rem;
+    padding: 6px 12px;
+  }
+  
+  /* Channels mobile */
+  .hero-channels {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin: 20px 0 16px;
+  }
+  
+  .channel-card {
+    padding: 12px 14px;
+  }
+  
+  .channel-card b {
+    font-size: 0.9rem;
+  }
+  
+  .channel-card span {
+    font-size: 0.78rem;
+  }
+  
+  /* Hero mini mobile */
+  .hero-mini {
+    gap: 12px;
+  }
+  
+  .hero-mini div {
+    font-size: 0.8rem;
+  }
+  
+  .hero-mini b {
+    font-size: 0.82rem;
+  }
+  
+  .hero-mini small {
+    font-size: 0.72rem;
+  }
+  
+  /* Hero visual mobile optimisé */
+  .hero-visual {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 280px !important;
+    transform: scale(0.75) !important;
+    transform-origin: top center !important;
+    margin: 16px auto 0 !important;
+  }
+  
+  /* Features mobile */
+  .features-band {
+    padding: 24px 20px;
+  }
+  
+  .feature-grid {
+    gap: 20px;
+  }
+  
+  /* Section mobile */
+  .section {
+    padding: 40px 0;
+  }
+  
+  .section-head {
+    margin-bottom: 30px;
+  }
+  
+  .section-head h2 {
+    font-size: 1.6rem;
+  }
+  
+  /* Footer mobile */
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  
+  /* Boutons mobile - zones tactiles optimales */
+  .btn {
+    min-height: 44px;
+    padding: 12px 20px;
+    font-size: 0.92rem;
+  }
+  
+  .btn-lg {
+    min-height: 48px;
+    padding: 14px 24px;
+  }
+  
+  /* Header mobile */
+  .site-header {
+    position: -webkit-sticky;
+    position: sticky;
+  }
+  
+  .header-inner {
+    padding: 12px 0;
+  }
+  
+  .brand-logo {
+    font-size: 1.1rem;
+  }
+  
+  /* Navigation mobile */
+  .main-nav {
+    /* Fix Safari iOS scroll */
+    -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
+  }
+  
+  /* CTA Banner mobile */
+  .cta-banner {
+    padding: 28px 24px;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .cta-banner h2 {
+    font-size: 1.4rem;
+  }
+  
+  .cta-actions {
+    min-width: 100%;
+  }
+}
+
+/* Corrections spécifiques iPhone SE et petits écrans (375px et moins) */
+@media screen and (max-width: 375px) {
+  .hero h1 {
+    font-size: 1.65rem !important;
+  }
+  
+  .hero .lead {
+    font-size: 0.95rem;
+  }
+  
+  .container {
+    padding: 0 14px;
+  }
+  
+  .hero-inner {
+    padding: 32px 0 40px;
+  }
+  
+  .hero-visual {
+    transform: scale(0.65) !important;
+    min-height: 240px !important;
+  }
+  
+  .section-head h2 {
+    font-size: 1.4rem;
+  }
+  
+  .btn {
+    font-size: 0.88rem;
+    padding: 10px 16px;
+  }
+}
+
+/* Corrections Safari iOS - Smooth scrolling et performance */
+@supports (-webkit-touch-callout: none) {
+  /* Fix pour Safari iOS uniquement */
+  body {
+    /* Améliorer le scroll sur iOS */
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Fix pour les images de fond sur iOS */
+  .hero-bg {
+    /* Forcer l'accélération matérielle */
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-perspective: 1000;
+    perspective: 1000;
+  }
+  
+  /* Fix pour le sticky header sur iOS */
+  .site-header {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+}
+
+/* Amélioration du contraste et lisibilité mobile */
+@media screen and (max-width: 767px) {
+  /* Augmenter légèrement le contraste du texte sur fond d'image */
+  .hero {
+    background: linear-gradient(105deg, rgba(255,255,255,.98) 0%, rgba(255,255,255,.94) 40%, rgba(233,246,240,.5) 72%, rgba(233,246,240,.25) 100%);
+  }
+  
+  /* Stats grid mobile */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  
+  .stat-item b {
+    font-size: 1.6rem;
+  }
+  
+  .stat-item span {
+    font-size: 0.85rem;
+  }
+  
+  /* Trust grid mobile */
+  .trust-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
