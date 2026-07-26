@@ -646,8 +646,16 @@ p { color: var(--text); }
 .footer-country.active { color: #fff; font-weight: 700; border-color: #2fbf71; background: rgba(47,191,113,.16); }
 
 /* ---------------- Responsive ---------------- */
+/* Laptops moyens (1024–1200px) : réduire police et visuel, garder 2 colonnes */
+@media (max-width: 1200px) {
+  .hero h1 { font-size: 2.6rem; }
+  .hero-inner { gap: 32px; padding: 48px 0 56px; }
+  .hero-visual { min-height: 420px; }
+}
 @media (max-width: 1024px) {
-  .hero h1 { font-size: 2.5rem; }
+  .hero h1 { font-size: 2.2rem; }
+  .hero-inner { gap: 24px; padding: 40px 0 48px; }
+  .hero-visual { min-height: 380px; transform: scale(0.85); transform-origin: top right; }
   .feature-grid, .profiles-grid, .stats-grid, .trust-grid { grid-template-columns: repeat(2, 1fr); }
   .steps-row { grid-template-columns: 1fr; }
   .step-arrow { transform: rotate(90deg); margin: 0 auto; }
@@ -655,6 +663,10 @@ p { color: var(--text); }
   .form-layout { grid-template-columns: 1fr; }
   .summary-card { position: static; }
   .market-layout { grid-template-columns: 1fr; }
+  /* Header : garder logo | nav | actions sur une seule ligne, compression gracieuse (860–1024px) */
+  .header-inner { flex-wrap: nowrap; }
+  .header-actions { flex-shrink: 1; min-width: 0; }
+  .main-nav { gap: 18px; }
 }
 @media (max-width: 860px) {
   .header-inner { gap: 12px; } /* réduire l'espacement sur mobile */
@@ -694,13 +706,14 @@ p { color: var(--text); }
   .nav-dropdown.open .nav-dd-menu { max-height: 400px; opacity: 1; padding: 8px 0 8px 16px; transform: none; }
   .nav-dd-menu a { padding: 12px 8px; border-bottom: none; font-size: 0.95rem; }
   .hero-inner, .signup-hero-grid { grid-template-columns: 1fr; }
-  .hero-visual { width: 560px; max-width: 100%; min-height: 430px; margin: 24px auto 0; transform: scale(.92); transform-origin: top center; }
+  /* Hero passe en 1 colonne : visuel centré, contenu et hauteur limités pour éviter tout débordement */
+  .hero-visual { width: 100%; max-width: 520px; min-height: 380px; margin: 20px auto 0; overflow: hidden; transform: scale(.88); transform-origin: top center; }
   .cta-banner { grid-template-columns: 1fr; }
   .header-actions .btn-outline { display: none; }
   /* Adapter le bouton "S'inscrire gratuitement" pour tablette/mobile large */
   .header-actions .btn-primary { 
-    font-size: 0.8rem; 
-    padding: 8px 11px;
+    font-size: 0.78rem; 
+    padding: 7px 10px;
   }
 }
 
@@ -723,12 +736,12 @@ p { color: var(--text); }
   h1, .hero h1, .signup-hero h1 { font-size: 2rem; }
   .feature-grid, .profiles-grid, .stats-grid, .trust-grid, .form-grid, .form-grid.two { grid-template-columns: 1fr; }
   .brand-tag { display: none; }
-  .hero-visual { transform: scale(.66); transform-origin: top left; min-height: 330px; margin: 12px 0 0; width: 560px; }
+  .hero-visual { transform: scale(.8); transform-origin: top center; min-height: 300px; margin: 12px auto 0; width: 100%; max-width: 460px; overflow: hidden; }
   .section { padding: 48px 0; }
-  /* Sous 560px, masquer le CTA "S'inscrire" du header : il déborde et pousse le hamburger hors écran.
-     L'inscription reste accessible via le menu (hamburger) et les CTA des sections. */
-  .header-actions .btn-primary { display: none; }
-  .header-actions { gap: 0; }
+  /* Sous 560px : garder le CTA "S'inscrire" visible mais très compact pour qu'il tienne
+     avec le logo et le hamburger sans déborder ni les pousser hors écran. */
+  .header-actions .btn-primary { display: inline-flex; font-size: 0.72rem; padding: 6px 8px; }
+  .header-actions { gap: 6px; }
 }
 
 
