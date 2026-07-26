@@ -341,7 +341,7 @@ function authActions() {
     }
     return `
           <a href="/connexion" class="btn btn-outline btn-sm">${IC.user}<span>Se connecter</span></a>
-          <a href="/inscription" class="btn btn-primary btn-sm">S'inscrire gratuitement</a>`;
+          <a href="/inscription" class="btn btn-primary btn-sm">S'inscrire<span class="btn-word-extra"> gratuitement</span></a>`;
 }
 
 /* Liens d'authentification dans le menu mobile (dans la nav déroulante). */
