@@ -129,6 +129,25 @@
     .modal-msg{font-size:.85rem;min-height:20px;margin-bottom:4px;}
     .modal-msg.ok{color:#059669;}
     .modal-msg.err{color:#dc2626;}
+    /* Newsletter & Pub */
+    .nl-radios{display:flex;gap:10px;flex-wrap:wrap;}
+    .nl-radio{display:inline-flex;align-items:center;gap:7px;padding:.5rem .85rem;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem;font-weight:600;color:#374151;cursor:pointer;transition:border-color .15s,background .15s;}
+    .nl-radio:hover{border-color:#0a7d3f;}
+    .nl-radio input{accent-color:#0a7d3f;}
+    .nl-toolbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;}
+    .nl-tb-btn{padding:.35rem .6rem;border:1px solid #e2e8f0;background:#f8fafc;border-radius:6px;font-size:.82rem;cursor:pointer;color:#374151;}
+    .nl-tb-btn:hover{background:#e2e8f0;}
+    #nlBody{width:100%;padding:.7rem .85rem;border:1.5px solid #e2e8f0;border-radius:7px;font-size:.9rem;font-family:inherit;resize:vertical;}
+    #nlBody:focus{outline:none;border-color:#0a7d3f;}
+    .nl-hint{font-size:.78rem;color:#94a3b8;margin-top:5px;}
+    .nl-country-btns{display:flex;gap:8px;flex-wrap:wrap;}
+    .nl-cc-btn{padding:.5rem .85rem;border:1.5px solid #e2e8f0;background:#fff;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;color:#374151;}
+    .nl-cc-btn:hover{border-color:#0a7d3f;}
+    .nl-cc-btn.active{background:rgba(10,125,63,.1);border-color:#0a7d3f;color:#0a7d3f;}
+    .nl-count-badge{display:inline-block;margin-top:14px;background:#eef2ff;color:#3730a3;font-weight:700;font-size:.9rem;padding:.55rem 1rem;border-radius:10px;}
+    .as-row{display:flex;align-items:center;gap:8px;padding:.4rem .5rem;border-radius:6px;font-size:.85rem;cursor:pointer;}
+    .as-row:hover{background:#f8fafc;}
+    .as-row input{accent-color:#0a7d3f;}
 
     /* ---- NEED CARDS ---- */
     .need-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:18px;margin-bottom:12px;}
@@ -274,6 +293,11 @@
       <div class="nav-section">Contenu</div>
       <a href="#" data-tab="needs">📢 Annonces à valider</a>
       <a href="#" data-tab="scrapers">🤖 Scrapers</a>
+      <div class="nav-section">Communication</div>
+      <a href="#" data-tab="newsletter">📧 Newsletter &amp; Pub</a>
+      <a href="#" data-tab="sectors">🏷️ Secteurs</a>
+      <div class="nav-section">Urgences</div>
+      <a href="#" data-tab="bugpay" style="color:#fbbf24;">🔧 Bug paiement</a>
     </nav>
     <div class="admin-sidebar-footer">
       <div class="admin-user">👤 <span id="adminNameLabel">Admin</span></div>
@@ -479,6 +503,159 @@
       <div class="acard" style="padding:0;"><div id="scrapersLogs" class="table-wrap"></div></div>
     </div>
 
+    <!-- ===== BUG PAIEMENT ===== -->
+    <div id="panel-bugpay" class="admin-panel hidden">
+      <div class="panel-header">
+        <h1>🔧 Activation abonnement — Bug de paiement</h1>
+        <div class="panel-actions">
+          <button class="btn-a btn-ghost" onclick="loadBugPay()">↻ Rafraîchir</button>
+        </div>
+      </div>
+
+      <!-- Bannière d'alerte -->
+      <div style="background:#fffbeb;border:2px solid #f59e0b;border-radius:12px;padding:16px 20px;margin-bottom:24px;display:flex;align-items:flex-start;gap:14px;">
+        <span style="font-size:1.5rem;flex-shrink:0;">⚠️</span>
+        <div>
+          <p style="font-weight:700;color:#92400e;margin-bottom:4px;">Utilisation réservée aux corrections de bug du système de paiement</p>
+          <p style="font-size:.85rem;color:#78350f;">Cette section permet d'activer manuellement l'abonnement d'un utilisateur lorsque son paiement a abouti côté opérateur mais n'a pas été traité correctement par le système. Chaque activation est tracée dans l'historique des paiements avec le motif renseigné.</p>
+        </div>
+      </div>
+
+      <!-- Recherche utilisateur -->
+      <div class="acard" style="margin-bottom:20px;">
+        <h3>🔍 Rechercher l'utilisateur concerné</h3>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+          <input id="bpSearch" placeholder="Nom, organisation, e-mail ou téléphone..." style="flex:1;min-width:260px;padding:.65rem .9rem;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.9rem;font-family:inherit;"
+            oninput="renderBugPayResults()" onfocus="this.style.borderColor='#0a7d3f'" onblur="this.style.borderColor='#e2e8f0'">
+          <select id="bpCountry" onchange="renderBugPayResults()" style="padding:.65rem .9rem;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem;font-family:inherit;">
+            <option value="">Tous les pays</option>
+            <option value="BJ">🇧🇯 Bénin</option>
+            <option value="TG">🇹🇬 Togo</option>
+            <option value="CI">🇨🇮 Côte d'Ivoire</option>
+            <option value="SN">🇸🇳 Sénégal</option>
+          </select>
+        </div>
+        <div id="bpResults">
+          <p style="color:#94a3b8;font-size:.85rem;padding:12px 0;">Tapez au moins 2 caractères pour rechercher…</p>
+        </div>
+      </div>
+
+      <!-- Historique activations bug paiement -->
+      <div class="acard" style="padding:0;">
+        <div style="padding:16px 20px 12px;border-bottom:1px solid #f1f5f9;">
+          <h3 style="margin:0;">📋 Historique des activations manuelles</h3>
+        </div>
+        <div id="bpHistory" class="table-wrap"><p class="loading">Chargement...</p></div>
+      </div>
+    </div>
+
+    <!-- ===== NEWSLETTER & PUB ===== -->
+    <div id="panel-newsletter" class="admin-panel hidden">
+      <div class="panel-header">
+        <h1>📧 Newsletter &amp; Annonces publicitaires</h1>
+        <div class="panel-actions">
+          <button class="btn-a btn-ghost" onclick="loadNewsletters()">↻ Rafraîchir</button>
+        </div>
+      </div>
+
+      <!-- Composition -->
+      <div class="acard">
+        <h3>✍️ Composer une campagne</h3>
+
+        <!-- Type -->
+        <div class="mf-group" style="margin-bottom:16px;">
+          <label>Type de campagne</label>
+          <div class="nl-radios" id="nlType">
+            <label class="nl-radio"><input type="radio" name="nlType" value="newsletter" checked onchange="nlOnTargetChange()"> 📰 Newsletter</label>
+            <label class="nl-radio"><input type="radio" name="nlType" value="pub" onchange="nlOnTargetChange()"> 📢 Annonce publicitaire</label>
+          </div>
+        </div>
+
+        <!-- Objet -->
+        <div class="mf-group" style="margin-bottom:16px;">
+          <label>Objet de l'e-mail *</label>
+          <input id="nlSubject" placeholder="Ex : Nouveaux appels d'offres BTP cette semaine">
+        </div>
+
+        <!-- Éditeur -->
+        <div class="mf-group" style="margin-bottom:16px;">
+          <label>Contenu de l'e-mail *</label>
+          <div class="nl-toolbar">
+            <button type="button" class="nl-tb-btn" onclick="nlFormat('bold')" title="Gras"><b>G</b></button>
+            <button type="button" class="nl-tb-btn" onclick="nlFormat('italic')" title="Italique"><i>I</i></button>
+            <button type="button" class="nl-tb-btn" onclick="nlFormat('underline')" title="Souligné"><u>S</u></button>
+            <button type="button" class="nl-tb-btn" onclick="nlFormat('h2')" title="Titre">H</button>
+            <button type="button" class="nl-tb-btn" onclick="nlFormat('ul')" title="Liste">• Liste</button>
+            <button type="button" class="nl-tb-btn" onclick="nlFormat('link')" title="Lien">🔗 Lien</button>
+          </div>
+          <textarea id="nlBody" rows="9" placeholder="Rédigez votre message… (HTML léger accepté)"></textarea>
+          <p class="nl-hint">Astuce : sélectionnez du texte puis cliquez sur un bouton de mise en forme. Le HTML est autorisé.</p>
+        </div>
+
+        <!-- Ciblage -->
+        <div class="mf-group" style="margin-bottom:8px;">
+          <label>🎯 Ciblage des destinataires</label>
+          <div class="nl-radios" id="nlTarget">
+            <label class="nl-radio"><input type="radio" name="nlTarget" value="all" checked onchange="nlOnTargetChange()"> 🌍 Tous les abonnés</label>
+            <label class="nl-radio"><input type="radio" name="nlTarget" value="by_sector" onchange="nlOnTargetChange()"> 📂 Par secteur d'activité</label>
+            <label class="nl-radio"><input type="radio" name="nlTarget" value="by_country" onchange="nlOnTargetChange()"> 🗺️ Par pays</label>
+          </div>
+        </div>
+
+        <!-- Sous-ciblage : secteur -->
+        <div class="mf-group nl-subtarget" id="nlSectorWrap" style="display:none;margin-bottom:8px;">
+          <label>Secteur d'activité</label>
+          <select id="nlSector" onchange="nlOnTargetChange()"><option value="">— Choisir un secteur —</option></select>
+        </div>
+
+        <!-- Sous-ciblage : pays -->
+        <div class="mf-group nl-subtarget" id="nlCountryWrap" style="display:none;margin-bottom:8px;">
+          <label>Pays</label>
+          <div class="nl-country-btns" id="nlCountryBtns">
+            <button type="button" class="nl-cc-btn active" data-cc="ALL" onclick="nlSetCountry('ALL')">🌍 Tous</button>
+            <button type="button" class="nl-cc-btn" data-cc="BJ" onclick="nlSetCountry('BJ')">🇧🇯 Bénin</button>
+            <button type="button" class="nl-cc-btn" data-cc="TG" onclick="nlSetCountry('TG')">🇹🇬 Togo</button>
+            <button type="button" class="nl-cc-btn" data-cc="CI" onclick="nlSetCountry('CI')">🇨🇮 Côte d'Ivoire</button>
+            <button type="button" class="nl-cc-btn" data-cc="SN" onclick="nlSetCountry('SN')">🇸🇳 Sénégal</button>
+          </div>
+        </div>
+
+        <!-- Compteur destinataires -->
+        <div class="nl-count-badge" id="nlCountBadge">👥 <span id="nlCount">…</span> destinataire(s) ciblé(s)</div>
+
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;">
+          <button class="btn-a btn-ghost" onclick="nlPreview()">👁 Prévisualiser l'e-mail</button>
+          <button class="btn-a btn-primary" onclick="nlSend()">📤 Envoyer maintenant</button>
+        </div>
+        <p id="nlMsg" class="modal-msg" style="margin-top:10px;"></p>
+      </div>
+
+      <!-- Historique des envois -->
+      <div class="acard" style="padding:0;">
+        <div style="padding:16px 20px 12px;border-bottom:1px solid #f1f5f9;">
+          <h3 style="margin:0;">📜 Campagnes précédentes</h3>
+        </div>
+        <div id="nlHistory" class="table-wrap"><p class="loading">Chargement…</p></div>
+      </div>
+    </div>
+
+    <!-- ===== SECTEURS ===== -->
+    <div id="panel-sectors" class="admin-panel hidden">
+      <div class="panel-header">
+        <h1>🏷️ Secteurs d'activité</h1>
+        <div class="panel-actions">
+          <button class="btn-a btn-ghost" onclick="loadSectors()">↻ Rafraîchir</button>
+          <button class="btn-a btn-primary" onclick="openAssignSector()">➕ Attribuer un secteur</button>
+        </div>
+      </div>
+      <p style="color:#64748b;font-size:.85rem;margin-bottom:16px;">
+        Nombre d'abonnés rattachés à chaque secteur (secteur déclaré au profil ou attribué manuellement). Sert de base au ciblage des newsletters.
+      </p>
+      <div class="acard" style="padding:0;">
+        <div id="sectorsList" class="table-wrap"><p class="loading">Chargement…</p></div>
+      </div>
+    </div>
+
   </main>
 </div>
 
@@ -606,6 +783,52 @@
     </div>
   </div>
 
+  <!-- MODALE : Activation abonnement Bug Paiement -->
+  <div id="modalBugPay" class="modal-box" style="display:none;" onclick="event.stopPropagation()">
+    <div class="modal-header" style="background:#fffbeb;border-radius:16px 16px 0 0;">
+      <h2>🔧 Activer l'abonnement — Bug paiement</h2>
+      <button class="modal-close" onclick="closeModal('modalBugPay')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="bpModalUserInfo" style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:.88rem;"></div>
+      <div class="mf-grid">
+        <div class="mf-group">
+          <label>Formule d'abonnement *</label>
+          <select id="bpPlan" onchange="updateBpAmount()">
+            <option value="mensuel" data-amount="10000">Mensuel — 10 000 FCFA</option>
+            <option value="trimestriel" data-amount="25000">Trimestriel — 25 000 FCFA</option>
+            <option value="semestriel" data-amount="45000">Semestriel — 45 000 FCFA</option>
+            <option value="annuel" data-amount="90000">Annuel — 90 000 FCFA</option>
+          </select>
+        </div>
+        <div class="mf-group">
+          <label>Durée (mois) *</label>
+          <input id="bpDuration" type="number" min="1" max="36" value="1">
+        </div>
+      </div>
+      <div class="mf-group">
+        <label>Montant réellement payé (FCFA)</label>
+        <input id="bpAmount" type="number" min="0" placeholder="ex : 10000">
+        <small style="color:#64748b;font-size:.78rem;margin-top:3px;display:block;">Montant prélevé côté opérateur. Mettre 0 si inconnu.</small>
+      </div>
+      <div class="mf-group">
+        <label>Motif / Référence *</label>
+        <input id="bpReason" placeholder="ex : Bug KKiaPay — réf. TX-20260726-XXXXX" style="font-size:.88rem;">
+        <small style="color:#64748b;font-size:.78rem;margin-top:3px;display:block;">Enregistré dans l'historique des paiements.</small>
+      </div>
+      <div style="background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:10px 14px;font-size:.83rem;color:#92400e;margin-top:4px;">
+        ⚠️ Cette activation sera enregistrée comme <strong>activation manuelle</strong> dans l'historique. Elle est irréversible sauf action contraire manuelle.
+      </div>
+      <p id="bpMsg" class="modal-msg" style="margin-top:10px;"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-a btn-ghost" onclick="closeModal('modalBugPay')">Annuler</button>
+      <button class="btn-a" id="bpBtn" onclick="confirmBugPay()" style="background:#f59e0b;color:#fff;font-weight:700;border:none;padding:.5rem 1.2rem;border-radius:7px;cursor:pointer;">
+        ⚡ Activer l'abonnement
+      </button>
+    </div>
+  </div>
+
   <!-- MODALE : Confirmation suppression groupée -->
   <div id="modalBulkDelete" class="modal-box" style="max-width:480px;display:none;" onclick="event.stopPropagation()">
     <div class="modal-header">
@@ -654,6 +877,47 @@
     <div class="modal-footer">
       <button class="btn-a btn-ghost" onclick="closeModal('modalBulkGrant')">Annuler</button>
       <button class="btn-a btn-primary" id="bulkGrantBtn" onclick="confirmBulkGrant()">Accorder l'abonnement</button>
+    </div>
+  </div>
+
+  <!-- MODALE : Aperçu e-mail -->
+  <div id="modalNlPreview" class="modal-box" style="max-width:640px;display:none;" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2>👁 Aperçu de l'e-mail</h2>
+      <button class="modal-close" onclick="closeModal('modalNlPreview')">✕</button>
+    </div>
+    <div class="modal-body" style="padding:0;">
+      <iframe id="nlPreviewFrame" style="width:100%;height:60vh;border:none;background:#f4f6f5;"></iframe>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-a btn-ghost" onclick="closeModal('modalNlPreview')">Fermer</button>
+    </div>
+  </div>
+
+  <!-- MODALE : Attribuer un secteur à des utilisateurs -->
+  <div id="modalAssignSector" class="modal-box" style="max-width:560px;display:none;" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2>➕ Attribuer un secteur</h2>
+      <button class="modal-close" onclick="closeModal('modalAssignSector')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="mf-group" style="margin-bottom:14px;">
+        <label>Secteur à attribuer *</label>
+        <select id="asSector"><option value="">— Choisir un secteur —</option></select>
+      </div>
+      <div class="mf-group" style="margin-bottom:6px;">
+        <label>Rechercher des utilisateurs</label>
+        <input id="asSearch" placeholder="Nom, organisation, e-mail…" oninput="asRenderResults()">
+      </div>
+      <div id="asResults" style="max-height:240px;overflow-y:auto;border:1px solid #e2e8f0;border-radius:8px;padding:6px;margin-bottom:6px;">
+        <p style="color:#94a3b8;font-size:.85rem;padding:8px;">Tapez au moins 2 caractères pour rechercher…</p>
+      </div>
+      <p style="font-size:.8rem;color:#64748b;">Sélectionnez un ou plusieurs utilisateurs à rattacher au secteur choisi.</p>
+      <p id="asMsg" class="modal-msg" style="margin-top:8px;"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-a btn-ghost" onclick="closeModal('modalAssignSector')">Annuler</button>
+      <button class="btn-a btn-primary" id="asBtn" onclick="asAssign()">Attribuer</button>
     </div>
   </div>
 
@@ -762,6 +1026,9 @@
     if (tab === 'payments') loadPayments();
     if (tab === 'needs')    loadNeeds();
     if (tab === 'scrapers') loadScrapers();
+    if (tab === 'bugpay')   loadBugPay();
+    if (tab === 'newsletter') initNewsletter();
+    if (tab === 'sectors')  loadSectors();
     // Fermer sidebar mobile
     document.getElementById('adminSidebar').classList.remove('open');
   }
@@ -786,6 +1053,12 @@
   function chip(status) {
     const s = SUB_STATUS[status] || SUB_STATUS.aucun;
     return `<span class="chip ${s.cls}">${s.label}</span>`;
+  }
+  // Échappement HTML pour l'affichage sûr de texte utilisateur.
+  function esc(v) {
+    return String(v ?? '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
   }
 
   /* ====================== PRINT / PDF ====================== */
@@ -1508,6 +1781,281 @@
     } catch(e) { el.innerHTML='<p class="empty">Impossible de charger les scrapers.</p>'; }
   }
 
+  /* ====================== NEWSLETTER & PUB ====================== */
+  let NL_SECTORS = [];        // cache des secteurs [{id,name,icon,subscribers_count}]
+  let nlCountry = 'ALL';      // pays sélectionné (ciblage par pays)
+  let nlCountTimer = null;    // debounce du compteur
+  let nlSectorsLoaded = false;
+
+  async function initNewsletter() {
+    if (!nlSectorsLoaded) { await nlLoadSectors(); }
+    nlOnTargetChange();
+    loadNewsletters();
+  }
+
+  async function nlLoadSectors() {
+    try {
+      const d = await adminApi('/admin/sectors');
+      NL_SECTORS = d.data || [];
+      nlSectorsLoaded = true;
+      const opts = '<option value="">— Choisir un secteur —</option>' +
+        NL_SECTORS.map(s => `<option value="${s.id}">${s.icon || '🏷️'} ${esc(s.name)} (${fmtN(s.subscribers_count)})</option>`).join('');
+      const sel = document.getElementById('nlSector'); if (sel) sel.innerHTML = opts;
+      const asel = document.getElementById('asSector');
+      if (asel) asel.innerHTML = '<option value="">— Choisir un secteur —</option>' +
+        NL_SECTORS.map(s => `<option value="${s.id}">${s.icon || '🏷️'} ${esc(s.name)}</option>`).join('');
+    } catch (e) { /* silencieux */ }
+  }
+
+  function nlTargetType() {
+    return document.querySelector('input[name="nlTarget"]:checked')?.value || 'all';
+  }
+  function nlCampaignType() {
+    return document.querySelector('input[name="nlType"]:checked')?.value || 'newsletter';
+  }
+
+  function nlOnTargetChange() {
+    const t = nlTargetType();
+    document.getElementById('nlSectorWrap').style.display  = (t === 'by_sector')  ? 'flex' : 'none';
+    document.getElementById('nlCountryWrap').style.display = (t === 'by_country') ? 'flex' : 'none';
+    nlRefreshCount();
+  }
+
+  function nlSetCountry(cc) {
+    nlCountry = cc;
+    document.querySelectorAll('#nlCountryBtns .nl-cc-btn').forEach(b => b.classList.toggle('active', b.dataset.cc === cc));
+    nlRefreshCount();
+  }
+
+  function nlRefreshCount() {
+    clearTimeout(nlCountTimer);
+    const badge = document.getElementById('nlCount');
+    badge.textContent = '…';
+    nlCountTimer = setTimeout(async () => {
+      const t = nlTargetType();
+      const params = new URLSearchParams({ target_type: t });
+      if (t === 'by_sector') {
+        const sid = document.getElementById('nlSector').value;
+        if (!sid) { badge.textContent = '0'; return; }
+        params.set('target_sector_id', sid);
+      }
+      if (t === 'by_country') params.set('target_country', nlCountry);
+      try {
+        const d = await adminApi('/admin/newsletters/target-count?' + params.toString());
+        badge.textContent = fmtN(d.count || 0);
+      } catch (e) { badge.textContent = '—'; }
+    }, 300);
+  }
+
+  /* Mise en forme de la zone de texte (HTML léger, sans librairie externe). */
+  function nlWrap(before, after) {
+    const ta = document.getElementById('nlBody');
+    const s = ta.selectionStart, e = ta.selectionEnd;
+    const sel = ta.value.substring(s, e);
+    ta.value = ta.value.substring(0, s) + before + sel + after + ta.value.substring(e);
+    ta.focus();
+    ta.selectionStart = s + before.length;
+    ta.selectionEnd = e + before.length;
+  }
+  function nlFormat(cmd) {
+    if (cmd === 'bold')      return nlWrap('<strong>', '</strong>');
+    if (cmd === 'italic')    return nlWrap('<em>', '</em>');
+    if (cmd === 'underline') return nlWrap('<u>', '</u>');
+    if (cmd === 'h2')        return nlWrap('<h2>', '</h2>');
+    if (cmd === 'ul') {
+      const ta = document.getElementById('nlBody');
+      const sel = ta.value.substring(ta.selectionStart, ta.selectionEnd) || 'élément';
+      const items = sel.split('\n').filter(x => x.trim()).map(x => '  <li>' + x.trim() + '</li>').join('\n');
+      return nlWrap('<ul>\n' + items + '\n</ul>', '');
+    }
+    if (cmd === 'link') {
+      const url = prompt('URL du lien :', 'https://');
+      if (!url) return;
+      return nlWrap('<a href="' + url + '">', '</a>');
+    }
+  }
+
+  function nlBuildPreviewHtml() {
+    const subject = document.getElementById('nlSubject').value.trim();
+    const body = document.getElementById('nlBody').value;
+    const isPub = nlCampaignType() === 'pub';
+    const badge = isPub ? '<div style="display:inline-block;background:#fff3cd;color:#b45309;font-size:12px;font-weight:bold;padding:4px 10px;border-radius:12px;margin-bottom:14px;">ANNONCE PUBLICITAIRE</div>' : '';
+    return `<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"></head>
+      <body style="margin:0;padding:0;background:#f4f6f5;font-family:Arial,Helvetica,sans-serif;color:#1f2d29;">
+      <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f6f5;padding:24px 0;"><tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:12px;overflow:hidden;max-width:600px;width:100%;">
+      <tr><td style="background:#1a7f5a;padding:20px 28px;"><span style="color:#fff;font-size:20px;font-weight:bold;">🔔 AlerteMarché</span></td></tr>
+      <tr><td style="padding:28px;">${badge}<h2 style="margin-top:0;color:#1a7f5a;">${esc(subject) || '(objet)'}</h2>
+      <div style="font-size:15px;line-height:1.6;color:#1f2d29;">${body || '<em style=\"color:#94a3b8\">(contenu vide)</em>'}</div>
+      <hr style="border:none;border-top:1px solid #e3ebe7;margin:24px 0;">
+      <p style="color:#6b7d77;font-size:13px;">Vous recevez cet e-mail en tant qu'abonné d'AlerteMarché.</p></td></tr>
+      <tr><td style="padding:18px 28px;background:#f0f4f2;color:#6b7d77;font-size:12px;">AlerteMarché — Veille des appels d'offres au Bénin, Togo &amp; Côte d'Ivoire.<br>Édité par PRO BENIN SARL — alertemarche.com</td></tr>
+      </table></td></tr></table></body></html>`;
+  }
+
+  function nlPreview() {
+    const msg = document.getElementById('nlMsg');
+    msg.className = 'modal-msg';
+    if (!document.getElementById('nlSubject').value.trim() || !document.getElementById('nlBody').value.trim()) {
+      msg.className = 'modal-msg err'; msg.textContent = 'Renseignez l\'objet et le contenu avant l\'aperçu.'; return;
+    }
+    document.getElementById('nlPreviewFrame').srcdoc = nlBuildPreviewHtml();
+    openModal('modalNlPreview');
+  }
+
+  function nlPayload() {
+    const t = nlTargetType();
+    const p = {
+      subject: document.getElementById('nlSubject').value.trim(),
+      body: document.getElementById('nlBody').value.trim(),
+      type: nlCampaignType(),
+      target_type: t,
+    };
+    if (t === 'by_sector')  p.target_sector_id = document.getElementById('nlSector').value || null;
+    if (t === 'by_country') p.target_country = nlCountry;
+    return p;
+  }
+
+  async function nlSend() {
+    const msg = document.getElementById('nlMsg');
+    msg.className = 'modal-msg';
+    const payload = nlPayload();
+    if (!payload.subject || !payload.body) {
+      msg.className = 'modal-msg err'; msg.textContent = 'Renseignez l\'objet et le contenu.'; return;
+    }
+    if (payload.target_type === 'by_sector' && !payload.target_sector_id) {
+      msg.className = 'modal-msg err'; msg.textContent = 'Choisissez un secteur cible.'; return;
+    }
+    const count = document.getElementById('nlCount').textContent;
+    if (!confirm(`Confirmer l'envoi à ${count} destinataire(s) ?`)) return;
+    try {
+      msg.className = 'modal-msg'; msg.textContent = 'Création de la campagne…';
+      const created = await adminApi('/admin/newsletters', { method: 'POST', body: payload });
+      const id = created.newsletter?.id;
+      msg.textContent = 'Envoi en cours…';
+      const sent = await adminApi(`/admin/newsletters/${id}/send`, { method: 'POST' });
+      msg.className = 'modal-msg ok'; msg.textContent = '✅ ' + (sent.message || 'Envoi lancé.');
+      // Réinitialiser le formulaire
+      document.getElementById('nlSubject').value = '';
+      document.getElementById('nlBody').value = '';
+      loadNewsletters();
+    } catch (e) {
+      msg.className = 'modal-msg err'; msg.textContent = '❌ ' + e.message;
+    }
+  }
+
+  const NL_STATUS = {
+    draft:   { label: 'Brouillon', cls: 'chip-gray' },
+    sending: { label: 'En cours',  cls: 'chip-orange' },
+    sent:    { label: 'Envoyée',   cls: 'chip-green' },
+  };
+  function nlTargetLabel(n) {
+    if (n.target_type === 'all') return '🌍 Tous';
+    if (n.target_type === 'by_sector') return '📂 ' + (n.target_sector || 'Secteur');
+    if (n.target_type === 'by_country') return '🗺️ ' + (COUNTRIES[n.target_country] || n.target_country || 'Pays');
+    return '—';
+  }
+
+  async function loadNewsletters() {
+    const el = document.getElementById('nlHistory');
+    el.innerHTML = '<p class="loading">Chargement…</p>';
+    try {
+      const d = await adminApi('/admin/newsletters');
+      const rows = d.data || [];
+      if (!rows.length) { el.innerHTML = '<p class="empty">Aucune campagne pour le moment.</p>'; return; }
+      el.innerHTML = `<table class="data-table"><thead><tr>
+        <th>Date</th><th>Type</th><th>Objet</th><th>Ciblage</th><th>Destinataires</th><th>Statut</th><th></th>
+        </tr></thead><tbody>${rows.map(n => {
+          const st = NL_STATUS[n.status] || NL_STATUS.draft;
+          const typeLabel = n.type === 'pub' ? '📢 Annonce' : '📰 Newsletter';
+          const canDel = n.status === 'draft';
+          return `<tr>
+            <td>${fmtDT(n.created_at)}</td>
+            <td>${typeLabel}</td>
+            <td>${esc(n.subject)}</td>
+            <td>${nlTargetLabel(n)}</td>
+            <td>${fmtN(n.sent_count)}</td>
+            <td><span class="chip ${st.cls}">${st.label}</span></td>
+            <td>${canDel ? `<button class="btn-a btn-danger" onclick="nlDelete(${n.id})">🗑 Supprimer</button>` : ''}</td>
+          </tr>`;
+        }).join('')}</tbody></table>`;
+    } catch (e) { el.innerHTML = '<p class="empty">Impossible de charger les campagnes.</p>'; }
+  }
+
+  async function nlDelete(id) {
+    if (!confirm('Supprimer ce brouillon ?')) return;
+    try { await adminApi(`/admin/newsletters/${id}`, { method: 'DELETE' }); loadNewsletters(); }
+    catch (e) { alert(e.message); }
+  }
+
+  /* ====================== SECTEURS ====================== */
+  async function loadSectors() {
+    const el = document.getElementById('sectorsList');
+    el.innerHTML = '<p class="loading">Chargement…</p>';
+    try {
+      const d = await adminApi('/admin/sectors');
+      NL_SECTORS = d.data || [];
+      nlSectorsLoaded = true;
+      if (!NL_SECTORS.length) { el.innerHTML = '<p class="empty">Aucun secteur.</p>'; return; }
+      const total = NL_SECTORS.reduce((a, s) => a + (s.subscribers_count || 0), 0);
+      el.innerHTML = `<table class="data-table"><thead><tr>
+        <th>Icône</th><th>Secteur</th><th>Abonnés</th>
+        </tr></thead><tbody>${NL_SECTORS.map(s => `<tr>
+          <td style="font-size:1.2rem;">${s.icon || '🏷️'}</td>
+          <td>${esc(s.name)}</td>
+          <td><strong>${fmtN(s.subscribers_count)}</strong></td>
+        </tr>`).join('')}
+        <tr style="background:#f8fafc;font-weight:700;"><td></td><td>Total (cumulé)</td><td>${fmtN(total)}</td></tr>
+        </tbody></table>`;
+    } catch (e) { el.innerHTML = '<p class="empty">Impossible de charger les secteurs.</p>'; }
+  }
+
+  /* ---- Attribution manuelle de secteur ---- */
+  let AS_SELECTED = new Set();
+  async function openAssignSector() {
+    AS_SELECTED = new Set();
+    document.getElementById('asMsg').textContent = '';
+    document.getElementById('asSearch').value = '';
+    if (!nlSectorsLoaded) await nlLoadSectors();
+    // Charger les utilisateurs si nécessaire (réutilise le cache global)
+    if (!USERS_CACHE.length) {
+      try { const d = await adminApi('/admin/users?all=1'); USERS_CACHE = d.data || []; } catch (e) {}
+    }
+    asRenderResults();
+    openModal('modalAssignSector');
+  }
+
+  function asRenderResults() {
+    const el = document.getElementById('asResults');
+    const q = (document.getElementById('asSearch').value || '').trim().toLowerCase();
+    if (q.length < 2) {
+      el.innerHTML = '<p style="color:#94a3b8;font-size:.85rem;padding:8px;">Tapez au moins 2 caractères pour rechercher…</p>';
+      return;
+    }
+    const items = USERS_CACHE.filter(u =>
+      [u.organization, u.name, u.email].some(v => (v || '').toLowerCase().includes(q))
+    ).slice(0, 50);
+    if (!items.length) { el.innerHTML = '<p class="empty">Aucun utilisateur trouvé.</p>'; return; }
+    el.innerHTML = items.map(u => `<label class="as-row">
+      <input type="checkbox" value="${u.id}" ${AS_SELECTED.has(u.id) ? 'checked' : ''} onchange="asToggle(${u.id}, this.checked)">
+      <span><strong>${esc(u.organization || u.name || '—')}</strong> — ${esc(u.email || '')} ${u.primary_country ? '(' + u.primary_country + ')' : ''}</span>
+    </label>`).join('');
+  }
+  function asToggle(id, on) { if (on) AS_SELECTED.add(id); else AS_SELECTED.delete(id); }
+
+  async function asAssign() {
+    const msg = document.getElementById('asMsg');
+    msg.className = 'modal-msg';
+    const sectorId = document.getElementById('asSector').value;
+    if (!sectorId) { msg.className = 'modal-msg err'; msg.textContent = 'Choisissez un secteur.'; return; }
+    if (!AS_SELECTED.size) { msg.className = 'modal-msg err'; msg.textContent = 'Sélectionnez au moins un utilisateur.'; return; }
+    try {
+      const d = await adminApi('/admin/sectors/assign', { method: 'POST', body: { sector_id: Number(sectorId), user_ids: [...AS_SELECTED] } });
+      msg.className = 'modal-msg ok'; msg.textContent = '✅ ' + (d.message || 'Attribution effectuée.');
+      loadSectors();
+    } catch (e) { msg.className = 'modal-msg err'; msg.textContent = '❌ ' + e.message; }
+  }
+
   /* ====================== MODALES ====================== */
   function openModal(id) {
     document.getElementById('modalOverlay').style.display = 'flex';
@@ -1546,6 +2094,162 @@
       showApp();
     }
   });
+
+  /* ====================== BUG PAIEMENT ====================== */
+  let bpTargetUser = null;
+
+  async function loadBugPay() {
+    if (!USERS_CACHE.length) {
+      try {
+        const d = await adminApi('/admin/users?all=1');
+        USERS_CACHE = d.data || [];
+      } catch(e) {}
+    }
+    renderBugPayResults();
+    loadBpHistory();
+  }
+
+  function renderBugPayResults() {
+    const el = document.getElementById('bpResults');
+    const q = (document.getElementById('bpSearch')?.value || '').trim().toLowerCase();
+    const cc = document.getElementById('bpCountry')?.value || '';
+
+    if (q.length < 2) {
+      el.innerHTML = '<p style="color:#94a3b8;font-size:.85rem;padding:12px 0;">Tapez au moins 2 caractères pour rechercher…</p>';
+      return;
+    }
+
+    let items = USERS_CACHE.filter(u => {
+      const match = [u.organization, u.name, u.email, u.phone].some(v => (v || '').toLowerCase().includes(q));
+      const countryOk = !cc || u.primary_country === cc;
+      return match && countryOk;
+    });
+
+    if (!items.length) {
+      el.innerHTML = '<p class="empty">Aucun utilisateur trouvé pour cette recherche.</p>';
+      return;
+    }
+
+    el.innerHTML = `<table class="data-table">
+      <thead><tr>
+        <th>Organisation / Nom</th><th>E-mail / Tél</th><th>Pays</th>
+        <th>Abonnement actuel</th><th>Action</th>
+      </tr></thead>
+      <tbody>${items.slice(0, 20).map(u => `<tr>
+        <td class="td-org">
+          <b>${u.organization || u.name || '—'}</b>
+          ${u.organization && u.name ? `<small>${u.name}</small>` : ''}
+        </td>
+        <td>${u.email || ''}${u.phone ? `<br><small style="color:#64748b;">${u.phone}</small>` : ''}</td>
+        <td>${COUNTRIES[u.primary_country] || u.primary_country || '—'}</td>
+        <td>
+          ${chip(u.subscription_status)}
+          ${u.subscription_status === 'active' ? '<br><small style="color:#059669;font-size:.78rem;">✅ Déjà actif</small>' : ''}
+          ${u.subscription_status === 'pending' ? '<br><small style="color:#d97706;font-size:.78rem;">⏳ En attente</small>' : ''}
+        </td>
+        <td>
+          <button onclick="openBugPayModal(${u.id})"
+            style="background:#f59e0b;color:#fff;font-weight:700;padding:.45rem 1rem;border:none;border-radius:7px;cursor:pointer;font-size:.82rem;font-family:inherit;">
+            ⚡ Activer
+          </button>
+        </td>
+      </tr>`).join('')}</tbody></table>
+      ${items.length > 20 ? `<p style="color:#64748b;font-size:.8rem;padding:8px 12px;">…et ${items.length - 20} autres résultats. Affinez votre recherche.</p>` : ''}`;
+  }
+
+  function openBugPayModal(userId) {
+    const u = USERS_CACHE.find(u => u.id === userId);
+    if (!u) return;
+    bpTargetUser = u;
+
+    document.getElementById('bpModalUserInfo').innerHTML = `
+      <strong style="font-size:.95rem;">🏢 ${u.organization || u.name || '—'}</strong>
+      ${u.organization && u.name ? `<br><span style="color:#64748b;">${u.name}</span>` : ''}
+      <br><span style="color:#374151;">📧 ${u.email || '—'} &nbsp;|&nbsp; 📱 ${u.phone || '—'}</span>
+      <br><span style="color:#374151;">${COUNTRIES[u.primary_country] || u.primary_country || ''}</span>
+      &nbsp;|&nbsp; Statut actuel : ${chip(u.subscription_status)}`;
+
+    const today = new Date().toLocaleDateString('fr-FR');
+    document.getElementById('bpReason').value = `Bug paiement — activation manuelle le ${today}`;
+    document.getElementById('bpPlan').value = 'mensuel';
+    document.getElementById('bpDuration').value = 1;
+    updateBpAmount();
+    document.getElementById('bpMsg').textContent = '';
+    openModal('modalBugPay');
+  }
+
+  function updateBpAmount() {
+    const sel = document.getElementById('bpPlan');
+    const opt = sel.options[sel.selectedIndex];
+    const durations = { mensuel: 1, trimestriel: 3, semestriel: 6, annuel: 12 };
+    document.getElementById('bpDuration').value = durations[sel.value] || 1;
+    document.getElementById('bpAmount').value = opt?.dataset?.amount || '';
+  }
+
+  async function confirmBugPay() {
+    const msg = document.getElementById('bpMsg');
+    const btn = document.getElementById('bpBtn');
+    msg.textContent = '';
+
+    if (!bpTargetUser) { msg.className = 'modal-msg err'; msg.textContent = '⚠️ Aucun utilisateur sélectionné.'; return; }
+
+    const plan = document.getElementById('bpPlan').value;
+    const dur = parseInt(document.getElementById('bpDuration').value) || 0;
+    const amount = parseInt(document.getElementById('bpAmount').value) || 0;
+    const reason = document.getElementById('bpReason').value.trim();
+
+    if (!plan || !dur) { msg.className = 'modal-msg err'; msg.textContent = '⚠️ Formule et durée obligatoires.'; return; }
+    if (!reason) { msg.className = 'modal-msg err'; msg.textContent = '⚠️ Le motif est obligatoire.'; return; }
+
+    btn.disabled = true; btn.textContent = 'Activation en cours…';
+    try {
+      const body = { user_id: bpTargetUser.id, plan, duration_months: dur, amount, payment_reference: reason };
+      const d = await adminApi('/admin/subscriptions/grant', { method: 'POST', body });
+      closeModal('modalBugPay');
+      bpTargetUser = null;
+
+      showResult('✅ Abonnement activé !',
+        `<p>Abonnement <strong>${PLANS[plan] || plan}</strong> activé avec succès.</p>
+         <p style="margin-top:8px;color:#059669;font-size:.88rem;">📅 Valable jusqu'au <strong>${fmtD(d.subscription?.expires_at)}</strong>.</p>
+         <p style="margin-top:8px;font-size:.82rem;color:#64748b;">Référence : <em>${reason}</em></p>`);
+
+      loadBugPay(); loadSubs(); loadUsers(); loadStats();
+    } catch(e) {
+      msg.className = 'modal-msg err';
+      msg.textContent = '⚠️ ' + (e.message || 'Erreur lors de l\'activation.');
+    } finally {
+      btn.disabled = false; btn.textContent = '⚡ Activer l\'abonnement';
+    }
+  }
+
+  async function loadBpHistory() {
+    const el = document.getElementById('bpHistory');
+    el.innerHTML = '<p class="loading">Chargement…</p>';
+    try {
+      const d = await adminApi('/admin/payments?all=1');
+      const items = (d.data || []).filter(p => p.is_manual);
+      if (!items.length) {
+        el.innerHTML = '<p class="empty">Aucune activation manuelle enregistrée.</p>';
+        return;
+      }
+      el.innerHTML = `<table class="data-table">
+        <thead><tr>
+          <th>Date</th><th>Organisation</th><th>E-mail</th><th>Formule</th>
+          <th>Montant</th><th>Statut</th><th>Référence / Motif</th>
+        </tr></thead>
+        <tbody>${items.map(p => `<tr>
+          <td style="white-space:nowrap;">${fmtDT(p.created_at)}</td>
+          <td class="td-org"><b>${p.organization || p.name || '—'}</b></td>
+          <td><small>${p.email || ''}</small></td>
+          <td><span class="badge-manual">${PLANS[p.plan] || p.plan || '—'}</span></td>
+          <td style="font-weight:700;">${p.amount ? fmt(p.amount) : 'Gratuit'}</td>
+          <td>${chip(p.status)}</td>
+          <td><small style="color:#64748b;font-size:.78rem;">${p.payment_reference || '—'}</small></td>
+        </tr>`).join('')}</tbody></table>`;
+    } catch(e) {
+      el.innerHTML = `<p class="empty">Impossible de charger l'historique.</p>`;
+    }
+  }
 </script>
 </body>
 </html>

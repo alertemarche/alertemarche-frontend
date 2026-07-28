@@ -481,8 +481,17 @@
       }
 
       try {
-        openKkiapay({
+        // API récente du widget = openKkiapayWidget (repli sur openKkiapay pour anciennes versions)
+        const _openWidget = window.openKkiapayWidget || window.openKkiapay;
+        if (typeof _openWidget !== 'function') {
+          btn.disabled = false;
+          btn.textContent = 'Payer 10 000 FCFA & soumettre l\'annonce';
+          msg.textContent = '⚠️ Le module de paiement n\'a pas pu se charger. Rafraîchissez la page et réessayez.';
+          return;
+        }
+        _openWidget({
           amount: AMOUNT_PUB,
+          key: KK_PUB.public_key,
           api_key: KK_PUB.public_key,
           sandbox: !!KK_PUB.sandbox,
           position: 'center',
@@ -499,21 +508,28 @@
       }
     }
 
-    // Succès paiement KKiaPay
-    window.addEventListener('kkiapay.success', async (ev) => {
-      const transactionId = (ev.detail && (ev.detail.transactionId || ev.detail.transaction_id)) || null;
+    // Succès / échec paiement KKiaPay (API récente + rétro-compatibilité)
+    async function _pubOnKkiapaySuccess(response) {
+      const r = response || {};
+      const transactionId = r.transactionId || r.transaction_id
+        || (r.detail && (r.detail.transactionId || r.detail.transaction_id)) || null;
       const draft = JSON.parse(sessionStorage.getItem('am_pub_draft') || '{}');
       await submitAnnouncement(draft, transactionId);
-    });
-
-    window.addEventListener('kkiapay.failed', () => {
+    }
+    function _pubOnKkiapayFailed() {
       const btn = document.getElementById('pubSubmitBtn');
       const msg = document.getElementById('pubMsg');
       btn.disabled = false;
       btn.textContent = 'Payer 10 000 FCFA & soumettre l\'annonce';
       msg.style.color = '#ef4444';
       msg.textContent = '⚠️ Le paiement n\'a pas abouti. Veuillez réessayer.';
-    });
+    }
+    if (typeof addKkiapayListener === 'function') {
+      addKkiapayListener('success', _pubOnKkiapaySuccess);
+      addKkiapayListener('failed', _pubOnKkiapayFailed);
+    }
+    window.addEventListener('kkiapay.success', (ev) => _pubOnKkiapaySuccess(ev.detail || ev));
+    window.addEventListener('kkiapay.failed', _pubOnKkiapayFailed);
 
     async function submitAnnouncement(data, transactionId) {
       const msg = document.getElementById('pubMsg');

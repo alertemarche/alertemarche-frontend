@@ -257,8 +257,15 @@
         // 3) Widget KKiaPay
         const user = JSON.parse(localStorage.getItem('am_user') || '{}');
         window._amSub = sub;
-        openKkiapay({
+        // API récente du widget = openKkiapayWidget (repli sur openKkiapay pour anciennes versions)
+        const _openWidget = window.openKkiapayWidget || window.openKkiapay;
+        if (typeof _openWidget !== 'function') {
+          if (hint) { hint.style.display = 'block'; hint.textContent = "Le module de paiement n'a pas pu se charger. Veuillez rafraîchir la page et réessayer."; }
+          return;
+        }
+        _openWidget({
           amount: amount,
+          key: KK.public_key,
           api_key: KK.public_key,
           sandbox: !!KK.sandbox,
           position: 'center',
@@ -273,9 +280,12 @@
       }
     }
 
-    window.addEventListener('kkiapay.success', async (e) => {
+    // Gestion du succès / échec du paiement (API récente + rétro-compatibilité)
+    async function _amOnKkiapaySuccess(response) {
       const hint = document.getElementById('abHint');
-      const transactionId = (e.detail && (e.detail.transactionId || e.detail.transaction_id)) || null;
+      const r = response || {};
+      const transactionId = r.transactionId || r.transaction_id
+        || (r.detail && (r.detail.transactionId || r.detail.transaction_id)) || null;
       const sub = window._amSub;
       if (!transactionId || !sub) return;
       try {
@@ -284,11 +294,18 @@
       } catch {
         if (hint) { hint.style.display = 'block'; hint.textContent = "Paiement reçu, activation en cours de vérification. Vous recevrez une confirmation par e-mail."; }
       }
-    });
-    window.addEventListener('kkiapay.failed', () => {
+    }
+    function _amOnKkiapayFailed() {
       const hint = document.getElementById('abHint');
       if (hint) { hint.style.display = 'block'; hint.textContent = "Le paiement n'a pas abouti. Vous pouvez réessayer."; }
-    });
+    }
+    if (typeof addKkiapayListener === 'function') {
+      addKkiapayListener('success', _amOnKkiapaySuccess);
+      addKkiapayListener('failed', _amOnKkiapayFailed);
+    }
+    // Rétro-compatibilité anciens événements globaux
+    window.addEventListener('kkiapay.success', (e) => _amOnKkiapaySuccess(e.detail || e));
+    window.addEventListener('kkiapay.failed', _amOnKkiapayFailed);
 
     document.addEventListener('DOMContentLoaded', async () => {
       renderPlans();               // affichage immédiat (repli)
