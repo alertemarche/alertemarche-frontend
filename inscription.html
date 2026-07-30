@@ -93,8 +93,8 @@
               </select>
             </div>
             <div class="field"><label>Secteur principal <span class="req">*</span></label><select name="sector" id="sectorSelect"><option value="">Sélectionnez votre secteur</option><option>Bâtiment / BTP</option><option>Informatique</option><option>Fournitures</option><option>Services</option><option>Santé</option><option>Éducation</option><option>Énergie</option><option>Hydraulique</option><option>Transport</option><option>Agriculture</option><option>Finance / Banque</option><option>Autre</option></select></div>
-            <div class="field"><label>Région <span class="req">*</span></label><select name="region" id="regionSelect"><option value="">Sélectionnez votre région</option><option>Alibori</option><option>Atacora</option><option>Atlantique</option><option>Borgou</option><option>Collines</option><option>Couffo</option><option>Donga</option><option>Littoral</option><option>Mono</option><option>Ouémé</option><option>Plateau</option><option>Zou</option></select></div>
-            <div class="field"><label>Ville <span class="req">*</span></label><select name="city" id="citySelect"><option value="">Sélectionnez votre ville</option><option>Cotonou</option><option>Porto-Novo</option><option>Parakou</option><option>Abomey-Calavi</option><option>Bohicon</option><option>Natitingou</option><option>Djougou</option><option>Ouidah</option><option>Lokossa</option><option>Kandi</option></select></div>
+            <div class="field"><label>Région <span class="req">*</span></label><select name="region" id="regionSelect"><option value="">Sélectionnez votre région</option></select></div>
+            <div class="field"><label>Ville <span class="req">*</span></label><select name="city" id="citySelect"><option value="">Sélectionnez votre ville</option></select></div>
           </div>
         </div>
 
@@ -165,9 +165,52 @@
     };
     let currentProfile = 'prestataire';
 
+    // Réalités géographiques de chaque pays : régions, villes et exemples (nom, email, téléphone).
+    const GEO_DATA = {
+      BJ: {
+        regions: ['Alibori','Atacora','Atlantique','Borgou','Collines','Couffo','Donga','Littoral','Mono','Ouémé','Plateau','Zou'],
+        cities:  ['Cotonou','Porto-Novo','Parakou','Abomey-Calavi','Bohicon','Natitingou','Djougou','Ouidah','Lokossa','Kandi'],
+        firstName: 'Ex: Jean', lastName: 'Ex: Dossou', email: 'Ex: jean.dossou@email.com', phone: '97 12 34 56',
+      },
+      TG: {
+        regions: ['Maritime','Plateaux','Centrale','Kara','Savanes'],
+        cities:  ['Lomé','Sokodé','Kara','Kpalimé','Atakpamé','Dapaong','Tsévié','Aného','Bassar','Notsé'],
+        firstName: 'Ex: Kossi', lastName: 'Ex: Adjovi', email: 'Ex: kossi.adjovi@email.com', phone: '90 00 00 00',
+      },
+      CI: {
+        regions: ['Abidjan','Yamoussoukro','Bas-Sassandra','Comoé','Denguélé','Gôh-Djiboua','Lacs','Lagunes','Montagnes','Sassandra-Marahoué','Savanes','Vallée du Bandama','Woroba','Zanzan'],
+        cities:  ['Abidjan','Yamoussoukro','Bouaké','Daloa','San-Pédro','Korhogo','Man','Gagnoa','Divo','Abengourou'],
+        firstName: 'Ex: Konan', lastName: 'Ex: Kouassi', email: 'Ex: konan.kouassi@email.com', phone: '07 00 00 00 00',
+      },
+      SN: {
+        regions: ['Dakar','Thiès','Diourbel','Fatick','Kaolack','Kaffrine','Kolda','Kédougou','Louga','Matam','Saint-Louis','Sédhiou','Tambacounda','Ziguinchor'],
+        cities:  ['Dakar','Touba','Thiès','Rufisque','Kaolack','Saint-Louis','Ziguinchor','Diourbel','Louga','Mbour'],
+        firstName: 'Ex: Abdoulaye', lastName: 'Ex: Diop', email: 'Ex: abdoulaye.diop@email.com', phone: '77 000 00 00',
+      },
+    };
+
+    // Applique les réalités du pays courant : place-holders + listes région/ville.
+    function applyGeo(country) {
+      const data = GEO_DATA[country] || GEO_DATA.BJ;
+      const fill = (sel, list, ph) => {
+        if (!sel) return;
+        sel.innerHTML = '<option value="">' + ph + '</option>' +
+          list.map(v => '<option>' + v + '</option>').join('');
+      };
+      fill(document.getElementById('regionSelect'), data.regions, 'Sélectionnez votre région');
+      fill(document.getElementById('citySelect'),   data.cities,  'Sélectionnez votre ville');
+      const setPh = (name, val) => { const el = document.querySelector('input[name="' + name + '"]'); if (el) el.placeholder = val; };
+      setPh('first_name', data.firstName);
+      setPh('last_name',  data.lastName);
+      setPh('email',      data.email);
+      setPh('phone',      data.phone);
+    }
+
     function initPage() {
-      // Pré-sélectionne l'indicatif téléphonique du pays choisi (BJ/TG/CI).
+      // Pré-sélectionne l'indicatif téléphonique du pays choisi (BJ/TG/CI/SN).
       (function(){ var dc = { BJ:'+229', TG:'+228', CI:'+225', SN:'+221' }[(window.amCode?amCode():'BJ')] || '+229'; var sel = document.querySelector('select.cc[name="cc"]'); if (sel) sel.value = dc; })();
+      // Adapte régions/villes/exemples aux réalités du pays courant.
+      applyGeo(window.amCode ? amCode() : 'BJ');
       const urlP = new URLSearchParams(location.search).get('profil');
       if (urlP && PROFILE_META[urlP]) currentProfile = urlP;
       applyProfile(currentProfile);
