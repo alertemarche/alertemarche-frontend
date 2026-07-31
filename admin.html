@@ -1221,7 +1221,16 @@
   // via l'API publique des appels d'offres (compteur cohérent avec le site).
   async function fetchTendersCount(cc) {
     try {
-      const res = await fetch(API_BASE + '/tenders?per_page=1' + (cc ? '&country=' + cc : ''), {
+      // Pour l'admin, on veut TOUS les marchés (actifs+expirés, tous types).
+      // - active=false : désactive le filtre de deadline (garde les marchés expirés)
+      // - type=... : inclut tous les types (public, privé, aac, plan_passation, avis_general)
+      const params = new URLSearchParams({
+        per_page: '1',
+        active: 'false',
+        type: 'public,prive,aac,plan_passation,avis_general'
+      });
+      if (cc) params.set('country', cc);
+      const res = await fetch(API_BASE + '/tenders?' + params.toString(), {
         headers: { 'Accept': 'application/json' },
       });
       const d = await res.json();
