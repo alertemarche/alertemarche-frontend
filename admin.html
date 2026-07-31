@@ -753,6 +753,69 @@
     </div>
   </div>
 
+  <!-- MODALE : Détails utilisateur -->
+  <div id="modalUserDetails" class="modal-box" style="max-width:750px;display:none;" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2>👤 Détails de l'utilisateur</h2>
+      <button class="modal-close" onclick="closeModal('modalUserDetails')">✕</button>
+    </div>
+    <div class="modal-body" id="userDetailsContent" style="max-height:calc(90vh - 180px);overflow-y:auto;">
+      <p class="loading">Chargement...</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-a btn-ghost" onclick="closeModal('modalUserDetails')">Fermer</button>
+    </div>
+  </div>
+
+  <!-- MODALE : Modifier utilisateur -->
+  <div id="modalEditUser" class="modal-box" style="display:none;" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2>✏️ Modifier l'utilisateur</h2>
+      <button class="modal-close" onclick="closeModal('modalEditUser')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="euUserId">
+      <div class="mf-grid">
+        <div class="mf-group"><label>Nom / Prénom</label>
+          <input id="euName" placeholder="Jean Dupont">
+        </div>
+        <div class="mf-group"><label>Organisation / Entreprise</label>
+          <input id="euOrganization" placeholder="Entreprise ABC">
+        </div>
+      </div>
+      <div class="mf-grid">
+        <div class="mf-group"><label>E-mail</label>
+          <input id="euEmail" type="email" placeholder="contact@exemple.bj">
+        </div>
+        <div class="mf-group"><label>Téléphone</label>
+          <input id="euPhone" placeholder="+229 00 00 00 00">
+        </div>
+      </div>
+      <div class="mf-grid">
+        <div class="mf-group"><label>Type de profil</label>
+          <select id="euProfileType">
+            <option value="artisan">Artisan / Prestataire</option>
+            <option value="prestataire">Prestataire</option>
+            <option value="particulier">Particulier</option>
+          </select>
+        </div>
+        <div class="mf-group"><label>Pays principal</label>
+          <select id="euCountry">
+            <option value="BJ">🇧🇯 Bénin</option>
+            <option value="TG">🇹🇬 Togo</option>
+            <option value="CI">🇨🇮 Côte d'Ivoire</option>
+            <option value="SN">🇸🇳 Sénégal</option>
+          </select>
+        </div>
+      </div>
+      <p id="euMsg" class="modal-msg"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-a btn-ghost" onclick="closeModal('modalEditUser')">Annuler</button>
+      <button class="btn-a btn-primary" id="euBtn" onclick="saveUserEdit()">Enregistrer</button>
+    </div>
+  </div>
+
   <!-- MODALE : Confirmation suppression -->
   <div id="modalConfirmDelete" class="modal-box" style="max-width:420px;display:none;" onclick="event.stopPropagation()">
     <div class="modal-header">
@@ -1463,6 +1526,8 @@
           <td style="text-align:center;">${fmtN(u.alerts_count||0)}</td>
           <td>${fmtD(u.created_at)}</td>
           <td class="td-actions">
+            <button class="btn-a btn-info" onclick="viewUserDetails(${u.id})" title="Détails">👁️</button>
+            <button class="btn-a btn-ghost" onclick="editUser(${u.id})" title="Modifier">✏️</button>
             <button class="btn-a btn-blue" onclick="openGrantForUser(${u.id},'${(u.email||'').replace(/'/g,"\\'")}')">🎁</button>
             <button class="btn-a btn-warn" onclick="toggleSuspend(${u.id},${!!u.is_suspended})" title="${u.is_suspended?'Réactiver':'Suspendre'}">${u.is_suspended?'🔓':'⏸'}</button>
             ${!u.is_admin ? `<button class="btn-a btn-danger" onclick="askDelete(${u.id},'${((u.organization||u.name)||'cet utilisateur').replace(/'/g,"\\'")}')">🗑</button>` : ''}
@@ -1476,6 +1541,137 @@
       await adminApi(`/admin/users/${userId}/suspend`, { method: 'PATCH' });
       loadUsers();
     } catch(e) { alert('Erreur : ' + e.message); }
+  }
+
+  async function viewUserDetails(userId) {
+    openModal('modalUserDetails');
+    const content = document.getElementById('userDetailsContent');
+    content.innerHTML = '<p class="loading">Chargement des détails...</p>';
+    try {
+      const data = await adminApi(`/admin/users/${userId}`);
+      const { user, subscription, alerts_stats, subscriptions_history } = data;
+      
+      const subHTML = subscription ? `
+        <div class="acard" style="background:#f0fdf4;border-left:4px solid #059669;">
+          <h4 style="margin:0 0 8px 0;color:#059669;">💳 Abonnement actif</h4>
+          <div style="font-size:.88rem;line-height:1.6;">
+            <strong>${subscription.plan}</strong> — ${fmt(subscription.amount)}<br>
+            Du ${fmtD(subscription.started_at)} au ${fmtD(subscription.expires_at)}<br>
+            <small style="color:#64748b;">Réf : ${subscription.payment_reference||'—'}</small>
+          </div>
+        </div>
+      ` : '<div class="acard" style="background:#fef2f2;"><p style="color:#dc2626;margin:0;">Aucun abonnement actif</p></div>';
+
+      const historyHTML = subscriptions_history && subscriptions_history.length > 0 ? `
+        <div class="acard">
+          <h4 style="margin:0 0 12px 0;">📋 Historique des abonnements (${subscriptions_history.length})</h4>
+          <div style="max-height:200px;overflow-y:auto;">
+            ${subscriptions_history.map(s => `
+              <div style="padding:8px;border-bottom:1px solid #e5e7eb;font-size:.85rem;">
+                <strong>${s.plan}</strong> — ${chip(s.status)} — ${fmt(s.amount)}<br>
+                <small style="color:#64748b;">${fmtD(s.started_at)} → ${fmtD(s.expires_at)}</small>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      ` : '';
+
+      content.innerHTML = `
+        <div class="acard">
+          <h3 style="margin:0 0 12px 0;">${user.is_admin ? '👑 ' : ''}${user.organization || user.name}</h3>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;font-size:.9rem;">
+            <div><strong>Nom :</strong> ${user.name||'—'}</div>
+            <div><strong>Organisation :</strong> ${user.organization||'—'}</div>
+            <div><strong>Email :</strong> ${user.email||'—'}</div>
+            <div><strong>Téléphone :</strong> ${user.phone||'—'}</div>
+            <div><strong>Profil :</strong> ${PROFILES[user.profile_type]||user.profile_type||'—'}</div>
+            <div><strong>Pays :</strong> ${COUNTRIES[user.primary_country]||user.primary_country||'—'}</div>
+            <div><strong>Admin :</strong> ${user.is_admin ? 'Oui ✅' : 'Non'}</div>
+            <div><strong>Suspendu :</strong> ${user.is_suspended ? 'Oui 🔒' : 'Non'}</div>
+            <div><strong>Inscription :</strong> ${fmtD(user.created_at)}</div>
+            <div><strong>Email vérifié :</strong> ${user.email_verified_at ? 'Oui ✅' : 'Non'}</div>
+          </div>
+          ${user.sectors && user.sectors.length > 0 ? `
+            <div style="margin-top:12px;"><strong>Secteurs :</strong><br>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">
+                ${user.sectors.map(s => `<span class="chip chip-blue">${s}</span>`).join('')}
+              </div>
+            </div>
+          ` : ''}
+          ${user.keywords && user.keywords.length > 0 ? `
+            <div style="margin-top:12px;"><strong>Mots-clés :</strong><br>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">
+                ${user.keywords.map(k => `<span class="chip chip-gray">${k}</span>`).join('')}
+              </div>
+            </div>
+          ` : ''}
+        </div>
+
+        ${subHTML}
+
+        <div class="acard">
+          <h4 style="margin:0 0 12px 0;">📊 Statistiques des alertes</h4>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;text-align:center;">
+            <div><div style="font-size:1.5rem;font-weight:700;color:#0a7d3f;">${fmtN(alerts_stats.total||0)}</div><small>Total</small></div>
+            <div><div style="font-size:1.5rem;font-weight:700;color:#059669;">${fmtN(alerts_stats.sent||0)}</div><small>Envoyées</small></div>
+            <div><div style="font-size:1.5rem;font-weight:700;color:#f59e0b;">${fmtN(alerts_stats.pending||0)}</div><small>En attente</small></div>
+            <div><div style="font-size:1.5rem;font-weight:700;color:#dc2626;">${fmtN(alerts_stats.failed||0)}</div><small>Échecs</small></div>
+          </div>
+        </div>
+
+        ${historyHTML}
+      `;
+    } catch(e) {
+      content.innerHTML = `<p class="err">Erreur : ${e.message}</p>`;
+    }
+  }
+
+  async function editUser(userId) {
+    openModal('modalEditUser');
+    document.getElementById('euUserId').value = userId;
+    document.getElementById('euMsg').textContent = '';
+    try {
+      const data = await adminApi(`/admin/users/${userId}`);
+      const u = data.user;
+      document.getElementById('euName').value = u.name || '';
+      document.getElementById('euOrganization').value = u.organization || '';
+      document.getElementById('euEmail').value = u.email || '';
+      document.getElementById('euPhone').value = u.phone || '';
+      document.getElementById('euProfileType').value = u.profile_type || '';
+      document.getElementById('euCountry').value = u.primary_country || '';
+    } catch(e) {
+      document.getElementById('euMsg').className = 'modal-msg err';
+      document.getElementById('euMsg').textContent = 'Erreur chargement : ' + e.message;
+    }
+  }
+
+  async function saveUserEdit() {
+    const userId = document.getElementById('euUserId').value;
+    const btn = document.getElementById('euBtn');
+    const msg = document.getElementById('euMsg');
+    btn.disabled = true; btn.textContent = 'Enregistrement…';
+    msg.textContent = '';
+    try {
+      const payload = {
+        name: document.getElementById('euName').value.trim() || null,
+        organization: document.getElementById('euOrganization').value.trim() || null,
+        email: document.getElementById('euEmail').value.trim() || null,
+        phone: document.getElementById('euPhone').value.trim() || null,
+        profile_type: document.getElementById('euProfileType').value || null,
+        primary_country: document.getElementById('euCountry').value || null,
+      };
+      await adminApi(`/admin/users/${userId}`, { method: 'PATCH', body: JSON.stringify(payload) });
+      msg.className = 'modal-msg ok';
+      msg.textContent = 'Utilisateur modifié avec succès !';
+      setTimeout(() => {
+        closeModal('modalEditUser');
+        loadUsers();
+      }, 1200);
+    } catch(e) {
+      msg.className = 'modal-msg err';
+      msg.textContent = 'Erreur : ' + e.message;
+      btn.disabled = false; btn.textContent = 'Enregistrer';
+    }
   }
 
   function askDelete(id, name) {
