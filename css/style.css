@@ -758,10 +758,22 @@ p { color: var(--text); }
   .brand-tag { display: none; }
   .hero-visual { transform: scale(.8); transform-origin: top center; min-height: 300px; margin: 12px auto 0; width: 100%; max-width: 460px; overflow: hidden; }
   .section { padding: 48px 0; }
-  /* Sous 560px : garder le CTA "S'inscrire" visible mais très compact pour qu'il tienne
-     avec le logo et le hamburger sans déborder ni les pousser hors écran. */
-  .header-actions .btn-primary { display: inline-flex; font-size: 0.72rem; padding: 6px 8px; }
-  .header-actions { gap: 6px; }
+  /* MOBILE : on masque les CTA du header ("Se connecter" / "S'inscrire"). Ils restent
+     accessibles dans le menu hamburger ("Créer un compte" / "Se connecter"). Cela libère
+     l'espace pour que le bouton hamburger (☰) reste TOUJOURS visible à l'écran : le CTA
+     poussait auparavant le hamburger hors de l'écran à droite sur mobile, rendant la
+     navigation (Accueil / Marchés publics / Marchés privés) inaccessible. */
+  .header-actions .btn { display: none; }
+  .header-actions { gap: 0; min-width: 0; flex-shrink: 0; margin-left: auto; }
+  .nav-toggle { display: flex; } /* hamburger toujours affiché */
+  /* Compacter le logo et le badge pays pour tenir même sur les plus petits écrans (≤360px) */
+  .header-inner { gap: 8px; }
+  .brand { gap: 7px; }
+  .brand-mark { width: 34px; height: 34px; }
+  .brand-mark svg { width: 20px; height: 20px; }
+  .brand-text { font-size: 1.05rem; }
+  .country-badge { font-size: .72rem; padding: 4px 8px; gap: 4px; }
+  .country-badge .flag-img { width: 18px; height: 12px; }
 }
 
 
