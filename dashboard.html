@@ -225,8 +225,7 @@
           const exp = SUB.expires_at ? new Date(SUB.expires_at).toLocaleDateString('fr-FR') : (SUB.ends_at || '—');
           box.innerHTML = `<p>✅ Abonnement <b>${planLabel}</b> actif jusqu'au <b>${exp}</b>. Vous recevez vos alertes en temps réel.</p>`;
         } else {
-          box.innerHTML = `<p>🔒 Vous n'avez pas d'abonnement actif. Un abonnement est nécessaire pour <b>recevoir</b> les alertes (la consultation du site reste libre). Vos centres d'intérêt sont enregistrés et prêts.</p>
-            <div class="mt-2"><a href="/tarifs" class="btn btn--primary">Choisir un abonnement</a></div>`;
+          box.innerHTML = `<p>🔒 Vous n'avez pas d'abonnement actif. Un abonnement est nécessaire pour <b>recevoir</b> les alertes (la consultation du site reste libre). Vos centres d'intérêt sont enregistrés et prêts.</p>`;
         }
 
       } catch (e) {
