@@ -2,13 +2,16 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+  <!-- Google Ads (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-11514321686"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','AW-11514321686');</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=3"><link rel="icon" type="image/x-icon" href="/favicon.ico?v=3"><link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png?v=3">
   <title>Compte créé — Bienvenue sur AlerteMarché Bénin</title>
   <meta name="description" content="Votre compte AlerteMarché est prêt. Recevez dès maintenant les marchés publics et privés adaptés à votre activité.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260731b">
+  <link rel="stylesheet" href="css/style.css?v=20260803">
 </head>
 <body>
 
@@ -47,6 +50,17 @@
   <script src="js/app.js?v=202607260200"></script>
   <script>
     function initPage() {
+      // Suivi de conversion Google Ads — inscription réussie
+      try {
+        if (typeof gtag === 'function' && !sessionStorage.getItem('am_conv_signup')) {
+          gtag('event', 'conversion', {
+            'send_to': 'AW-11514321686/WIwaCKvYmtoCEJa2uviq',
+            'value': 1.0,
+            'currency': 'USD'
+          });
+          sessionStorage.setItem('am_conv_signup', '1');
+        }
+      } catch (_) {}
       let info = null;
       try { info = JSON.parse(sessionStorage.getItem('am_signup_done') || 'null'); } catch (_) {}
       const recap = document.getElementById('recap');
