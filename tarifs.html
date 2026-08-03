@@ -173,7 +173,7 @@
     </div>
   </section>
 
-  <script src="js/app.js?v=202607260200"></script>
+  <script src="js/app.js?v=20260803b"></script>
   <script>
     let KK = null;             // config KKiaPay {public_key, sandbox, configured}
     let PLANS = null;          // formules chargées depuis /plans (source de vérité)
@@ -311,6 +311,18 @@
       renderPlans();               // affichage immédiat (repli)
       await Promise.all([loadPlans(), loadKkiapayConfig()]);
       renderPlans();               // ré-affichage avec la source de vérité serveur
+
+      // Auto-déclenchement du paiement KKiaPay si l'utilisateur arrive depuis la
+      // modale « Accès Premium requis » (ex: /tarifs?plan=trimestriel&checkout=1).
+      // Le tunnel de paiement s'ouvre directement, sans re-cliquer.
+      const params = new URLSearchParams(window.location.search);
+      const wantedPlan = params.get('plan');
+      const validPlans = ['mensuel', 'trimestriel', 'semestriel', 'annuel'];
+      if (params.get('checkout') === '1' && validPlans.includes(wantedPlan)) {
+        // Nettoie l'URL pour éviter un relancement au rafraîchissement.
+        history.replaceState(null, '', 'tarifs');
+        startCheckout(wantedPlan);
+      }
     });
   </script>
 </body>

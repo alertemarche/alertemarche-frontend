@@ -632,7 +632,7 @@ function renderPaywallBanner(status) {
     } else { // free
         banner.className = 'am-paywall-banner am-paywall-orange';
         banner.innerHTML = `<div class="am-pb-inner">` +
-            `<span class="am-pb-text">⚡ Plan gratuit · Débloquez l'accès complet à tous les marchés + alertes email automatiques dès 10 000 FCFA / mois</span>` +
+            `<span class="am-pb-text">⚡ Plan gratuit · Débloquez l'accès complet à tous les marchés + alertes email automatiques dès 29 500 FCFA / mois</span>` +
             `<a href="/tarifs" class="am-pb-btn">Passer Premium →</a></div>`;
     }
     const header = document.querySelector('.site-header');
@@ -646,10 +646,13 @@ function showSubscriptionModal() {
     injectPaywallStyles();
     if (document.getElementById('am-sub-modal')) return;
     const plans = [
-        { name: 'Mensuel', price: '10 000', unit: 'FCFA / mois', note: 'Sans engagement', hl: false },
-        { name: 'Trimestriel', price: '27 000', unit: 'FCFA / 3 mois', note: 'soit 9 000 FCFA/mois', hl: true },
-        { name: 'Annuel', price: '96 000', unit: 'FCFA / an', note: 'soit 8 000 FCFA/mois', hl: false },
+        { key: 'mensuel', name: 'Mensuel', price: '29 500', unit: 'FCFA / mois', note: 'Sans engagement', hl: false },
+        { key: 'trimestriel', name: 'Trimestriel', price: '73 750', unit: 'FCFA / 3 mois', note: 'soit 24 583 FCFA/mois', hl: true },
+        { key: 'annuel', name: 'Annuel', price: '265 500', unit: 'FCFA / an', note: 'soit 22 125 FCFA/mois', hl: false },
     ];
+    // Le bouton lance directement le paiement KKiaPay (via la page tarifs qui
+    // déclenche automatiquement le tunnel, sans re-cliquer). Visiteur non connecté
+    // → inscription d'abord (l'intention de paiement est conservée).
     const cards = plans.map((p) => `
         <div class="am-plan ${p.hl ? 'hl' : ''}">
           ${p.hl ? '<span class="am-plan-badge">★ Le plus populaire</span>' : ''}
@@ -657,7 +660,7 @@ function showSubscriptionModal() {
           <div class="am-price">${p.price}</div>
           <div class="am-unit">${p.unit}</div>
           <div class="am-note">${p.note}</div>
-          <a href="/tarifs" class="am-plan-btn">Choisir ce plan</a>
+          <a href="/tarifs?plan=${p.key}&checkout=1" class="am-plan-btn">Choisir ce plan</a>
         </div>`).join('');
     const overlay = document.createElement('div');
     overlay.className = 'am-modal-overlay';
