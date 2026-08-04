@@ -79,10 +79,11 @@
       <!-- Repli statique (si JS indisponible) -->
       <noscript>
       <div class="ab-plans">
-        <div class="ab-plan"><div class="ab-plan-hd"><h3>Mensuel</h3></div><div class="ab-price">29 500 <small>FCFA / mois</small></div></div>
-        <div class="ab-plan"><div class="ab-plan-hd"><h3>Trimestriel</h3></div><div class="ab-price">73 750 <small>FCFA / 3 mois</small></div></div>
-        <div class="ab-plan"><div class="ab-plan-hd"><h3>Semestriel</h3></div><div class="ab-price">132 750 <small>FCFA / 6 mois</small></div></div>
-        <div class="ab-plan ab-plan--featured"><div class="ab-plan-hd"><h3>Annuel</h3></div><div class="ab-price">265 500 <small>FCFA / an</small></div></div>
+        <div class="ab-plan"><div class="ab-plan-hd"><h3>Hebdomadaire</h3></div><div class="ab-price">5 000 <small>FCFA / semaine</small></div></div>
+        <div class="ab-plan"><div class="ab-plan-hd"><h3>Mensuel</h3></div><div class="ab-price">17 700 <small>FCFA / mois</small></div></div>
+        <div class="ab-plan"><div class="ab-plan-hd"><h3>Trimestriel</h3></div><div class="ab-price">44 250 <small>FCFA / 3 mois</small></div></div>
+        <div class="ab-plan"><div class="ab-plan-hd"><h3>Semestriel</h3></div><div class="ab-price">79 650 <small>FCFA / 6 mois</small></div></div>
+        <div class="ab-plan ab-plan--featured"><div class="ab-plan-hd"><h3>Annuel</h3></div><div class="ab-price">159 300 <small>FCFA / an</small></div></div>
       </div>
       </noscript>
 
@@ -180,18 +181,20 @@
 
     // Repli local si l'API /plans est indisponible (montants identiques à config/plans.php)
     const PLANS_FALLBACK = {
-      mensuel:     { label: 'Mensuel',     amount: 29500,  duration_months: 1,  discount: 0,  period_label: '/ mois' },
-      trimestriel: { label: 'Trimestriel', amount: 73750,  duration_months: 3,  discount: 17, period_label: '/ 3 mois' },
-      semestriel:  { label: 'Semestriel',  amount: 132750, duration_months: 6,  discount: 25, period_label: '/ 6 mois' },
-      annuel:      { label: 'Annuel',      amount: 265500, duration_months: 12, discount: 25, period_label: '/ an' },
+      hebdomadaire: { label: 'Hebdomadaire', amount: 5000,   duration_months: 0.25, discount: 0,  period_label: '/ semaine' },
+      mensuel:      { label: 'Mensuel',      amount: 17700,  duration_months: 1,    discount: 0,  period_label: '/ mois' },
+      trimestriel:  { label: 'Trimestriel',  amount: 44250,  duration_months: 3,    discount: 17, period_label: '/ 3 mois' },
+      semestriel:   { label: 'Semestriel',   amount: 79650,  duration_months: 6,    discount: 25, period_label: '/ 6 mois' },
+      annuel:       { label: 'Annuel',       amount: 159300, duration_months: 12,   discount: 25, period_label: '/ an' },
     };
 
     // Avantages par formule (progressifs, conformes à la maquette)
     const PLAN_PERKS = {
-      mensuel:     ['Accès à tous les appels d\'offres', 'Alertes en temps réel', 'Recherche avancée', 'Support par email'],
-      trimestriel: ['Accès à tous les appels d\'offres', 'Alertes en temps réel', 'Recherche avancée', 'Support prioritaire'],
-      semestriel:  ['Accès à tous les appels d\'offres', 'Alertes en temps réel', 'Recherche avancée', 'Support prioritaire'],
-      annuel:      ['Accès à tous les appels d\'offres', 'Alertes en temps réel', 'Recherche avancée', 'Support prioritaire', 'Rapports et analyses exclusifs'],
+      hebdomadaire: ['Accès à tous les appels d\'offres', 'Alertes en temps réel', 'Recherche avancée', 'Idéal pour tester'],
+      mensuel:      ['Accès à tous les appels d\'offres', 'Alertes en temps réel', 'Recherche avancée', 'Support par email'],
+      trimestriel:  ['Accès à tous les appels d\'offres', 'Alertes en temps réel', 'Recherche avancée', 'Support prioritaire'],
+      semestriel:   ['Accès à tous les appels d\'offres', 'Alertes en temps réel', 'Recherche avancée', 'Support prioritaire'],
+      annuel:       ['Accès à tous les appels d\'offres', 'Alertes en temps réel', 'Recherche avancée', 'Support prioritaire', 'Rapports et analyses exclusifs'],
     };
 
     const fmtN = n => new Intl.NumberFormat('fr-FR').format(n);
@@ -199,7 +202,7 @@
     const checkIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
 
     function renderPlans() {
-      const order = ['mensuel', 'trimestriel', 'semestriel', 'annuel'];
+      const order = ['hebdomadaire', 'mensuel', 'trimestriel', 'semestriel', 'annuel'];
       const wrap = document.getElementById('abPlans');
       wrap.innerHTML = order.map(key => {
         const p = (PLANS && PLANS[key]) || PLANS_FALLBACK[key];
@@ -317,7 +320,7 @@
       // Le tunnel de paiement s'ouvre directement, sans re-cliquer.
       const params = new URLSearchParams(window.location.search);
       const wantedPlan = params.get('plan');
-      const validPlans = ['mensuel', 'trimestriel', 'semestriel', 'annuel'];
+      const validPlans = ['hebdomadaire', 'mensuel', 'trimestriel', 'semestriel', 'annuel'];
       if (params.get('checkout') === '1' && validPlans.includes(wantedPlan)) {
         // Nettoie l'URL pour éviter un relancement au rafraîchissement.
         history.replaceState(null, '', 'tarifs');
