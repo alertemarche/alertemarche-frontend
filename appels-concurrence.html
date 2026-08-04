@@ -98,20 +98,45 @@
   <script>
     const svg = {
       inst:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11"/></svg>',
+      ref:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
       pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>',
       cal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
       ext:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>',
     };
+    const lockIcon = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:4px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
 
     function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
     function tenderCard(t) {
+      const locked = (window.amIsLocked ? amIsLocked(t) : (window.AM_USER_STATUS !== 'subscribed'));
+      const lots = (t.nbLots && t.nbLots > 1) ? `<span class="tag">${t.nbLots} lots</span>` : '';
+
+      if (locked) {
+        return `<article class="tender-card">
+          <div class="tc-top">
+            <span class="sector-badge aac">Appel à concurrence</span>
+            ${window.countryBadge ? countryBadge(t.country || (window.amCode ? amCode() : 'BJ')) : ''}
+            <span class="tc-time">${esc(t.time)}${t.isNew ? '<span class="tc-new">Nouveau</span>' : ''}</span>
+          </div>
+          <h3>${esc(t.title)}</h3>
+          <div class="tc-meta">
+            <div class="m">${svg.inst}<span>Structure : ${lockIcon}<span class="am-lock-val">••••••••••••</span></span></div>
+            <div class="m">${svg.ref}<span>Référence : ${lockIcon}<span class="am-lock-val">•••••••••</span></span></div>
+            <div class="m">${svg.pin}<span>${esc(t.loc)}</span></div>
+            <div class="m"><span class="tc-budget na">Budget : ${lockIcon}<span class="am-lock-val">•••••••• FCFA</span></span></div>
+            <div class="m">${svg.cal}<span>Date limite : ${lockIcon}<span class="am-lock-val">••/••/••••</span></span></div>
+          </div>
+          <div class="tc-tags">${t.tags.map(x => `<span class="tag">${esc(x)}</span>`).join('')}${lots}</div>
+          <div class="tc-actions">
+            <button type="button" class="btn btn-ghost am-locked-details" style="opacity:.75;">${lockIcon} Voir les détails</button>
+          </div>
+        </article>`;
+      }
+
       const budget = t.budget
         ? `<span class="tc-budget">Budget : ${new Intl.NumberFormat('fr-FR').format(t.budget)} FCFA</span>`
         : `<span class="tc-budget na" title="Le budget estimatif n'est pas publié par la source officielle pour les appels d'offres ouverts. Consultez le Dossier d'Appel d'Offres (DAO) sur le site officiel pour les détails.">Budget : Non publié par la source <span style="cursor:help; opacity:.7">ⓘ</span></span>`;
-      const ref = t.reference ? `<div class="m">${svg.inst}<span>Référence : <b>${esc(t.reference)}</b></span></div>` : '';
-      const lots = (t.nbLots && t.nbLots > 1) ? `<span class="tag">${t.nbLots} lots</span>` : '';
-      // Redirection vers la page officielle de l'avis (pas de téléchargement DAO).
+      const ref = t.reference ? `<div class="m">${svg.ref}<span>Référence : <b>${esc(t.reference)}</b></span></div>` : '';
       const officialUrl = t.url || '';
       const officialBtn = officialUrl
         ? `<a href="${esc(officialUrl)}" target="_blank" rel="noopener" class="btn btn-primary">Voir sur le site officiel ${svg.ext}</a>`
@@ -132,7 +157,7 @@
         </div>
         <div class="tc-tags">${t.tags.map(x => `<span class="tag">${esc(x)}</span>`).join('')}${lots}</div>
         <div class="tc-actions">
-          <a href="/inscription" class="btn btn-ghost am-locked-details" onclick="event.preventDefault();window.amLockedDetailsAction&&window.amLockedDetailsAction();return false;">Voir les détails</a>
+          <a href="/inscription" class="btn btn-ghost">Recevoir les alertes</a>
           ${officialBtn}
         </div>
       </article>`;
@@ -141,6 +166,7 @@
     function initPage() {
       // Adapte le sous-titre au pays sélectionné (Bénin/Togo/Côte d'Ivoire).
       if (window.amMeta) { var _m = amMeta(); var _st = document.getElementById('pageSubtitle'); if (_st) _st.textContent = "Appels d'offres et avis d'appel à concurrence des marchés publics — " + _m.name; }
+      if (window.renderPaywallBanner) renderPaywallBanner(window.AM_USER_STATUS);
       const grid = document.getElementById('tendersGrid');
       let data = [];
 
@@ -148,6 +174,13 @@
         grid.innerHTML = list.length ? list.map(tenderCard).join('') : '<p class="muted" style="grid-column:1/-1;padding:30px;text-align:center;">Aucun avis disponible pour le moment.</p>';
         document.getElementById('countNum').textContent = new Intl.NumberFormat('fr-FR').format(list.length);
       }
+
+      grid.addEventListener('click', e => {
+        if (e.target.closest('.am-locked-details')) {
+          e.preventDefault();
+          if (window.amLockedDetailsAction) amLockedDetailsAction();
+        }
+      });
 
       function applyFilters() {
         const kw = (document.getElementById('searchInput').value || document.getElementById('fKeyword').value || '').toLowerCase();
@@ -203,7 +236,7 @@
 
       // Hydratation depuis l'API réelle. Mêmes données que la page « Appels d'offres
       // publics » (type=public), présentées comme avis d'appel à concurrence.
-      api('/tenders?country=' + (window.amCode ? amCode() : 'BJ') + '&type=public&per_page=200').then(res => {
+      api('/tenders?country=' + (window.amCode ? amCode() : 'BJ') + '&type=public&per_page=200', { auth: true }).then(res => {
         const items = (res.data || res || []);
         if (Array.isArray(items) && items.length) {
           const now = Date.now();
@@ -223,6 +256,7 @@
               budget: (t.estimated_amount && /\d/.test(String(t.estimated_amount))) ? parseInt(String(t.estimated_amount).replace(/\D/g,'')) || null : null,
               deadline: t.deadline ? new Date(t.deadline).toLocaleDateString('fr-FR') : 'À confirmer',
               tags: [t.market_type].filter(Boolean),
+              is_locked: t.is_locked || false,
             };
           });
           const rInsts = [...new Set(data.map(t => t.inst))].filter(Boolean).sort();
