@@ -591,11 +591,12 @@ function injectPaywallStyles() {
       .am-paywall-orange .am-pb-btn { color:#b45309; }
       @media(max-width:640px){ .am-pb-inner{flex-direction:column; align-items:flex-start; gap:10px;} .am-pb-text{font-size:.9rem;} .am-pb-btn{width:100%; text-align:center;} }
       .am-modal-overlay { position:fixed; inset:0; background:rgba(15,23,42,.62); display:flex; align-items:center; justify-content:center; z-index:9999; padding:20px; }
-      .am-modal { background:#fff; border-radius:18px; max-width:840px; width:100%; padding:34px 32px; position:relative; box-shadow:0 30px 80px rgba(0,0,0,.4); max-height:92vh; overflow:auto; }
+      .am-modal { background:#fff; border-radius:18px; max-width:1040px; width:100%; padding:34px 32px; position:relative; box-shadow:0 30px 80px rgba(0,0,0,.4); max-height:92vh; overflow:auto; }
       .am-modal-close { position:absolute; top:16px; right:16px; border:none; background:#f1f5f9; width:36px; height:36px; border-radius:50%; font-size:20px; line-height:1; cursor:pointer; color:#334155; }
       .am-modal h2 { font-size:1.5rem; font-weight:900; text-align:center; margin-bottom:6px; color:#0f172a; }
       .am-modal-sub { text-align:center; color:#64748b; margin-bottom:26px; }
-      .am-plans { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+      .am-plans { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+      @media(max-width:900px){ .am-plans{grid-template-columns:repeat(2,1fr);} }
       .am-plan { border:2px solid #e2e8f0; border-radius:14px; padding:24px 18px 22px; text-align:center; position:relative; }
       .am-plan.hl { border-color:#16a34a; box-shadow:0 10px 30px rgba(22,163,74,.18); }
       .am-plan-badge { position:absolute; top:-11px; left:50%; transform:translateX(-50%); background:#16a34a; color:#fff; font-size:.72rem; font-weight:800; padding:3px 12px; border-radius:20px; white-space:nowrap; }
@@ -641,11 +642,12 @@ function renderPaywallBanner(status) {
 }
 window.renderPaywallBanner = renderPaywallBanner;
 
-/* Modale d'abonnement : présente les 3 formules et renvoie vers /tarifs. */
+/* Modale d'abonnement : présente les formules et renvoie vers /tarifs. */
 function showSubscriptionModal() {
     injectPaywallStyles();
     if (document.getElementById('am-sub-modal')) return;
     const plans = [
+        { key: 'hebdomadaire', name: 'Hebdomadaire', price: '5 000', unit: 'FCFA / semaine', note: 'Idéal pour tester', hl: false },
         { key: 'mensuel', name: 'Mensuel', price: '17 700', unit: 'FCFA / mois', note: 'Sans engagement', hl: false },
         { key: 'trimestriel', name: 'Trimestriel', price: '44 250', unit: 'FCFA / 3 mois', note: 'soit 14 750 FCFA/mois', hl: true },
         { key: 'annuel', name: 'Annuel', price: '159 300', unit: 'FCFA / an', note: 'soit 13 275 FCFA/mois', hl: false },
