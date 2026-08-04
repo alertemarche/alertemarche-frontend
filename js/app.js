@@ -632,7 +632,7 @@ function renderPaywallBanner(status) {
     } else { // free
         banner.className = 'am-paywall-banner am-paywall-orange';
         banner.innerHTML = `<div class="am-pb-inner">` +
-            `<span class="am-pb-text">⚡ Plan gratuit · Débloquez l'accès complet à tous les marchés + alertes email automatiques dès 29 500 FCFA / mois</span>` +
+            `<span class="am-pb-text">⚡ Plan gratuit · Débloquez l'accès complet à tous les marchés + alertes email automatiques dès 17 700 FCFA / mois</span>` +
             `<a href="/tarifs" class="am-pb-btn">Passer Premium →</a></div>`;
     }
     const header = document.querySelector('.site-header');
@@ -646,9 +646,9 @@ function showSubscriptionModal() {
     injectPaywallStyles();
     if (document.getElementById('am-sub-modal')) return;
     const plans = [
-        { key: 'mensuel', name: 'Mensuel', price: '29 500', unit: 'FCFA / mois', note: 'Sans engagement', hl: false },
-        { key: 'trimestriel', name: 'Trimestriel', price: '73 750', unit: 'FCFA / 3 mois', note: 'soit 24 583 FCFA/mois', hl: true },
-        { key: 'annuel', name: 'Annuel', price: '265 500', unit: 'FCFA / an', note: 'soit 22 125 FCFA/mois', hl: false },
+        { key: 'mensuel', name: 'Mensuel', price: '17 700', unit: 'FCFA / mois', note: 'Sans engagement', hl: false },
+        { key: 'trimestriel', name: 'Trimestriel', price: '44 250', unit: 'FCFA / 3 mois', note: 'soit 14 750 FCFA/mois', hl: true },
+        { key: 'annuel', name: 'Annuel', price: '159 300', unit: 'FCFA / an', note: 'soit 13 275 FCFA/mois', hl: false },
     ];
     // Le bouton lance directement le paiement KKiaPay (via la page tarifs qui
     // déclenche automatiquement le tunnel, sans re-cliquer). Visiteur non connecté
