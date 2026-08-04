@@ -597,14 +597,16 @@ function injectPaywallStyles() {
       .am-modal-sub { text-align:center; color:#64748b; margin-bottom:26px; }
       .am-plans { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
       @media(max-width:900px){ .am-plans{grid-template-columns:repeat(2,1fr);} }
-      .am-plan { border:2px solid #e2e8f0; border-radius:14px; padding:24px 18px 22px; text-align:center; position:relative; }
+      .am-plan { border:2px solid #e2e8f0; border-radius:14px; padding:24px 18px 22px; text-align:center; position:relative; cursor:pointer; transition:all .2s; }
+      .am-plan:hover { border-color:#16a34a; transform:translateY(-3px); box-shadow:0 12px 24px rgba(0,0,0,.08); }
       .am-plan.hl { border-color:#16a34a; box-shadow:0 10px 30px rgba(22,163,74,.18); }
+      .am-plan.hl:hover { box-shadow:0 15px 35px rgba(22,163,74,.25); }
       .am-plan-badge { position:absolute; top:-11px; left:50%; transform:translateX(-50%); background:#16a34a; color:#fff; font-size:.72rem; font-weight:800; padding:3px 12px; border-radius:20px; white-space:nowrap; }
       .am-plan h3 { font-size:1.05rem; font-weight:800; margin-bottom:12px; color:#0f172a; }
       .am-price { font-size:1.7rem; font-weight:900; color:#0f172a; line-height:1.1; }
       .am-unit { color:#64748b; font-size:.85rem; margin-top:2px; }
       .am-note { color:#16a34a; font-size:.8rem; font-weight:700; margin:8px 0 16px; }
-      .am-plan-btn { display:block; background:#16a34a; color:#fff; font-weight:800; padding:11px; border-radius:9px; text-decoration:none; transition:background .15s; }
+      .am-plan-btn { display:block; background:#16a34a; color:#fff; font-weight:800; padding:11px; border-radius:9px; text-decoration:none; transition:background .15s; pointer-events:none; }
       .am-plan-btn:hover { background:#128a3d; }
       @media(max-width:640px){ .am-plans{grid-template-columns:1fr;} .am-modal{padding:26px 18px;} }
     `;
@@ -656,13 +658,13 @@ function showSubscriptionModal() {
     // déclenche automatiquement le tunnel, sans re-cliquer). Visiteur non connecté
     // → inscription d'abord (l'intention de paiement est conservée).
     const cards = plans.map((p) => `
-        <div class="am-plan ${p.hl ? 'hl' : ''}">
+        <div class="am-plan ${p.hl ? 'hl' : ''}" data-plan="${p.key}">
           ${p.hl ? '<span class="am-plan-badge">★ Le plus populaire</span>' : ''}
           <h3>${p.name}</h3>
           <div class="am-price">${p.price}</div>
           <div class="am-unit">${p.unit}</div>
           <div class="am-note">${p.note}</div>
-          <a href="/tarifs?plan=${p.key}&checkout=1" class="am-plan-btn">Choisir ce plan</a>
+          <span class="am-plan-btn">Choisir ce plan</span>
         </div>`).join('');
     const overlay = document.createElement('div');
     overlay.className = 'am-modal-overlay';
@@ -677,6 +679,13 @@ function showSubscriptionModal() {
     const close = () => overlay.remove();
     overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
     overlay.querySelector('.am-modal-close').addEventListener('click', close);
+    // Gestionnaire de clic sur les cartes de plan
+    overlay.querySelectorAll('.am-plan').forEach(card => {
+        card.addEventListener('click', () => {
+            const planKey = card.getAttribute('data-plan');
+            window.location.href = `/tarifs?plan=${planKey}&checkout=1`;
+        });
+    });
     document.addEventListener('keydown', function esc(e) { if (e.key === 'Escape') { close(); document.removeEventListener('keydown', esc); } });
     document.body.appendChild(overlay);
 }

@@ -173,7 +173,7 @@
     </div>
   </section>
 
-  <script src="js/app.js?v=20260805b"></script>
+  <script src="js/app.js?v=20260805c"></script>
   <script>
     let KK = null;             // config KKiaPay {public_key, sandbox, configured}
     let PLANS = null;          // formules chargées depuis /plans (source de vérité)
@@ -321,7 +321,17 @@
       if (params.get('checkout') === '1' && validPlans.includes(wantedPlan)) {
         // Nettoie l'URL pour éviter un relancement au rafraîchissement.
         history.replaceState(null, '', 'tarifs');
-        startCheckout(wantedPlan);
+        const hint = document.getElementById('abHint');
+        if (hint) {
+          hint.style.display = 'block';
+          hint.style.color = '#16a34a';
+          hint.textContent = '⏳ Préparation du paiement sécurisé...';
+        }
+        // Petit délai pour s'assurer que tout est chargé
+        setTimeout(() => {
+          startCheckout(wantedPlan);
+          if (hint) hint.style.display = 'none';
+        }, 300);
       }
     });
   </script>
