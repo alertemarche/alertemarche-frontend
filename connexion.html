@@ -227,11 +227,13 @@
       return null;
     }
 
-    // Redirige vers le tableau de bord si un utilisateur déjà connecté ouvre
-    // /connexion (formulaire inutile). Couvre aussi le retour navigateur.
+    // Redirige un utilisateur déjà connecté vers sa destination (si ?redirect= présent)
+    // ou vers le tableau de bord (par défaut). Couvre aussi le retour navigateur.
     function redirectIfLoggedIn() {
-      if (localStorage.getItem('am_token')) { location.replace('/dashboard'); return true; }
-      return false;
+      if (!localStorage.getItem('am_token')) return false;
+      const target = resolveRedirectTarget();
+      location.replace(target || '/dashboard');
+      return true;
     }
 
     // Cas mobile : le bouton « retour » restaure souvent la page depuis le
