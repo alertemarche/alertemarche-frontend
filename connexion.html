@@ -226,14 +226,22 @@
       return null;
     }
 
+    // Redirige vers le tableau de bord si un utilisateur déjà connecté ouvre
+    // /connexion (formulaire inutile). Couvre aussi le retour navigateur.
+    function redirectIfLoggedIn() {
+      if (localStorage.getItem('am_token')) { location.replace('/dashboard'); return true; }
+      return false;
+    }
+
+    // Cas mobile : le bouton « retour » restaure souvent la page depuis le
+    // bfcache sans relancer DOMContentLoaded. pageshow couvre ce scénario.
+    window.addEventListener('pageshow', () => { redirectIfLoggedIn(); });
+
     document.addEventListener('DOMContentLoaded', () => {
-      // Si l'utilisateur est déjà connecté (ex: clic depuis l'e-mail de rappel sur
-      // le même appareil), on l'envoie directement vers sa destination.
-      const already = localStorage.getItem('am_token');
-      if (already) {
-        location.href = resolveRedirectTarget() || '/dashboard';
-        return;
-      }
+      // Si l'utilisateur est DÉJÀ connecté en arrivant sur /connexion (ex: bouton
+      // « retour » du navigateur depuis /tarifs), on l'envoie vers son tableau de
+      // bord — sans réafficher le formulaire ni reboucler vers ?redirect=.
+      if (redirectIfLoggedIn()) return;
 
       document.getElementById('loginBtn').addEventListener('click', login);
       document.getElementById('lPassword').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
@@ -257,6 +265,8 @@
       try {
         const res = await api('/auth/login', { method: 'POST', body: { identifier, password } });
         if (res.token) localStorage.setItem('am_token', res.token);
+        // Stocke le profil pour pré-remplir le paiement KKiaPay (téléphone/email/nom).
+        if (res.user) { try { localStorage.setItem('am_user', JSON.stringify(res.user)); } catch (_) {} }
         gtag('event', 'login');
         // Priorité à la destination demandée (ex: e-mail de rappel → /tarifs).
         const target = resolveRedirectTarget();
