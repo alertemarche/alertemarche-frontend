@@ -227,25 +227,21 @@
       return null;
     }
 
-    // Redirige un utilisateur déjà connecté vers sa destination (si ?redirect= présent)
-    // ou vers le tableau de bord (par défaut). Couvre aussi le retour navigateur.
-    function redirectIfLoggedIn() {
-      if (!localStorage.getItem('am_token')) return false;
-      const target = resolveRedirectTarget();
-      location.replace(target || '/dashboard');
-      return true;
-    }
-
-    // Cas mobile : le bouton « retour » restaure souvent la page depuis le
-    // bfcache sans relancer DOMContentLoaded. pageshow couvre ce scénario.
-    window.addEventListener('pageshow', () => { redirectIfLoggedIn(); });
+    // Bouton « retour » du navigateur : quand la page /connexion est RESTAURÉE
+    // depuis le cache (bfcache, e.persisted=true) — typiquement un retour depuis
+    // /tarifs ou /offre-speciale — un utilisateur connecté doit atterrir sur son
+    // tableau de bord, PAS revoir le formulaire de connexion (Bug #2).
+    // En revanche, à l'OUVERTURE NORMALE du lien (chargement neuf), on affiche
+    // toujours le formulaire de connexion, même si un jeton est présent : c'est
+    // le comportement attendu pour le lien de l'e-mail de rappel (connexion puis
+    // redirection vers la page d'abonnement).
+    window.addEventListener('pageshow', (e) => {
+      if (e.persisted && localStorage.getItem('am_token')) {
+        location.replace('/dashboard');
+      }
+    });
 
     document.addEventListener('DOMContentLoaded', () => {
-      // Si l'utilisateur est DÉJÀ connecté en arrivant sur /connexion (ex: bouton
-      // « retour » du navigateur depuis /tarifs), on l'envoie vers son tableau de
-      // bord — sans réafficher le formulaire ni reboucler vers ?redirect=.
-      if (redirectIfLoggedIn()) return;
-
       document.getElementById('loginBtn').addEventListener('click', login);
       document.getElementById('lPassword').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
       
