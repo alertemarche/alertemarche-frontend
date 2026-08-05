@@ -292,7 +292,11 @@
         await api('/payments/kkiapay/verify', { method: 'POST', auth: true, body: { transaction_id: transactionId, subscription_id: sub.id } });
         window.location.href="dashboard";
       } catch {
-        if (hint) { hint.style.display = 'block'; hint.textContent = "Paiement reçu, activation en cours de vérification. Vous recevrez une confirmation par e-mail."; }
+        // La vérification immédiate peut échouer (elle sera confirmée par le
+        // webhook KKiaPay quelques instants plus tard). On rassure l'utilisateur
+        // puis on le redirige vers son tableau de bord.
+        if (hint) { hint.style.display = 'block'; hint.textContent = "✅ Paiement reçu ! Activation de votre abonnement en cours (quelques instants). Redirection vers votre tableau de bord…"; }
+        setTimeout(() => { window.location.href = "dashboard"; }, 3500);
       }
     }
     function _amOnKkiapayFailed() {
