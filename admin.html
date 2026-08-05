@@ -183,6 +183,8 @@
     .loading{padding:24px;text-align:center;color:#94a3b8;}
     .section-sep{border:none;border-top:1px solid #f1f5f9;margin:24px 0;}
     .badge-manual{background:#ede9fe;color:#5b21b6;font-size:.72rem;font-weight:700;padding:2px 7px;border-radius:10px;}
+    .btn-del-sub{background:#fef2f2;border:1px solid #fecaca;color:#dc2626;border-radius:8px;padding:4px 9px;font-size:.95rem;cursor:pointer;line-height:1;transition:.15s;}
+    .btn-del-sub:hover{background:#dc2626;color:#fff;border-color:#dc2626;}
 
     /* ---- CHECKBOX MULTI-SELECT ---- */
     .cb-wrap{display:flex;align-items:center;justify-content:center;}
@@ -1783,7 +1785,7 @@
     el.innerHTML = `<table class="data-table">
       <thead><tr>
         <th>Entreprise / Contact</th><th>E-mail / Tél</th><th>Formule</th>
-        <th>Montant</th><th>Statut</th><th>Début</th><th>Échéance</th><th>Référence</th>
+        <th>Montant</th><th>Statut</th><th>Début</th><th>Échéance</th><th>Référence</th><th></th>
       </tr></thead>
       <tbody>${items.map(s => `<tr>
         <td class="td-org"><b>${s.organization||'—'}</b>${s.name?`<small>${s.name}</small>`:''}</td>
@@ -1794,7 +1796,21 @@
         <td>${fmtD(s.started_at)}</td>
         <td>${fmtD(s.expires_at)}</td>
         <td><small style="color:#94a3b8;font-size:.75rem;">${(s.payment_reference||'—').substring(0,18)}${(s.payment_reference||'').length>18?'…':''}</small></td>
+        <td>${s.status==='active' ? '' : `<button class="btn-del-sub" title="Supprimer définitivement" onclick="deleteSubscription(${s.id}, '${(s.organization||s.name||'').replace(/'/g,"\\'")}')">🗑</button>`}</td>
       </tr>`).join('')}</tbody></table>`;
+  }
+
+  /* Supprime définitivement une transaction (doublon / tentative annulée) */
+  async function deleteSubscription(id, label) {
+    if (!confirm(`Supprimer définitivement cette transaction${label?` de « ${label} »`:''} ?\n\nCette action est irréversible.`)) return;
+    try {
+      await adminApi('/admin/subscriptions/' + id, { method: 'DELETE' });
+      // Recharge les listes et compteurs impactés
+      loadSubs(); loadStats();
+      if (typeof PAYMENTS_CACHE !== 'undefined') loadPayments();
+    } catch(e) {
+      alert('⚠️ ' + (e.message || 'Suppression impossible.'));
+    }
   }
 
   /* ====================== GRANT SUBSCRIPTION ====================== */
@@ -1879,7 +1895,7 @@
     el.innerHTML = `<table class="data-table">
       <thead><tr>
         <th>#</th><th>Entreprise / Contact</th><th>E-mail</th><th>Formule</th>
-        <th>Montant</th><th>Type</th><th>Statut</th><th>Référence</th><th>Date</th>
+        <th>Montant</th><th>Type</th><th>Statut</th><th>Référence</th><th>Date</th><th></th>
       </tr></thead>
       <tbody>${items.map(p => `<tr>
         <td style="color:#94a3b8;font-size:.78rem;">#${p.id}</td>
@@ -1891,6 +1907,7 @@
         <td>${chip(p.status)}</td>
         <td><small style="color:#94a3b8;font-size:.73rem;">${(p.payment_reference||'—')}</small></td>
         <td style="font-size:.8rem;">${fmtD(p.created_at)}</td>
+        <td>${p.status==='active' ? '' : `<button class="btn-del-sub" title="Supprimer définitivement" onclick="deleteSubscription(${p.id}, '${(p.organization||p.name||'').replace(/'/g,"\\'")}')">🗑</button>`}</td>
       </tr>`).join('')}</tbody></table>`;
   }
 
