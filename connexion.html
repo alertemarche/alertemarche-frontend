@@ -202,7 +202,39 @@
 
   <script src="js/app.js?v=20260805c"></script>
   <script>
+    // Destinations internes autorisées après connexion (évite les redirections ouvertes).
+    // Une clé courte (ex: ?redirect=tarifs) OU un chemin interne commençant par « / » sont acceptés.
+    const REDIRECT_WHITELIST = {
+      tarifs: '/tarifs',
+      abonnement: '/tarifs',
+      dashboard: '/dashboard',
+      'marches-publics': '/marches-publics',
+      'marches-prives': '/marches-prives',
+      'preferences-alertes': '/preferences-alertes',
+      publier: '/publier',
+    };
+
+    // Résout la cible de redirection demandée dans l'URL (?redirect=… ou ?next=…).
+    function resolveRedirectTarget() {
+      const params = new URLSearchParams(window.location.search);
+      const raw = (params.get('redirect') || params.get('next') || '').trim();
+      if (!raw) return null;
+      // 1) Clé courte connue
+      if (REDIRECT_WHITELIST[raw]) return REDIRECT_WHITELIST[raw];
+      // 2) Chemin interne sûr (commence par « / », pas « // » ni protocole externe)
+      if (/^\/[a-z0-9\-\/?=&_.%]*$/i.test(raw) && !raw.startsWith('//')) return raw;
+      return null;
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
+      // Si l'utilisateur est déjà connecté (ex: clic depuis l'e-mail de rappel sur
+      // le même appareil), on l'envoie directement vers sa destination.
+      const already = localStorage.getItem('am_token');
+      if (already) {
+        location.href = resolveRedirectTarget() || '/dashboard';
+        return;
+      }
+
       document.getElementById('loginBtn').addEventListener('click', login);
       document.getElementById('lPassword').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
       
@@ -226,6 +258,9 @@
         const res = await api('/auth/login', { method: 'POST', body: { identifier, password } });
         if (res.token) localStorage.setItem('am_token', res.token);
         gtag('event', 'login');
+        // Priorité à la destination demandée (ex: e-mail de rappel → /tarifs).
+        const target = resolveRedirectTarget();
+        if (target) { location.href = target; return; }
         location.href = (res.user && res.user.profile_type === 'admin_public' && res.user.is_admin) ? '/admin' : '/dashboard';
       } catch (e) {
         msg.innerHTML = '<div class="notice notice--danger">Identifiants incorrects. Veuillez réessayer.</div>';
