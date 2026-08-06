@@ -4,7 +4,7 @@
 ![Node](https://img.shields.io/badge/Node.js-20%2B-339933?logo=nodedotjs&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-5-646CFF?logo=vite&logoColor=white)
 
-Interface web de **AlerteMarché**, la plateforme SaaS de veille intelligente pour les appels d'offres au **Bénin**, **Togo**, **Côte d'Ivoire** et **Sénégal**.
+Interface web de **AlerteMarché**, la plateforme SaaS de veille intelligente pour les appels d'offres au **Bénin**, **Togo**, **Côte d'Ivoire**, **Sénégal** et **Burkina Faso**.
 
 ## À propos
 
