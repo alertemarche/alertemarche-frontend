@@ -285,7 +285,7 @@ const AM_COUNTRIES = [
         code: 'BF', name: 'Burkina Faso', cc: 'bf', available: true,
         dialCode: '+226',
         color: '#009E49',
-        hero: 'img/hero-bf.jpg?v=2',
+        hero: 'img/hero-bf.jpg?v=3',
         heroTitle: 'au Burkina Faso',
         heroLead: "Recevez par <b>e-mail</b> des alertes instantanées sur les opportunités de votre secteur.",
         armp: 'ARCOP Burkina Faso',
