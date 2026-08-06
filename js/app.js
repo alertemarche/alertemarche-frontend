@@ -97,6 +97,16 @@ const SEO_CONFIG = {
         priveTitle: 'Marchés Privés Sénégal 🇸🇳 | ONG & Bailleurs Internationaux',
         priveDesc: 'Appels d\'offres privés au Sénégal : PNUD, Banque Mondiale, BAD, UE. Consultations d\'ONG et organismes internationaux.',
         schema: { region: 'SN', city: 'Dakar' }
+    },
+    BF: {
+        keywords: 'appels d\'offres Burkina Faso, marchés publics Burkina, DGCMEF, ARCOP Burkina, soumission Burkina Faso, appel à concurrence Burkina, marché public Ouagadougou, opportunités Burkina',
+        homeTitle: 'Appels d\'Offres Burkina Faso 🇧🇫 | Marchés Publics & DGCMEF | AlerteMarché',
+        homeDesc: 'Recevez tous les appels d\'offres publics et privés du Burkina Faso en temps réel. Surveillance 24/7 de la DGCMEF, ARCOP et bailleurs internationaux.',
+        publicTitle: 'Marchés Publics Burkina Faso 🇧🇫 | DGCMEF & ARCOP | Appels d\'Offres',
+        publicDesc: 'Tous les appels d\'offres publics du Burkina Faso : DGCMEF, ministères, agences publiques. Alertes email automatiques personnalisées.',
+        priveTitle: 'Marchés Privés Burkina Faso 🇧🇫 | ONG & Bailleurs Internationaux',
+        priveDesc: 'Appels d\'offres privés au Burkina Faso : PNUD, Banque Mondiale, BAD, UE. Consultations d\'ONG et organismes internationaux.',
+        schema: { region: 'BF', city: 'Ouagadougou' }
     }
 };
 
@@ -268,6 +278,32 @@ const AM_COUNTRIES = [
             {
                 name: 'Ousmane Ndiaye', role: 'Directeur commercial, Sénégal Équipements', city: 'Saint-Louis',
                 text: "Grâce à AlerteMarché, nous suivons efficacement les opportunités au Sénégal. La qualité des données et la réactivité des alertes nous donnent un avantage compétitif réel.",
+            },
+        ],
+    },
+    {
+        code: 'BF', name: 'Burkina Faso', cc: 'bf', available: true,
+        dialCode: '+226',
+        color: '#009E49',
+        hero: 'img/hero-bf.jpg',
+        heroTitle: 'au Burkina Faso',
+        heroLead: "Recevez par <b>e-mail</b> des alertes instantanées sur les opportunités de votre secteur.",
+        armp: 'ARCOP Burkina Faso',
+        mockInst: 'DGCMEF Burkina Faso - Marchés Publics',
+        mockObject: "Fourniture de matériel informatique",
+        mockLoc: 'Ouagadougou',
+        testimonials: [
+            {
+                name: 'Ousmane Ouédraogo', role: 'Directeur Général, Faso BTP Services', city: 'Ouagadougou',
+                text: "AlerteMarché a transformé notre veille commerciale. Nous recevons les appels d'offres des bailleurs internationaux dès leur publication. Un outil stratégique pour notre développement.",
+            },
+            {
+                name: 'Awa Sawadogo', role: 'Gérante, Naaba Fournitures', city: 'Bobo-Dioulasso',
+                text: "Une plateforme professionnelle qui répond à nos besoins. Les alertes sont précises et nous permettent de répondre rapidement aux marchés. Le service client est excellent.",
+            },
+            {
+                name: 'Idrissa Kaboré', role: 'Directeur commercial, Burkina Équipements', city: 'Koudougou',
+                text: "Grâce à AlerteMarché, nous suivons efficacement les opportunités au Burkina Faso. La qualité des données et la réactivité des alertes nous donnent un avantage compétitif réel.",
             },
         ],
     },
