@@ -9,7 +9,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css?v=20260803">
-  <script src="https://cdn.kkiapay.me/k.js"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RRXKSCN05J"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RRXKSCN05J');gtag('config','AW-11514321686');</script>
   <style>
@@ -110,8 +109,7 @@
       <div class="pub-steps">
         <div class="pub-step"><div class="pub-step-num">1</div><div class="pub-step-txt"><b>Créez votre compte</b><span>Inscription gratuite</span></div></div>
         <div class="pub-step"><div class="pub-step-num">2</div><div class="pub-step-txt"><b>Rédigez l'annonce</b><span>Formulaire guidé</span></div></div>
-        <div class="pub-step"><div class="pub-step-num">3</div><div class="pub-step-txt"><b>Payez 29 500 FCFA</b><span>Mobile Money / carte</span></div></div>
-        <div class="pub-step"><div class="pub-step-num">4</div><div class="pub-step-txt"><b>Validation & diffusion</b><span>Sous 24–48 h ouvrées</span></div></div>
+        <div class="pub-step"><div class="pub-step-num">3</div><div class="pub-step-txt"><b>Validation & diffusion</b><span>Sous 24–48 h ouvrées — GRATUIT</span></div></div>
       </div>
 
       <div class="pub-who">
@@ -282,12 +280,12 @@
                 </div>
               </div>
 
-              <!-- Conditions + paiement -->
-              <div class="pub-price-box">
-                <h3>💳 Tarif de publication</h3>
-                <div class="pub-price-big">29 500 <small>FCFA / annonce</small></div>
-                <p style="margin:6px 0 0;font-size:.88rem;color:#92400e;">Paiement sécurisé par Mobile Money (MTN, Moov) ou carte bancaire via KKiaPay.</p>
-                <ul class="pub-conds">
+              <!-- Validation gratuite -->
+              <div class="pub-price-box" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-color:#16a34a;">
+                <h3 style="color:#065f46;">🎉 Publication gratuite</h3>
+                <div class="pub-price-big" style="color:#16a34a;">0 <small style="color:#059669;">FCFA</small></div>
+                <p style="margin:6px 0 0;font-size:.88rem;color:#065f46;font-weight:600;">Soumettez gratuitement — validation manuelle sous 24–48 h ouvrées.</p>
+                <ul class="pub-conds" style="color:#065f46;">
                   <li>Diffusion aux abonnés correspondant à votre secteur</li>
                   <li>Alerte e-mail instantanée après validation</li>
                   <li>Affichage sur la page Appels d'offres privés</li>
@@ -301,14 +299,14 @@
               <div style="margin-top:20px;display:flex;gap:10px;align-items:flex-start;">
                 <input type="checkbox" id="acceptCGU" style="margin-top:4px;flex-shrink:0;width:16px;height:16px;">
                 <label for="acceptCGU" style="font-size:.88rem;line-height:1.5;cursor:pointer;">
-                  J'ai lu et j'accepte les <a href="/cgu" target="_blank" style="color:var(--primary,#0a7d3f);">Conditions Générales d'Utilisation</a> d'AlerteMarché. Je certifie que le contenu de cette annonce est exact, légal et que mon organisation en est l'émetteur légitime. <strong>Le paiement de 29 500 FCFA est dû avant la mise en ligne et non remboursable si l'annonce est refusée pour non-conformité.</strong>
+                  J'ai lu et j'accepte les <a href="/cgu" target="_blank" style="color:var(--primary,#0a7d3f);">Conditions Générales d'Utilisation</a> d'AlerteMarché. Je certifie que le contenu de cette annonce est exact, légal et que mon organisation en est l'émetteur légitime. <strong>La publication est gratuite mais soumise à validation manuelle par notre équipe éditoriale sous 24 à 48 heures ouvrées.</strong>
                 </label>
               </div>
 
               <p id="pubMsg" style="margin-top:12px;font-size:.9rem;font-weight:600;"></p>
 
-              <button type="submit" class="pub-submit-btn" id="pubSubmitBtn">
-                Payer 29 500 FCFA &amp; soumettre l'annonce
+              <button type="submit" class="pub-submit-btn" id="pubSubmitBtn" style="background:#16a34a;">
+                Soumettre l'annonce gratuitement
               </button>
 
             </form>
@@ -341,7 +339,7 @@
               <li>• Le contenu doit être réel, précis et non trompeur</li>
               <li>• Aucun contenu discriminatoire, illégal ou contraire aux bonnes mœurs</li>
               <li>• AlerteMarché se réserve le droit de refuser ou modifier toute annonce</li>
-              <li>• Le paiement est non remboursable en cas de refus pour non-conformité</li>
+              <li>• La publication est gratuite mais soumise à validation manuelle</li>
               <li>• Durée de diffusion : 30 jours à partir de la validation</li>
               <li>• L'annonce est supprimée automatiquement après la date limite</li>
             </ul>
@@ -360,10 +358,8 @@
 
   <script src="js/app.js?v=20260810g"></script>
   <script>
-    const AMOUNT_PUB = 29500; // FCFA
-    let KK_PUB = null;
+    // Publication GRATUITE avec validation manuelle (plus de paiement KKiaPay)
     let currentUser = null;
-    let pendingNeedId = null;
 
     async function initPage() {
       const tok = localStorage.getItem('am_token');
@@ -380,10 +376,8 @@
         btn.textContent = '🔐 Se connecter pour soumettre l\'annonce';
         btn.style.background = '#6b7280';
       } else {
-        // Connecté : mode complet
+        // Connecté : soumission gratuite activée
         document.getElementById('visitorNotice').style.display = 'none';
-        btn.textContent = 'Payer 29 500 FCFA & soumettre l\'annonce';
-        btn.style.background = '#d97706';
         // Pré-remplir organisation
         try {
           currentUser = JSON.parse(localStorage.getItem('am_user') || '{}');
@@ -391,8 +385,6 @@
             document.getElementById('orgField').value = currentUser.organization;
           }
         } catch (_) {}
-        // Charger la config KKiaPay
-        try { KK_PUB = await api('/payments/kkiapay/config'); } catch { KK_PUB = { configured: false }; }
       }
 
       // Gestion des 4 boutons de type d'annonce
@@ -454,9 +446,9 @@
 
       msg.textContent = '';
       btn.disabled = true;
-      btn.textContent = 'Préparation du paiement…';
+      btn.textContent = 'Envoi en cours…';
 
-      // Sauvegarder les données du formulaire en session avant le paiement
+      // Soumettre l'annonce gratuitement (plus de paiement)
       const formData = {
         type: f.get('type'),
         sector: f.get('sector'),
@@ -471,65 +463,8 @@
         country: f.get('country'),
         locality: f.get('locality'),
       };
-      try { sessionStorage.setItem('am_pub_draft', JSON.stringify(formData)); } catch (_) {}
-
-      // Démarrer le paiement KKiaPay
-      if (!KK_PUB || !KK_PUB.configured || !KK_PUB.public_key) {
-        // KKiaPay non configuré : soumettre directement en attente de paiement manuel
-        await submitAnnouncement(formData, null);
-        return;
-      }
-
-      try {
-        // API récente du widget = openKkiapayWidget (repli sur openKkiapay pour anciennes versions)
-        const _openWidget = window.openKkiapayWidget || window.openKkiapay;
-        if (typeof _openWidget !== 'function') {
-          btn.disabled = false;
-          btn.textContent = 'Payer 29 500 FCFA & soumettre l\'annonce';
-          msg.textContent = '⚠️ Le module de paiement n\'a pas pu se charger. Rafraîchissez la page et réessayez.';
-          return;
-        }
-        _openWidget({
-          amount: AMOUNT_PUB,
-          key: KK_PUB.public_key,
-          api_key: KK_PUB.public_key,
-          sandbox: !!KK_PUB.sandbox,
-          position: 'center',
-          theme: '#d97706',
-          name: currentUser?.name || '',
-          email: currentUser?.email || '',
-          phone: (currentUser?.phone || '').replace('+', ''),
-          data: JSON.stringify({ type: 'publication' }),
-        });
-      } catch (err) {
-        btn.disabled = false;
-        btn.textContent = 'Payer 29 500 FCFA & soumettre l\'annonce';
-        msg.textContent = '⚠️ Impossible d\'ouvrir le formulaire de paiement. Réessayez ou contactez-nous.';
-      }
+      await submitAnnouncement(formData, null);
     }
-
-    // Succès / échec paiement KKiaPay (API récente + rétro-compatibilité)
-    async function _pubOnKkiapaySuccess(response) {
-      const r = response || {};
-      const transactionId = r.transactionId || r.transaction_id
-        || (r.detail && (r.detail.transactionId || r.detail.transaction_id)) || null;
-      const draft = JSON.parse(sessionStorage.getItem('am_pub_draft') || '{}');
-      await submitAnnouncement(draft, transactionId);
-    }
-    function _pubOnKkiapayFailed() {
-      const btn = document.getElementById('pubSubmitBtn');
-      const msg = document.getElementById('pubMsg');
-      btn.disabled = false;
-      btn.textContent = 'Payer 29 500 FCFA & soumettre l\'annonce';
-      msg.style.color = '#ef4444';
-      msg.textContent = '⚠️ Le paiement n\'a pas abouti. Veuillez réessayer.';
-    }
-    if (typeof addKkiapayListener === 'function') {
-      addKkiapayListener('success', _pubOnKkiapaySuccess);
-      addKkiapayListener('failed', _pubOnKkiapayFailed);
-    }
-    window.addEventListener('kkiapay.success', (ev) => _pubOnKkiapaySuccess(ev.detail || ev));
-    window.addEventListener('kkiapay.failed', _pubOnKkiapayFailed);
 
     async function submitAnnouncement(data, transactionId) {
       const msg = document.getElementById('pubMsg');
@@ -574,7 +509,7 @@
 
       } catch (err) {
         btn.disabled = false;
-        btn.textContent = 'Payer 29 500 FCFA & soumettre l\'annonce';
+        btn.textContent = 'Soumettre l\'annonce gratuitement';
         msg.style.color = '#ef4444';
         msg.textContent = '⚠️ ' + (err.message || 'Erreur lors de la soumission. Veuillez réessayer.');
       }
