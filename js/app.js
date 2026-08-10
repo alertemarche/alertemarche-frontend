@@ -559,6 +559,13 @@ function renderFooter() {
           <div>
             <div class="footer-brand"><span class="brand-mark">${IC.bell}</span> Alerte<b style="color:#fff">Marché</b> <span style="background:#16a34a;color:#fff;font-weight:900;font-size:.62rem;letter-spacing:.5px;padding:2px 7px;border-radius:12px;margin-left:4px;vertical-align:middle;">GRATUIT</span></div>
             <p><b style="color:#fff">Service 100% gratuit</b> de veille des marchés publics et privés en Afrique de l'Ouest 🇧🇯 🇹🇬 🇨🇮 🇸🇳 🇧🇫. Recevez chaque jour les meilleures opportunités par e-mail, sans engagement.</p>
+            <div style="margin-top:16px;padding:12px 16px;background:linear-gradient(135deg,#16a34a,#059669);border-radius:8px;display:inline-flex;align-items:center;gap:10px;">
+              <span style="font-size:1.2rem;">📧</span>
+              <div>
+                <div style="font-size:.75rem;color:#dcfce7;font-weight:600;margin-bottom:2px;text-transform:uppercase;letter-spacing:.5px;">Contactez-nous</div>
+                <a href="mailto:info@alertemarche.com" style="color:#fff;font-weight:700;font-size:1rem;text-decoration:none;">info@alertemarche.com</a>
+              </div>
+            </div>
           </div>
           <div class="footer-col">
             <h4>Plateforme</h4>
