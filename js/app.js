@@ -642,10 +642,10 @@ window.fetchUserStatus = fetchUserStatus;
 /* Un avis est-il verrouillé pour l'utilisateur courant ?
    Priorité au champ backend `is_locked` ; repli sur le statut client. */
 function amIsLocked(t) {
-    // AlerteMarché est 100% GRATUIT : plus aucun verrouillage. Tous les
-    // marchés sont accessibles à tout le monde (le backend renvoie déjà
-    // is_locked=false). On force false ici par sécurité côté client.
-    return false;
+    // AlerteMarché est 100% GRATUIT pour les inscrits, mais les visiteurs
+    // non-inscrits voient les marchés floutés pour les inciter à créer un
+    // compte gratuit. Le backend renvoie is_locked=true pour les visiteurs.
+    return t.is_locked === true;
 }
 window.amIsLocked = amIsLocked;
 
