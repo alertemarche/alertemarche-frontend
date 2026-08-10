@@ -23,8 +23,15 @@
     <div class="container hero-inner">
       <div>
         <span class="hero-badge" id="heroBadge">🇧🇯 BÉNIN — Ne manquez aucune opportunité</span>
-        <h1 id="heroTitle">Inscrivez-vous gratuitement, consultez les marchés publics et privés actifs <span class="green">au Bénin</span></h1>
-        <p class="lead" id="heroLead">Recevez par <b>e-mail</b> des alertes instantanées sur les opportunités de votre secteur.</p>
+        <h1 id="heroTitle">Recevez les appels d'offres publics et privés qui vous concernent — <span class="green">Gratuitement</span></h1>
+        <p class="lead" id="heroLead">Jusqu'à <b>5 alertes de marchés actifs par jour</b>, dans <b>3 domaines</b> de votre choix, directement par e-mail. Sans engagement, sans carte bancaire.</p>
+        <div class="hero-free-tags" style="display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 18px;">
+          <span style="display:inline-flex;align-items:center;gap:6px;background:#ecfdf5;color:#047857;font-weight:700;font-size:.86rem;padding:6px 12px;border-radius:20px;">✅ 100% gratuit</span>
+          <span style="display:inline-flex;align-items:center;gap:6px;background:#ecfdf5;color:#047857;font-weight:700;font-size:.86rem;padding:6px 12px;border-radius:20px;">✅ 5 alertes / jour</span>
+          <span style="display:inline-flex;align-items:center;gap:6px;background:#ecfdf5;color:#047857;font-weight:700;font-size:.86rem;padding:6px 12px;border-radius:20px;">✅ 3 domaines au choix</span>
+          <span style="display:inline-flex;align-items:center;gap:6px;background:#ecfdf5;color:#047857;font-weight:700;font-size:.86rem;padding:6px 12px;border-radius:20px;">✅ Marchés publics & privés</span>
+        </div>
+        <a href="/inscription" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:8px;font-size:1.02rem;padding:13px 26px;">Créer mon compte gratuit →</a>
 
         <div class="hero-channels">
           <div class="channel-card">
@@ -256,7 +263,7 @@
     </div>
   </section>
 
-  <script src="js/app.js?v=20260806f"></script>
+  <script src="js/app.js?v=20260810g"></script>
   <script>
     // Compteurs dynamiques des catégories (appel API par type de marché).
     function initPage() {
@@ -269,7 +276,7 @@
         var badge = document.getElementById('heroBadge');
         if (badge) badge.innerHTML = flagImg(m.cc, m.name) + ' ' + m.name.toUpperCase() + ' — Ne manquez aucune opportunité';
         var ht = document.getElementById('heroTitle');
-        if (ht) ht.innerHTML = 'Inscrivez-vous gratuitement, consultez les marchés publics et privés actifs <span class="green">' + m.heroTitle + '</span>';
+        if (ht) ht.innerHTML = "Recevez les appels d'offres publics et privés qui vous concernent " + m.heroTitle + ' — <span class="green">Gratuitement</span>';
         var hl = document.getElementById('heroLead');
         if (hl) hl.innerHTML = m.heroLead;
         var wt = document.getElementById('whyTitle');

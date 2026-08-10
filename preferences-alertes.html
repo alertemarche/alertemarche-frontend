@@ -35,7 +35,7 @@
 
         <div class="form-section">
           <div class="form-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v4l-6 6v6l-4-2v-4L4 8z"/></svg> Vos secteurs d'activité <span class="req">*</span></div>
-          <p class="chip-hint">Cliquez pour sélectionner un ou plusieurs secteurs. Les alertes seront filtrées selon ces choix.</p>
+          <p class="chip-hint">Cliquez pour sélectionner jusqu'à <b>3 domaines</b>. Les alertes seront filtrées selon ces choix.</p>
           <div class="chip-grid" id="sectorGrid" style="margin-top:12px;">
             <div class="chip-hint">Chargement des secteurs…</div>
           </div>
@@ -92,7 +92,7 @@
     </div>
   </section>
 
-  <script src="js/app.js?v=20260806f"></script>
+  <script src="js/app.js?v=20260810g"></script>
   <script>
     let SECTORS = [];        // [{code, name}]
     let selectedSectors = new Set();
@@ -130,7 +130,10 @@
           chip.innerHTML = '<span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>' + s.name;
           chip.addEventListener('click', () => {
             if (selectedSectors.has(s.name)) { selectedSectors.delete(s.name); chip.classList.remove('selected'); }
-            else { selectedSectors.add(s.name); chip.classList.add('selected'); }
+            else {
+              if (selectedSectors.size >= 3) { alert('Vous pouvez choisir jusqu\'à 3 domaines maximum.'); return; }
+              selectedSectors.add(s.name); chip.classList.add('selected');
+            }
             renderRecap();
           });
           grid.appendChild(chip);

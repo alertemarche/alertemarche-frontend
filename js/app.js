@@ -183,7 +183,7 @@ const AM_COUNTRIES = [
         color: '#008751',
         hero: 'img/amazone.jpg',
         heroTitle: 'au Bénin',
-        heroLead: "Recevez par <b>e-mail</b> des alertes instantanées sur les opportunités de votre secteur.",
+        heroLead: "Jusqu'à <b>5 alertes de marchés actifs par jour</b>, dans <b>3 domaines</b> de votre choix, directement par e-mail. Sans engagement, sans carte bancaire.",
         armp: 'ARMP Bénin',
         mockInst: 'Autorité de Régulation des Marchés Publics - Bénin',
         mockObject: "Travaux de construction d'un bâtiment R+2",
@@ -209,7 +209,7 @@ const AM_COUNTRIES = [
         color: '#006A4E',
         hero: 'img/hero-tg.jpg',
         heroTitle: 'au Togo',
-        heroLead: "Recevez par <b>e-mail</b> des alertes instantanées sur les opportunités de votre secteur.",
+        heroLead: "Jusqu'à <b>5 alertes de marchés actifs par jour</b>, dans <b>3 domaines</b> de votre choix, directement par e-mail. Sans engagement, sans carte bancaire.",
         armp: 'ARMP Togo',
         mockInst: 'ARCOP Togo - Marchés Publics',
         mockObject: "Fourniture d'équipements informatiques",
@@ -235,7 +235,7 @@ const AM_COUNTRIES = [
         color: '#F77F00',
         hero: 'img/hero-ci.jpg',
         heroTitle: "en Côte d'Ivoire",
-        heroLead: "Recevez par <b>e-mail</b> des alertes instantanées sur les opportunités de votre secteur.",
+        heroLead: "Jusqu'à <b>5 alertes de marchés actifs par jour</b>, dans <b>3 domaines</b> de votre choix, directement par e-mail. Sans engagement, sans carte bancaire.",
         armp: 'ANRMP Côte d\'Ivoire',
         mockInst: 'DGMP Côte d\'Ivoire',
         mockObject: "Réhabilitation de voirie urbaine",
@@ -261,7 +261,7 @@ const AM_COUNTRIES = [
         color: '#00853F',
         hero: 'img/hero-sn.jpg',
         heroTitle: 'au Sénégal',
-        heroLead: "Recevez par <b>e-mail</b> des alertes instantanées sur les opportunités de votre secteur.",
+        heroLead: "Jusqu'à <b>5 alertes de marchés actifs par jour</b>, dans <b>3 domaines</b> de votre choix, directement par e-mail. Sans engagement, sans carte bancaire.",
         armp: 'ARMP Sénégal',
         mockInst: 'DCMP Sénégal - Marchés Publics',
         mockObject: "Fourniture de matériel médical",
@@ -287,7 +287,7 @@ const AM_COUNTRIES = [
         color: '#009E49',
         hero: 'img/hero-bf.jpg?v=3',
         heroTitle: 'au Burkina Faso',
-        heroLead: "Recevez par <b>e-mail</b> des alertes instantanées sur les opportunités de votre secteur.",
+        heroLead: "Jusqu'à <b>5 alertes de marchés actifs par jour</b>, dans <b>3 domaines</b> de votre choix, directement par e-mail. Sans engagement, sans carte bancaire.",
         armp: 'ARCOP Burkina Faso',
         mockInst: 'DGCMEF Burkina Faso - Marchés Publics',
         mockObject: "Fourniture de matériel informatique",
@@ -428,6 +428,35 @@ function refreshAuthUI() {
 }
 window.refreshAuthUI = refreshAuthUI;
 
+/* -------- Ruban « 100% GRATUIT » (haut de toutes les pages) -------- */
+function renderFreeRibbon() {
+    if (document.getElementById('am-free-ribbon')) return;
+    // Styles (injectés une seule fois) : ruban + badge header.
+    if (!document.getElementById('am-free-styles')) {
+        const st = document.createElement('style');
+        st.id = 'am-free-styles';
+        st.textContent = `
+          .am-free-ribbon{background:#0f766e;color:#fff;text-align:center;font-weight:700;
+            font-size:.92rem;line-height:1.35;padding:8px 16px;}
+          .am-free-ribbon b{font-weight:900;}
+          .am-free-ribbon a{color:#fff;text-decoration:underline;font-weight:800;margin-left:6px;white-space:nowrap;}
+          .am-free-badge{display:inline-flex;align-items:center;background:#16a34a;color:#fff;
+            font-weight:900;font-size:.72rem;letter-spacing:.5px;padding:3px 9px;border-radius:20px;
+            margin-left:2px;box-shadow:0 2px 6px rgba(22,163,74,.35);}
+          @media(max-width:900px){ .am-free-ribbon{font-size:.8rem;padding:7px 12px;} .am-free-badge{display:none;} }
+        `;
+        document.head.appendChild(st);
+    }
+    const ribbon = document.createElement('div');
+    ribbon.id = 'am-free-ribbon';
+    ribbon.className = 'am-free-ribbon';
+    ribbon.innerHTML = `🎉 <b>AlerteMarché est 100% GRATUIT</b> — Recevez chaque jour les appels d'offres qui vous concernent par e-mail.`
+        + `<a href="/inscription">Créer mon compte gratuit →</a>`;
+    // Insère tout en haut du <body>, au-dessus du header.
+    document.body.insertBefore(ribbon, document.body.firstChild);
+}
+window.renderFreeRibbon = renderFreeRibbon;
+
 /* -------- Header -------- */
 function renderNav() {
     const path = location.pathname.split('/').pop() || '/index';
@@ -453,6 +482,7 @@ function renderNav() {
             <span class="brand-tag">Opportunités • Veille • Croissance</span>
           </span>
         </a>
+        <span class="am-free-badge" title="Service 100% gratuit">GRATUIT</span>
         ${countrySelector()}
         <nav class="main-nav" id="mainNav">
           <a href="/index" class="${isActive('/index')}">Accueil</a>
@@ -460,7 +490,7 @@ function renderNav() {
           <a href="/marches-prives" class="${isActive('/marches-prives')}">Marchés privés</a>
           <a href="/blog" class="${isActive('/blog')}">Blog</a>
           <a href="/publier" class="nav-publier ${isActive('/publier')}">📢 Publier une annonce</a>
-          <a href="/tarifs" class="${isActive('/tarifs')}">Abonnement</a>
+          <a href="/tarifs" class="${isActive('/tarifs')}">Offre gratuite</a>
           <span id="navAuthMobile">${authLinksMobile()}</span>
         </nav>
         <div class="header-actions" id="headerActions">
@@ -527,15 +557,15 @@ function renderFooter() {
       <div class="container">
         <div class="footer-grid">
           <div>
-            <div class="footer-brand"><span class="brand-mark">${IC.bell}</span> Alerte<b style="color:#fff">Marché</b></div>
-            <p>La plateforme de référence pour la veille des appels d'offres en Afrique de l'Ouest. Recevez les meilleures opportunités par e-mail, en temps réel.</p>
+            <div class="footer-brand"><span class="brand-mark">${IC.bell}</span> Alerte<b style="color:#fff">Marché</b> <span style="background:#16a34a;color:#fff;font-weight:900;font-size:.62rem;letter-spacing:.5px;padding:2px 7px;border-radius:12px;margin-left:4px;vertical-align:middle;">GRATUIT</span></div>
+            <p><b style="color:#fff">Service 100% gratuit</b> de veille des marchés publics et privés en Afrique de l'Ouest 🇧🇯 🇹🇬 🇨🇮 🇸🇳 🇧🇫. Recevez chaque jour les meilleures opportunités par e-mail, sans engagement.</p>
           </div>
           <div class="footer-col">
             <h4>Plateforme</h4>
             <a href="/marches-publics">Marchés publics</a>
             <a href="/marches-prives">Marchés privés</a>
             <a href="/blog">Blog & Guides</a>
-            <a href="/tarifs">Abonnement</a>
+            <a href="/tarifs">Notre offre gratuite</a>
           </div>
           <div class="footer-col">
             <h4>Compte</h4>
@@ -605,8 +635,10 @@ window.fetchUserStatus = fetchUserStatus;
 /* Un avis est-il verrouillé pour l'utilisateur courant ?
    Priorité au champ backend `is_locked` ; repli sur le statut client. */
 function amIsLocked(t) {
-    if (t && typeof t.is_locked === 'boolean') return t.is_locked;
-    return window.AM_USER_STATUS !== 'subscribed';
+    // AlerteMarché est 100% GRATUIT : plus aucun verrouillage. Tous les
+    // marchés sont accessibles à tout le monde (le backend renvoie déjà
+    // is_locked=false). On force false ici par sécurité côté client.
+    return false;
 }
 window.amIsLocked = amIsLocked;
 
@@ -656,27 +688,11 @@ window.injectPaywallStyles = injectPaywallStyles;
 /* Affiche le bandeau paywall en haut de page selon le statut.
    Vert pour anonyme, orange pour inscrit gratuit, rien pour abonné. */
 function renderPaywallBanner(status) {
-    status = status || window.AM_USER_STATUS;
-    injectPaywallStyles();
+    // Site 100% GRATUIT : plus de bandeau paywall / d'incitation à payer.
+    // Le ruban vert « GRATUIT » (renderFreeRibbon) le remplace en haut de page.
+    // Fonction conservée (no-op) pour compatibilité avec les pages qui l'appellent.
     const existing = document.getElementById('am-paywall-banner');
     if (existing) existing.remove();
-    if (status === 'subscribed') return;
-    const banner = document.createElement('div');
-    banner.id = 'am-paywall-banner';
-    if (status === 'anonymous') {
-        banner.className = 'am-paywall-banner am-paywall-green';
-        banner.innerHTML = `<div class="am-pb-inner">` +
-            `<span class="am-pb-text">🔒 Inscrivez-vous gratuitement pour accéder aux offres complètes</span>` +
-            `<a href="/inscription" class="am-pb-btn">S'inscrire</a></div>`;
-    } else { // free
-        banner.className = 'am-paywall-banner am-paywall-orange';
-        banner.innerHTML = `<div class="am-pb-inner">` +
-            `<span class="am-pb-text">⚡ Plan gratuit · Débloquez l'accès complet à tous les marchés + alertes email automatiques dès 17 700 FCFA / mois</span>` +
-            `<a href="/tarifs" class="am-pb-btn">Passer Premium →</a></div>`;
-    }
-    const header = document.querySelector('.site-header');
-    if (header && header.parentNode) header.parentNode.insertBefore(banner, header.nextSibling);
-    else document.body.insertBefore(banner, document.body.firstChild);
 }
 window.renderPaywallBanner = renderPaywallBanner;
 
@@ -749,6 +765,7 @@ window.amLockedDetailsAction = amLockedDetailsAction;
 document.addEventListener('DOMContentLoaded', async () => {
     if (!document.body.dataset.noChrome) {
         renderNav();
+        renderFreeRibbon(); // ruban « GRATUIT » au-dessus du header
         renderFooter();
     }
     initFaq();
