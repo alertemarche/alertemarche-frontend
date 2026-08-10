@@ -62,13 +62,6 @@
     .pub-type-btn b { font-size: .88rem; font-weight: 700; color: var(--ink, #111); display: block; }
     .pub-type-btn small { font-size: .74rem; color: var(--muted, #6b7280); line-height: 1.3; }
 
-    /* Bandeau visiteur */
-    .pub-visitor-notice {
-      background: #fffbeb; border: 1.5px solid #f59e0b; border-radius: 8px;
-      padding: 12px 16px; margin-bottom: 18px; font-size: .88rem; display: none;
-    }
-    .pub-visitor-notice a { color: #d97706; font-weight: 600; }
-
     .pub-price-box { background: linear-gradient(135deg, #fffbeb, #fef3c7); border: 2px solid #f59e0b; border-radius: 12px; padding: 24px; margin-top: 28px; }
     .pub-price-box h3 { font-size: 1.05rem; font-weight: 700; margin: 0 0 6px; }
     .pub-price-big { font-size: 2rem; font-weight: 900; color: #d97706; line-height: 1; margin: 8px 0; }
@@ -89,6 +82,15 @@
     .pub-guarantee h4 { margin: 0 0 8px; color: #065f46; font-size: .95rem; }
     .pub-login-wall { background: #fff8f0; border: 2px solid #f59e0b; border-radius: 10px; padding: 20px; text-align: center; display: none; }
     .pub-login-wall p { margin: 0 0 14px; font-size: .95rem; }
+
+    /* Visitor Banner (formulaire visible mais flouté) */
+    .pub-visitor-banner { background: linear-gradient(135deg, #16a34a, #059669); color: #fff; padding: 20px; border-radius: 12px; margin-bottom: 24px; text-align: center; display: none; }
+    .pub-visitor-banner h3 { font-size: 1.2rem; font-weight: 800; margin: 0 0 10px; }
+    .pub-visitor-banner p { margin: 0 0 16px; font-size: .95rem; opacity: .95; }
+    .pub-visitor-banner .btn-cta { background: #fff; color: #16a34a; padding: 12px 28px; border-radius: 8px; font-weight: 700; text-decoration: none; display: inline-block; }
+
+    /* Formulaire flouté pour visiteurs */
+    body.pub-visitor-mode #pubFormWrap { filter: blur(3px); pointer-events: none; user-select: none; }
 
     /* Confirmation */
     .pub-confirm { text-align: center; padding: 40px 20px; display: none; }
@@ -126,16 +128,14 @@
   <section class="section" style="background:var(--bg);">
     <div class="container">
 
-      <!-- Mur de connexion (si non connecté) -->
-      <div id="loginWall" class="pub-login-wall" style="max-width:520px;margin:0 auto 32px;">
-        <p>🔐 <strong>Connectez-vous</strong> ou <strong>créez un compte professionnel gratuit</strong> pour publier une annonce.</p>
-        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-          <a href="/connexion?next=/publier" class="btn btn--outline" style="padding:.7rem 1.4rem;border-radius:8px;">Se connecter</a>
-          <a href="/inscription?profil=prestataire" class="btn btn--primary" style="padding:.7rem 1.4rem;border-radius:8px;background:#d97706;border-color:#d97706;">Créer un compte gratuit</a>
-        </div>
+      <!-- Banner visiteur (formulaire visible mais flouté) -->
+      <div id="visitorBanner" class="pub-visitor-banner">
+        <h3>🎉 Publiez gratuitement votre annonce</h3>
+        <p>Créez un compte professionnel gratuit en 2 minutes pour soumettre votre appel d'offres ou besoin de prestation.</p>
+        <a href="/inscription?profil=entreprise&next=/publier" class="btn-cta">Créer mon compte gratuit</a>
       </div>
 
-      <div id="pubContent" class="pub-layout" style="display:none;">
+      <div id="pubContent" class="pub-layout">
 
         <!-- Formulaire principal -->
         <div class="pub-form-card">
@@ -159,11 +159,6 @@
           <!-- Le formulaire -->
           <div id="pubFormWrap">
             <h2>Votre annonce</h2>
-
-            <!-- Bandeau visiteur (non connecté) -->
-            <div id="visitorNotice" class="pub-visitor-notice">
-              📋 Vous naviguez en mode aperçu. <a href="/connexion?next=/publier">Connectez-vous</a> ou <a href="/inscription?profil=prestataire">créez un compte</a> pour soumettre votre annonce.
-            </div>
 
             <form id="pubForm" novalidate>
 
@@ -363,21 +358,20 @@
 
     async function initPage() {
       const tok = localStorage.getItem('am_token');
-
-      // Toujours afficher le formulaire (mode aperçu sans connexion possible)
-      document.getElementById('loginWall').style.display = 'none';
-      document.getElementById('pubContent').style.display = 'grid';
-
-      const btn = document.getElementById('pubSubmitBtn');
+      const visitorBanner = document.getElementById('visitorBanner');
+      const pubContent = document.getElementById('pubContent');
 
       if (!tok) {
-        // Non connecté : mode aperçu — formulaire visible mais soumission bloquée
-        document.getElementById('visitorNotice').style.display = 'block';
-        btn.textContent = '🔐 Se connecter pour soumettre l\'annonce';
-        btn.style.background = '#6b7280';
+        // Mode visiteur : banner visible + formulaire flouté
+        visitorBanner.style.display = 'block';
+        document.body.classList.add('pub-visitor-mode');
+        pubContent.style.display = 'grid';
       } else {
-        // Connecté : soumission gratuite activée
-        document.getElementById('visitorNotice').style.display = 'none';
+        // Connecté : banner caché + formulaire normal
+        visitorBanner.style.display = 'none';
+        document.body.classList.remove('pub-visitor-mode');
+        pubContent.style.display = 'grid';
+        
         // Pré-remplir organisation
         try {
           currentUser = JSON.parse(localStorage.getItem('am_user') || '{}');
