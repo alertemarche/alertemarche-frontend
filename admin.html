@@ -291,6 +291,7 @@
     <nav class="admin-nav">
       <a href="#" data-tab="stats" class="active">📊 Tableau de bord</a>
       <a href="#" data-tab="calendar">📅 Calendrier d'activité</a>
+      <a href="#" data-tab="devices">📱 Appareils connectés</a>
       <div class="nav-section">Données</div>
       <a href="#" data-tab="users">👥 Utilisateurs inscrits</a>
       <a href="#" data-tab="subs">💳 Abonnements</a>
@@ -382,6 +383,61 @@
           <span>📋 Appels collectés</span><span>📨 Alertes e-mail</span><span>✨ Autres</span>
         </div>
         <div id="calGrid" class="cal-grid"><p class="loading">Chargement…</p></div>
+      </div>
+    </div>
+
+    <!-- ===== APPAREILS CONNECTÉS ===== -->
+    <div id="panel-devices" class="admin-panel hidden">
+      <div class="panel-header">
+        <h1>📱 Appareils connectés</h1>
+        <div class="panel-actions">
+          <button class="btn-a btn-ghost" onclick="loadDevices()">↻ Rafraîchir</button>
+          <button class="btn-a btn-ghost" onclick="printPanel('devices')">🖨️ Imprimer / PDF</button>
+        </div>
+      </div>
+      <p style="color:#64748b;font-size:.9rem;margin:0 0 18px;">
+        Suivi des appareils des commerces connectés à leur espace. Un même commerce peut apparaître
+        plusieurs fois s'il se connecte depuis plusieurs appareils (ordinateur, téléphone, tablette).
+      </p>
+      <div class="dev-cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:22px;">
+        <div class="acard" style="margin:0;">
+          <h3 style="margin-top:0;">🟢 En ce moment <span style="font-weight:400;color:#94a3b8;font-size:.8rem;">(5 dernières min)</span></h3>
+          <div style="font-size:2rem;font-weight:800;color:#16a34a;" id="devNowTotal">—</div>
+          <div style="font-size:.85rem;color:#475569;margin-top:8px;line-height:1.9;">
+            💻 Ordinateurs : <strong id="devNowDesktop">—</strong><br>
+            📱 Téléphones : <strong id="devNowMobile">—</strong><br>
+            📲 Tablettes : <strong id="devNowTablet">—</strong>
+          </div>
+        </div>
+        <div class="acard" style="margin:0;">
+          <h3 style="margin-top:0;">📅 Aujourd'hui <span style="font-weight:400;color:#94a3b8;font-size:.8rem;">(depuis minuit)</span></h3>
+          <div style="font-size:2rem;font-weight:800;color:#0f766e;" id="devTodayTotal">—</div>
+          <div style="font-size:.85rem;color:#475569;margin-top:8px;line-height:1.9;">
+            💻 Ordinateurs : <strong id="devTodayDesktop">—</strong><br>
+            📱 Téléphones : <strong id="devTodayMobile">—</strong><br>
+            📲 Tablettes : <strong id="devTodayTablet">—</strong>
+          </div>
+        </div>
+        <div class="acard" style="margin:0;">
+          <h3 style="margin-top:0;">📈 7 derniers jours</h3>
+          <div style="font-size:2rem;font-weight:800;color:#f97316;" id="devWeekTotal">—</div>
+          <div style="font-size:.85rem;color:#475569;margin-top:8px;line-height:1.9;">
+            💻 Ordinateurs : <strong id="devWeekDesktop">—</strong><br>
+            📱 Téléphones : <strong id="devWeekMobile">—</strong><br>
+            📲 Tablettes : <strong id="devWeekTablet">—</strong>
+          </div>
+        </div>
+      </div>
+      <div class="acard" style="padding:0;">
+        <h3 style="padding:16px 16px 0;margin:0;">Détail des appareils <span style="font-weight:400;color:#94a3b8;font-size:.8rem;">(30 derniers jours, 200 plus récents)</span></h3>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead>
+              <tr><th>Commerce</th><th>Type d'appareil</th><th>Navigateur</th><th>Système</th><th>Dernière activité</th></tr>
+            </thead>
+            <tbody id="devList"><tr><td colspan="5" class="loading">Chargement...</td></tr></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -1092,6 +1148,7 @@
     currentPrintPanel = tab;
     if (tab === 'stats')    loadStats();
     if (tab === 'calendar') loadCalendar();
+    if (tab === 'devices')  loadDevices();
     if (tab === 'users')    loadUsers();
     if (tab === 'subs')     loadSubs();
     if (tab === 'payments') loadPayments();
@@ -1223,6 +1280,40 @@
       // Applique le filtre pays courant (compteur d'appels d'offres + répartition)
       applyStatsCountry();
     } catch(e) { console.error(e); }
+  }
+
+  /* ====================== APPAREILS CONNECTÉS ====================== */
+  const DEVICE_LABELS = { desktop: '💻 Ordinateur', mobile: '📱 Téléphone', tablet: '📲 Tablette' };
+
+  async function loadDevices() {
+    const tbody = document.getElementById('devList');
+    try {
+      const d = await adminApi('/admin/device-stats');
+      const fill = (prefix, b) => {
+        b = b || {};
+        document.getElementById(prefix + 'Total').textContent = fmtN(b.total);
+        document.getElementById(prefix + 'Desktop').textContent = fmtN(b.desktop);
+        document.getElementById(prefix + 'Mobile').textContent = fmtN(b.mobile);
+        document.getElementById(prefix + 'Tablet').textContent = fmtN(b.tablet);
+      };
+      fill('devNow', d.now);
+      fill('devToday', d.today);
+      fill('devWeek', d.week);
+
+      const list = d.list || [];
+      tbody.innerHTML = list.length
+        ? list.map(r => `<tr>
+            <td>${esc(r.organization || 'Inconnu')}</td>
+            <td>${DEVICE_LABELS[r.device_type] || esc(r.device_type || '—')}</td>
+            <td>${esc(r.browser || '—')}</td>
+            <td>${esc(r.platform || '—')}</td>
+            <td>${fmtDT(r.last_seen_at)}</td>
+          </tr>`).join('')
+        : '<tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:20px;">Aucun appareil connecté récemment.</td></tr>';
+    } catch(e) {
+      console.error(e);
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#dc2626;padding:20px;">Erreur de chargement.</td></tr>';
+    }
   }
 
   // Récupère le nombre d'appels d'offres pour un pays (ou tous si cc vide)
