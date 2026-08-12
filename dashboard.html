@@ -31,9 +31,7 @@
       <a href="#" class="active" data-tab="overview">📊 Vue d'ensemble</a>
       <a href="#" data-tab="interests">🎯 Centres d'intérêt</a>
       <a href="#" data-tab="alerts">🔔 Mes alertes</a>
-      <a href="#" data-tab="subs">💳 Mon abonnement</a>
       <a href="#" data-tab="profile">👤 Mon profil</a>
-      <a href="/tarifs">⬆️ Améliorer mon offre</a>
     </aside>
 
     <main class="dash__main">
@@ -54,13 +52,10 @@
         <p class="muted mb-2">Bienvenue dans votre espace personnel. Gérez vos centres d'intérêt pour recevoir en temps réel les marchés qui vous concernent.</p>
         <div class="kpi-grid">
           <div class="kpi"><b id="kAlerts">—</b><span>Alertes reçues</span></div>
-          <div class="kpi"><b id="kFree">—</b><span>Statut d'abonnement</span></div>
-          <div class="kpi"><b id="kPlan">—</b><span>Formule actuelle</span></div>
           <div class="kpi"><b id="kSectors">—</b><span>Secteurs suivis</span></div>
         </div>
-        <!-- Boutons principaux mis en avant -->
+        <!-- Bouton principal mis en avant -->
         <div class="dash-cta">
-          <a href="/tarifs" class="dash-cta__btn dash-cta__btn--primary">💳 Abonnez-vous</a>
           <a href="/marches-publics" class="dash-cta__btn dash-cta__btn--secondary">📄 Consulter les marchés publics et privé</a>
         </div>
         <div class="card">
@@ -123,13 +118,6 @@
         <div id="alertsList"><p class="muted">Chargement…</p></div>
       </section>
 
-      <!-- Abonnement -->
-      <section data-panel="subs" class="hidden">
-        <h2 class="mb-2">💳 Mon abonnement</h2>
-        <div id="subsList"><p class="muted">Chargement…</p></div>
-        <div class="notice mt-2">Pour activer ou changer de formule, rendez-vous sur la page <a href="/tarifs"><b>Abonnement</b></a>.</div>
-      </section>
-
       <!-- Mon profil -->
       <section data-panel="profile" class="hidden">
         <h2 class="mb-2">👤 Mon profil</h2>
@@ -178,7 +166,6 @@
     const KW_SUGGESTIONS = ['forage','panneaux solaires','groupe électrogène','mobilier de bureau','matériel informatique','construction de bâtiment','réhabilitation','fourniture de carburant','consultant','étude de faisabilité','nettoyage','gardiennage','transport','médicaments','semences'];
 
     let ME = null;
-    let SUB = null;
     let SECTORS = [];
     let selectedSectors = new Set();
     let keywords = [];
@@ -188,7 +175,6 @@
       $$('.dash__side a[data-tab]').forEach(a => a.classList.toggle('active', a.dataset.tab === tab));
       $$('[data-panel]').forEach(p => p.classList.toggle('hidden', p.dataset.panel !== tab));
       if (tab === 'alerts') loadAlerts();
-      if (tab === 'subs') loadSubs();
       if (tab === 'interests' && !interestsReady) loadInterests();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -197,13 +183,9 @@
       try {
         const d = await api('/auth/me', { auth: true });
         ME = d.user;
-        SUB = d.subscription;
-        const active = SUB && SUB.status === 'active';
 
         document.getElementById('uName').textContent = ME.name || ME.email || ME.phone || 'Mon compte';
         document.getElementById('uHello').textContent = (ME.name || '').split(' ')[0] || 'à vous';
-        document.getElementById('kFree').textContent = active ? 'Actif' : 'Inactif';
-        document.getElementById('kPlan').textContent = (SUB && SUB.plan) ? cap(SUB.plan) : 'Aucune';
         document.getElementById('kSectors').textContent = (ME.sectors && ME.sectors.length) ? ME.sectors.length : 0;
 
         // Profil
@@ -220,13 +202,7 @@
 
         // Statut
         const box = document.getElementById('statusBox');
-        if (active) {
-          const planLabel = SUB.plan ? cap(SUB.plan) : 'Abonnement';
-          const exp = SUB.expires_at ? new Date(SUB.expires_at).toLocaleDateString('fr-FR') : (SUB.ends_at || '—');
-          box.innerHTML = `<p>✅ Abonnement <b>${planLabel}</b> actif jusqu'au <b>${exp}</b>. Vous recevez vos alertes en temps réel.</p>`;
-        } else {
-          box.innerHTML = `<p>🔒 Vous n'avez pas d'abonnement actif. Un abonnement est nécessaire pour <b>recevoir</b> les alertes (la consultation du site reste libre). Vos centres d'intérêt sont enregistrés et prêts.</p>`;
-        }
+        box.innerHTML = `<p>✅ Votre compte est <b>actif</b> et <b>100% gratuit</b>. Vous recevez jusqu'à <b>5 alertes par jour</b> pour les marchés correspondant à vos centres d'intérêt.</p>`;
 
       } catch (e) {
         console.error('Erreur chargement compte:', e);
@@ -346,19 +322,6 @@
           <div class="tender__meta"><span>Envoyée le <b>${a.sent_at || a.created_at || '—'}</b></span></div>
         </div>`).join('');
       } catch { el.innerHTML = '<div class="card">Impossible de charger les alertes.</div>'; }
-    }
-
-    async function loadSubs() {
-      const el = document.getElementById('subsList'); el.innerHTML = '<p class="muted">Chargement…</p>';
-      try {
-        const d = await api('/subscriptions', { auth: true });
-        const items = d.data || d.subscriptions || [];
-        if (!items.length) { el.innerHTML = '<div class="card">Aucun abonnement actif. <a href="/tarifs">Découvrez nos offres</a>.</div>'; return; }
-        el.innerHTML = items.map(s => `<div class="tender">
-          <div class="tender__top"><h3>${s.plan ? cap(s.plan) : (PROFILES[s.profile_type]?.label || s.profile_type || 'Abonnement')}</h3><span class="chip">${s.status}</span></div>
-          <div class="tender__meta"><span>Montant : <b>${fmt(s.amount||0)}</b></span><span>Échéance : <b>${s.expires_at ? new Date(s.expires_at).toLocaleDateString('fr-FR') : (s.ends_at||'—')}</b></span></div>
-        </div>`).join('');
-      } catch { el.innerHTML = '<div class="card">Impossible de charger les abonnements.</div>'; }
     }
 
     async function saveProfile() {
