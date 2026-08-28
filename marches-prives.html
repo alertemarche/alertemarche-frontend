@@ -59,7 +59,7 @@
         <div style="margin-top:18px;background:linear-gradient(145deg,#fff7ed,#ffedd5);border:1.5px dashed #f97316;border-radius:12px;padding:16px;text-align:center;">
           <span style="display:inline-block;background:#f97316;color:#fff;font-size:.65rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:12px;margin-bottom:10px;">📢 Pub disponible</span>
           <p style="font-size:.82rem;color:#44403c;margin:0 0 12px;line-height:1.45;font-weight:600;">Atteignez nos chefs d'entreprise inscrits dans 5 pays d'Afrique de l'Ouest</p>
-          <a href="mailto:info@alertemarche.com?subject=Espace%20publicitaire%20AlerteMarché" style="display:block;background:#f97316;color:#fff;font-weight:800;font-size:.8rem;padding:.55rem .8rem;border-radius:8px;text-decoration:none;margin-bottom:8px;">✉ Nous contacter</a>
+          <button onclick="openPubModal()" style="display:block;width:100%;background:#f97316;color:#fff;font-weight:800;font-size:.8rem;padding:.55rem .8rem;border-radius:8px;border:none;cursor:pointer;margin-bottom:8px;font-family:inherit;">✉ Réserver cet espace</button>
           <span style="font-size:.72rem;color:#9a3412;font-weight:600;">info@alertemarche.com</span>
         </div>
 
@@ -96,10 +96,10 @@
       <h2 style="font-size:1.75rem;font-weight:900;color:#1c1917;margin:0 0 12px;line-height:1.2;">Touchez les décideurs inscrits<br>sur <span style="color:#f97316;">AlerteMarché</span></h2>
       <p style="color:#57534e;font-size:1rem;max-width:560px;margin:0 auto 28px;line-height:1.6;">Des milliers de chefs d'entreprise et responsables achats dans <strong>5 pays</strong> — Bénin, Togo, Côte d'Ivoire, Sénégal &amp; Burkina Faso — consultent nos marchés chaque jour. Réservez votre espace pour leur présenter vos produits ou services.</p>
       <div style="display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;">
-        <a href="mailto:info@alertemarche.com?subject=Espace%20publicitaire%20AlerteMarché" style="display:inline-flex;align-items:center;gap:9px;background:#f97316;color:#fff;font-weight:800;padding:.85rem 1.8rem;border-radius:10px;text-decoration:none;font-size:1rem;box-shadow:0 4px 14px rgba(249,115,22,.35);transition:background .2s;" onmouseover="this.style.background='#ea6c0a'" onmouseout="this.style.background='#f97316'">
+        <button onclick="openPubModal()" style="display:inline-flex;align-items:center;gap:9px;background:#f97316;color:#fff;font-weight:800;padding:.85rem 1.8rem;border-radius:10px;border:none;cursor:pointer;font-size:1rem;box-shadow:0 4px 14px rgba(249,115,22,.35);transition:background .2s;font-family:inherit;" onmouseover="this.style.background='#ea6c0a'" onmouseout="this.style.background='#f97316'">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg>
-          Nous contacter pour la pub
-        </a>
+          Réserver cet espace
+        </button>
         <span style="color:#9a3412;font-weight:700;font-size:.95rem;">info@alertemarche.com</span>
       </div>
     </div>
@@ -318,5 +318,6 @@
       document.addEventListener('DOMContentLoaded', initPage);
     }
   </script>
+  <script src="js/pub-modal.js"></script>
 </body>
 </html>
