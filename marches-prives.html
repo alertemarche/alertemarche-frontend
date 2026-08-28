@@ -244,11 +244,14 @@
         if (Array.isArray(items) && items.length) {
           const now = Date.now();
           data = items.map(t => {
-            const isNew = t.publication_date ? (now - new Date(t.publication_date).getTime()) < 3 * 864e5 : false;
+            // Fraîcheur basée sur collected_at (date d'ajout réelle) car
+            // publication_date est souvent corrompue (dates dans le futur).
+            const freshDate = t.collected_at || t.publication_date;
+            const isNew = freshDate ? (now - new Date(freshDate).getTime()) < 3 * 864e5 : false;
             return {
               country: t.country || 'BJ',
               is_locked: (typeof t.is_locked === 'boolean') ? t.is_locked : undefined,
-              time: relTime(t.publication_date || t.collected_at),
+              time: relTime(freshDate),
               isNew,
               title: t.title || 'Consultation',
               inst: t.institution || 'Organisme international',
