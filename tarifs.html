@@ -89,7 +89,7 @@
             <li style="display:flex;gap:12px;align-items:flex-start;font-size:.95rem;"><span style="color:#16a34a;font-weight:800;font-size:1.1rem;">✓</span><span>Correspondance intelligente selon vos activités</span></li>
             <li style="display:flex;gap:12px;align-items:flex-start;font-size:.95rem;"><span style="color:#16a34a;font-weight:800;font-size:1.1rem;">✓</span><span><strong>Sans carte bancaire, sans engagement</strong></span></li>
           </ul>
-          <a href="/inscription" style="display:block;text-align:center;background:#16a34a;color:#fff;font-weight:800;padding:1rem;border-radius:10px;text-decoration:none;font-size:1.05rem;transition:background .2s;" onmouseover="this.style.background='#15803d'" onmouseout="this.style.background='#16a34a'">
+          <a id="tarifs-cta" href="/inscription" style="display:block;text-align:center;background:#16a34a;color:#fff;font-weight:800;padding:1rem;border-radius:10px;text-decoration:none;font-size:1.05rem;transition:background .2s;" onmouseover="this.style.background='#15803d'" onmouseout="this.style.background='#16a34a'">
             Créer mon compte gratuit →
           </a>
         </div>
@@ -190,6 +190,15 @@
       const params = new URLSearchParams(window.location.search);
       if (params.get('checkout') === '1' && !localStorage.getItem('am_token')) {
         window.location.href = 'inscription';
+      }
+
+      // Bouton CTA : si l'utilisateur est déjà connecté, on remplace
+      // "Créer mon compte gratuit" par "Accéder à mon tableau de bord"
+      // pour éviter de lui proposer de créer un compte qu'il possède déjà.
+      const cta = document.getElementById('tarifs-cta');
+      if (cta && localStorage.getItem('am_token')) {
+        cta.textContent = '→ Accéder à mon tableau de bord';
+        cta.href = '/dashboard';
       }
     });
   </script>
