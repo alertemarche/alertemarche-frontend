@@ -783,5 +783,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Corrige l'affichage du header une fois le statut réel connu
     // (ex. jeton expiré purgé → on rebascule sur Se connecter/S'inscrire).
     if (typeof refreshAuthUI === 'function') refreshAuthUI();
+    // Masquer le ruban "Créer mon compte" pour les utilisateurs déjà connectés
+    if (window.AM_USER_STATUS !== 'anonymous') {
+        const ribbon = document.getElementById('am-free-ribbon');
+        if (ribbon) ribbon.style.display = 'none';
+    }
     if (typeof initPage === 'function') initPage();
 });

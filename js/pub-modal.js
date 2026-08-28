@@ -232,6 +232,23 @@
           notice.className = 'pm-ok';
           form.reset();
           submit.style.display = 'none';
+          // Masquer les champs du formulaire pour que le bouton Fermer soit visible
+          form.querySelectorAll('.pm-field').forEach(f => f.style.display = 'none');
+          // Afficher un bouton Fermer pour reprendre la navigation
+          let closeBtn = document.getElementById('pm-close-after');
+          if (!closeBtn) {
+            closeBtn = document.createElement('button');
+            closeBtn.id = 'pm-close-after';
+            closeBtn.type = 'button';
+            closeBtn.textContent = '✕ Fermer et continuer mes recherches';
+            closeBtn.style.cssText = 'display:block;width:100%;margin-top:12px;padding:13px;background:#fff;color:#1c1917;border:2px solid #e7e5e4;border-radius:10px;font-size:.95rem;font-weight:700;cursor:pointer;font-family:inherit;transition:border-color .15s;';
+            closeBtn.onmouseenter = () => closeBtn.style.borderColor = '#f97316';
+            closeBtn.onmouseleave = () => closeBtn.style.borderColor = '#e7e5e4';
+            closeBtn.addEventListener('click', closePubModal);
+            notice.insertAdjacentElement('afterend', closeBtn);
+          } else {
+            closeBtn.style.display = 'block';
+          }
         } else {
           const firstError = json.errors ? Object.values(json.errors)[0][0] : (json.message || 'Une erreur est survenue.');
           notice.textContent = '⚠ ' + firstError;
@@ -253,9 +270,15 @@
   window.openPubModal = function () {
     const overlay = document.getElementById('pm-overlay');
     if (!overlay) { console.warn('pub-modal: overlay introuvable'); return; }
-    // Réinitialiser le bouton au cas où il avait été masqué
+    // Réinitialiser le bouton d'envoi au cas où il avait été masqué
     const submit = document.getElementById('pm-submit');
     if (submit) { submit.style.display = ''; submit.disabled = false; submit.textContent = 'Envoyer ma demande →'; }
+    // Masquer le bouton Fermer (affiché après succès)
+    const closeBtn = document.getElementById('pm-close-after');
+    if (closeBtn) closeBtn.style.display = 'none';
+    // Restaurer les champs du formulaire (masqués après succès)
+    const form = document.getElementById('pm-form');
+    if (form) form.querySelectorAll('.pm-field').forEach(f => f.style.display = '');
     document.getElementById('pm-notice').className = '';
     document.getElementById('pm-notice').textContent = '';
     overlay.classList.add('pm-open');
