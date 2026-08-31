@@ -284,8 +284,36 @@
       });
       let data = [];
 
+      // ── ESPACE PUBLICITAIRE — encart natif intercalé dans le listing ──
+      function advertCard() {
+        return `
+        <div style="grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;background:linear-gradient(120deg,#fff7ed 0%,#ffedd5 100%);border:1.5px dashed #f97316;border-radius:14px;padding:20px 24px;">
+          <div style="display:flex;align-items:center;gap:16px;min-width:0;">
+            <span style="font-size:1.9rem;flex-shrink:0;">📢</span>
+            <div>
+              <div style="font-weight:900;color:#1c1917;font-size:1.02rem;line-height:1.25;">Votre publicité pourrait être ici</div>
+              <div style="color:#78716c;font-size:.85rem;margin-top:3px;">Touchez nos chefs d'entreprise inscrits dans 5 pays — Bénin, Togo, Côte d'Ivoire, Sénégal &amp; Burkina Faso</div>
+            </div>
+          </div>
+          <button onclick="openPubModal()" style="flex-shrink:0;display:inline-flex;align-items:center;gap:8px;background:#f97316;color:#fff;font-weight:800;padding:.6rem 1.35rem;border-radius:9px;border:none;cursor:pointer;font-size:.9rem;white-space:nowrap;box-shadow:0 3px 10px rgba(249,115,22,.3);font-family:inherit;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg>
+            Réserver cet espace
+          </button>
+        </div>`;
+      }
+
+      // Intercale un encart pub toutes les 6 cartes de consultation
+      function withAdverts(cards) {
+        const out = [];
+        cards.forEach((html, i) => {
+          out.push(html);
+          if ((i + 1) % 6 === 0 && i < cards.length - 1) out.push(advertCard());
+        });
+        return out;
+      }
+
       function render(list) {
-        grid.innerHTML = list.length ? list.map(tenderCard).join('') : '<p class="muted" style="grid-column:1/-1;padding:30px;text-align:center;">Aucune consultation ne correspond à votre recherche.</p>';
+        grid.innerHTML = list.length ? withAdverts(list.map(tenderCard)).join('') : '<p class="muted" style="grid-column:1/-1;padding:30px;text-align:center;">Aucune consultation ne correspond à votre recherche.</p>';
         document.getElementById('countNum').textContent = new Intl.NumberFormat('fr-FR').format(list.length);
       }
 
