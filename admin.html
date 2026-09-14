@@ -79,6 +79,24 @@
     .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:14px 16px;border-bottom:1px solid #f1f5f9;}
     .toolbar input,.toolbar select{padding:.5rem .8rem;border:1.5px solid #e2e8f0;border-radius:7px;font-size:.85rem;background:#fff;min-width:180px;}
     .toolbar input:focus,.toolbar select:focus{outline:none;border-color:#0a7d3f;}
+    /* ---- Filtres période ---- */
+    .period-bar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:10px 16px;border-bottom:1px solid #f1f5f9;background:#f8fafb;}
+    .period-btn{padding:.35rem .85rem;border-radius:20px;border:1.5px solid #e2e8f0;background:#fff;font-size:.82rem;font-weight:600;cursor:pointer;color:#475569;transition:all .18s;}
+    .period-btn:hover{border-color:#0a7d3f;color:#0a7d3f;}
+    .period-btn.active{background:#0a7d3f;border-color:#0a7d3f;color:#fff;}
+    .period-custom{display:none;align-items:center;gap:6px;margin-left:4px;}
+    .period-custom.show{display:flex;}
+    .period-custom input[type=date]{padding:.3rem .6rem;border:1.5px solid #e2e8f0;border-radius:7px;font-size:.82rem;background:#fff;}
+    .period-custom input[type=date]:focus{outline:none;border-color:#0a7d3f;}
+    /* ---- Résumé par pays ---- */
+    .country-summary{display:flex;gap:10px;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid #f1f5f9;background:#fff;}
+    .cs-card{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;border:1.5px solid #e2e8f0;background:#f8fafb;min-width:130px;cursor:pointer;transition:border-color .15s;}
+    .cs-card:hover{border-color:#0a7d3f;}
+    .cs-card.cs-active{border-color:#0a7d3f;background:#f0fdf4;}
+    .cs-count{font-size:1.4rem;font-weight:800;color:#0a7d3f;line-height:1;}
+    .cs-label{font-size:.78rem;color:#64748b;font-weight:600;}
+    .cs-total{border-color:#0a7d3f20;background:#f0fdf4;}
+    .cs-total .cs-count{color:#0f172a;}
 
     /* ---- TABLES ---- */
     .table-wrap{overflow-x:auto;}
@@ -452,6 +470,22 @@
         </div>
       </div>
       <div class="acard" style="padding:0;">
+        <!-- Boutons période -->
+        <div class="period-bar">
+          <span style="font-size:.8rem;font-weight:700;color:#64748b;margin-right:2px;">📅 Période :</span>
+          <button class="period-btn active" data-period="all"       onclick="setPeriod(this)">Tous</button>
+          <button class="period-btn"        data-period="today"     onclick="setPeriod(this)">Aujourd'hui</button>
+          <button class="period-btn"        data-period="yesterday" onclick="setPeriod(this)">Hier</button>
+          <button class="period-btn"        data-period="month"     onclick="setPeriod(this)">Ce mois</button>
+          <button class="period-btn"        data-period="year"      onclick="setPeriod(this)">Cette année</button>
+          <button class="period-btn"        data-period="custom"    onclick="setPeriod(this)">🗓 Personnalisé</button>
+          <span class="period-custom" id="periodCustom">
+            du <input type="date" id="dateFrom" onchange="loadUsers()">
+            au <input type="date" id="dateTo"   onchange="loadUsers()">
+          </span>
+        </div>
+        <!-- Résumé abonnés par pays -->
+        <div class="country-summary" id="countrySummary" style="display:none;"></div>
         <div class="toolbar">
           <input id="usersSearch" placeholder="🔎 Nom, entreprise, e-mail…" oninput="renderUsers()">
           <select id="usersProfile" onchange="loadUsers()">
@@ -1449,6 +1483,64 @@
   }
 
   /* ====================== UTILISATEURS ====================== */
+  /* ====================== FILTRE PÉRIODE ====================== */
+  function getPeriodDates() {
+    const active = document.querySelector('.period-btn.active');
+    const p = active?.dataset?.period || 'all';
+    const now = new Date();
+    const fmt = d => d.toISOString().slice(0, 10);
+    const today = fmt(now);
+    if (p === 'today')     return { date_from: today, date_to: today };
+    if (p === 'yesterday') { const y = new Date(now); y.setDate(y.getDate()-1); const yd=fmt(y); return { date_from: yd, date_to: yd }; }
+    if (p === 'month')  return { date_from: fmt(new Date(now.getFullYear(), now.getMonth(), 1)), date_to: today };
+    if (p === 'year')   return { date_from: now.getFullYear() + '-01-01', date_to: today };
+    if (p === 'custom') return { date_from: document.getElementById('dateFrom')?.value||'', date_to: document.getElementById('dateTo')?.value||'' };
+    return {};
+  }
+
+  function setPeriod(btn) {
+    document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const custom = document.getElementById('periodCustom');
+    if (btn.dataset.period === 'custom') custom.classList.add('show');
+    else custom.classList.remove('show');
+    loadUsers();
+  }
+
+  /* ====================== RÉSUMÉ PAR PAYS ====================== */
+  const COUNTRY_FLAGS_P = { BJ:'🇧🇯', TG:'🇹🇬', CI:'🇨🇮', SN:'🇸🇳', BF:'🇧🇫' };
+  const COUNTRY_NAMES_P = { BJ:'Bénin', TG:'Togo', CI:"Côte d'Ivoire", SN:'Sénégal', BF:'Burkina Faso' };
+
+  function renderCountrySummary(allUsers) {
+    const box = document.getElementById('countrySummary');
+    if (!box) return;
+    const counts = {};
+    allUsers.forEach(u => { const c = u.primary_country||'—'; counts[c]=(counts[c]||0)+1; });
+    const active = document.querySelector('.period-btn.active')?.dataset?.period||'all';
+    const lbl = {all:'au total',today:"aujourd'hui",yesterday:'hier',month:'ce mois',year:'cette année',custom:'sur la période'}[active]||'';
+    const curCC = document.getElementById('usersCountry')?.value||'';
+    const cards = [
+      `<div class="cs-card cs-total${!curCC?' cs-active':''}" onclick="filterByCountrySummary('')">
+        <div class="cs-count">${allUsers.length}</div>
+        <div class="cs-label">🌍 Tous<br><small style="color:#94a3b8;font-size:.7rem;">${lbl}</small></div>
+      </div>`,
+      ...['BJ','TG','CI','SN','BF'].map(cc => {
+        const n = counts[cc]||0;
+        return `<div class="cs-card${curCC===cc?' cs-active':''}" onclick="filterByCountrySummary('${cc}')">
+          <div class="cs-count" style="${n===0?'color:#94a3b8;':''}">${n}</div>
+          <div class="cs-label">${COUNTRY_FLAGS_P[cc]} ${COUNTRY_NAMES_P[cc]}<br><small style="color:#94a3b8;font-size:.7rem;">${lbl}</small></div>
+        </div>`;
+      })
+    ];
+    box.innerHTML = cards.join('');
+    box.style.display = 'flex';
+  }
+
+  function filterByCountrySummary(cc) {
+    document.getElementById('usersCountry').value = cc;
+    loadUsers();
+  }
+
   async function loadUsers() {
     const el = document.getElementById('usersList');
     el.innerHTML = '<p class="loading">Chargement…</p>';
@@ -1457,9 +1549,21 @@
     const cc = document.getElementById('usersCountry')?.value;
     if (pf) params.set('profile_type', pf);
     if (cc) params.set('country', cc);
+    const { date_from, date_to } = getPeriodDates();
+    if (date_from) params.set('date_from', date_from);
+    if (date_to)   params.set('date_to',   date_to);
     try {
-      const d = await adminApi('/admin/users?' + params);
+      // Pour le résumé par pays : charger sans filtre pays (pour avoir tous les compteurs)
+      const paramsAll = new URLSearchParams({ all: '1' });
+      if (pf) paramsAll.set('profile_type', pf);
+      if (date_from) paramsAll.set('date_from', date_from);
+      if (date_to)   paramsAll.set('date_to',   date_to);
+      const [d, dAll] = await Promise.all([
+        adminApi('/admin/users?' + params),
+        cc ? adminApi('/admin/users?' + paramsAll) : Promise.resolve(null),
+      ]);
       USERS_CACHE = d.data || [];
+      renderCountrySummary(cc ? (dAll?.data||[]) : USERS_CACHE);
       renderUsers();
     } catch(e) { el.innerHTML = `<p class="empty">Impossible de charger les utilisateurs.</p>`; }
   }
