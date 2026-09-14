@@ -1288,13 +1288,16 @@
   let statsData = null;      // Dernières statistiques chargées
   let statsCountry = '';     // Pays sélectionné dans le filtre du tableau de bord ('' = Tous)
 
-  async function loadStats() {
+  async function loadStats(country = '') {
     try {
-      const d = await adminApi('/admin/stats');
+      const params = new URLSearchParams();
+      if (country) params.set('country', country);
+      const d = await adminApi('/admin/stats' + (country ? '?' + params : ''));
       statsData = d;
       document.getElementById('kUsers').textContent = fmtN(d.users_total);
       document.getElementById('kSubs').textContent = fmtN(d.active_subscriptions);
       document.getElementById('kRev').textContent = fmtN(d.revenue_active);
+      document.getElementById('kTenders').textContent = fmtN(d.tenders_total);
       document.getElementById('kAlerts').textContent = fmtN(d.alerts_sent);
       document.getElementById('kNeeds').textContent = fmtN(d.needs_pending);
 
@@ -1311,7 +1314,7 @@
           }).join('')
         : '<p style="color:#94a3b8;font-size:.85rem;">Aucune donnée.</p>';
 
-      // Applique le filtre pays courant (compteur d'appels d'offres + répartition)
+      // Met à jour l'interface (boutons actifs + répartition pays)
       applyStatsCountry();
     } catch(e) { console.error(e); }
   }
@@ -1350,42 +1353,12 @@
     }
   }
 
-  // Récupère le nombre d'appels d'offres pour un pays (ou tous si cc vide)
-  // via l'API publique des appels d'offres (compteur cohérent avec le site).
-  async function fetchTendersCount(cc) {
-    try {
-      // Pour l'admin, on veut TOUS les marchés (actifs+expirés, tous types).
-      // - active=false : désactive le filtre de deadline (garde les marchés expirés)
-      // - type=... : inclut tous les types (public, privé, aac, plan_passation, avis_general)
-      const params = new URLSearchParams({
-        per_page: '1',
-        active: 'false',
-        type: 'public,prive,aac,plan_passation,avis_general'
-      });
-      if (cc) params.set('country', cc);
-      const res = await fetch(API_BASE + '/tenders?' + params.toString(), {
-        headers: { 'Accept': 'application/json' },
-      });
-      const d = await res.json();
-      if (typeof d.total === 'number') return d.total;
-      if (d.meta && typeof d.meta.total === 'number') return d.meta.total;
-      const items = d.data || d || [];
-      return Array.isArray(items) ? items.length : 0;
-    } catch(e) { return null; }
-  }
-
-  // Met à jour le tableau de bord en fonction du pays sélectionné.
-  async function applyStatsCountry() {
+  // Met à jour l'interface du tableau de bord (boutons actifs + répartition pays).
+  function applyStatsCountry() {
     if (!statsData) return;
     // Boutons actifs
     document.querySelectorAll('#statsCountryFilter .scf-btn').forEach(b =>
       b.classList.toggle('active', (b.dataset.cc || '') === statsCountry));
-
-    // Compteur d'appels d'offres (filtré par pays via l'API publique)
-    const kt = document.getElementById('kTenders');
-    kt.textContent = '…';
-    const n = await fetchTendersCount(statsCountry);
-    kt.textContent = (n === null) ? fmtN(statsData.tenders_total) : fmtN(n);
 
     // Répartition par pays — met en évidence le pays sélectionné
     const byC = statsData.users_by_country || {};
@@ -1399,10 +1372,10 @@
       : '<p style="color:#94a3b8;font-size:.85rem;">Aucune donnée.</p>';
   }
 
-  // Change le pays du filtre du tableau de bord.
+  // Change le pays du filtre du tableau de bord et recharge les statistiques.
   function setStatsCountry(cc) {
     statsCountry = cc || '';
-    applyStatsCountry();
+    loadStats(statsCountry);
   }
 
   /* ====================== CALENDRIER D'ACTIVITÉ ====================== */
