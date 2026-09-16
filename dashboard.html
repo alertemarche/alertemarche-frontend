@@ -10,7 +10,7 @@
   <meta name="description" content="Tableau de bord AlerteMarché : vos alertes, centres d'intérêt, abonnements et paramètres.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260803">
+  <link rel="stylesheet" href="css/style.css?v=20260916b">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RRXKSCN05J"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RRXKSCN05J');gtag('config','AW-11514321686');</script>
 </head>
@@ -166,7 +166,7 @@
     </main>
   </div>
 
-  <script src="js/app.js?v=20260916a"></script>
+  <script src="js/app.js?v=20260916b"></script>
   <script>
     if (!token()) location.href="connexion";
 
@@ -364,6 +364,26 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      // Si l'utilisateur vient de s'inscrire pour publier une annonce
+      const pendingPlan = localStorage.getItem('am_pub_plan');
+      if (pendingPlan) {
+        const banner = document.createElement('div');
+        banner.style.cssText = 'background:linear-gradient(135deg,#fffbeb,#fef3c7);border:2px solid #f59e0b;border-radius:12px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;';
+        banner.innerHTML = `
+          <span style="font-size:1.5rem;">🎉</span>
+          <div style="flex:1;min-width:200px;">
+            <b style="color:#92400e;display:block;margin-bottom:3px;">Votre compte est prêt ! Publiez votre annonce maintenant.</b>
+            <span style="font-size:.85rem;color:#78350f;">Forfait choisi : <strong>${pendingPlan === 'premium' ? '⭐ PREMIUM — 50 000 FCFA / 30 jours' : 'GRATUIT — 0 FCFA / 15 jours'}</strong></span>
+          </div>
+          <a href="/publier?plan=${pendingPlan}" onclick="localStorage.removeItem('am_pub_plan')" style="background:#f59e0b;color:#fff;font-weight:700;padding:10px 22px;border-radius:8px;text-decoration:none;white-space:nowrap;font-size:.9rem;">
+            ➕ Publier maintenant →
+          </a>
+          <button onclick="localStorage.removeItem('am_pub_plan');this.parentElement.remove();" style="background:none;border:none;cursor:pointer;color:#92400e;font-size:1.1rem;padding:4px;" title="Fermer">✕</button>
+        `;
+        const overview = document.querySelector('[data-panel="overview"]');
+        if (overview) overview.insertBefore(banner, overview.firstChild);
+      }
+
       $$('.dash__side a[data-tab]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); switchTab(a.dataset.tab); }));
       $$('[data-goto]').forEach(b => b.addEventListener('click', () => switchTab(b.dataset.goto)));
       document.getElementById('logoutBtn').addEventListener('click', doLogout);

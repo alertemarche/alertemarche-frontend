@@ -8,7 +8,7 @@
   <meta name="description" content="Publiez votre appel d'offres, besoin ou avis sur AlerteMarché. Touchez des milliers d'entreprises et prestataires qualifiés au Bénin et en Afrique de l'Ouest.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260803">
+  <link rel="stylesheet" href="css/style.css?v=20260916b">
   <script src="https://cdn.kkiapay.me/k.js"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RRXKSCN05J"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RRXKSCN05J');gtag('config','AW-11514321686');</script>
@@ -162,6 +162,111 @@
         <h3>🎉 Publiez gratuitement votre annonce</h3>
         <p>Créez un compte professionnel gratuit en 2 minutes pour soumettre votre appel d'offres ou besoin de prestation.</p>
         <a href="/inscription?profil=entreprise&next=/publier" class="btn-cta">Créer mon compte gratuit</a>
+      </div>
+
+      <div id="pubLanding" style="display:none;">
+        <!-- Accroche -->
+        <div style="text-align:center;margin-bottom:36px;">
+          <h2 style="font-size:1.6rem;font-weight:800;color:#111;margin:0 0 10px;">Choisissez votre formule avant de publier</h2>
+          <p style="color:#6b7280;font-size:1rem;margin:0;">Votre annonce sera visible par des milliers d'entreprises et prestataires en Afrique de l'Ouest.</p>
+        </div>
+
+        <!-- Cards comparatif côte à côte -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:720px;margin:0 auto 40px;">
+
+          <!-- GRATUIT -->
+          <div style="background:#fff;border:2px solid #16a34a;border-radius:16px;padding:28px 22px;text-align:center;position:relative;">
+            <span style="background:#dcfce7;color:#15803d;font-size:.72rem;font-weight:800;padding:4px 14px;border-radius:20px;display:inline-block;margin-bottom:14px;letter-spacing:.05em;">GRATUIT</span>
+            <div style="font-size:2.4rem;font-weight:900;color:#16a34a;line-height:1;">0 <span style="font-size:1.1rem;font-weight:600;">FCFA</span></div>
+            <div style="font-size:.85rem;color:#6b7280;margin:6px 0 18px;">Visible pendant <strong>15 jours</strong></div>
+            <ul style="list-style:none;padding:0;margin:0 0 24px;font-size:.85rem;color:#374151;text-align:left;">
+              <li style="padding:5px 0;display:flex;gap:8px;align-items:flex-start;"><span style="color:#16a34a;font-weight:700;flex-shrink:0;">✓</span> Diffusion par e-mail aux abonnés</li>
+              <li style="padding:5px 0;display:flex;gap:8px;align-items:flex-start;"><span style="color:#16a34a;font-weight:700;flex-shrink:0;">✓</span> Validation sous 24–48 h ouvrées</li>
+              <li style="padding:5px 0;display:flex;gap:8px;align-items:flex-start;"><span style="color:#16a34a;font-weight:700;flex-shrink:0;">✓</span> Carte standard dans la liste</li>
+              <li style="padding:5px 0;display:flex;gap:8px;align-items:flex-start;"><span style="color:#9ca3af;flex-shrink:0;">✗</span> <span style="color:#9ca3af;">Mise en tête de liste</span></li>
+              <li style="padding:5px 0;display:flex;gap:8px;align-items:flex-start;"><span style="color:#9ca3af;flex-shrink:0;">✗</span> <span style="color:#9ca3af;">Badge doré + carte XL</span></li>
+              <li style="padding:5px 0;display:flex;gap:8px;align-items:flex-start;"><span style="color:#9ca3af;flex-shrink:0;">✗</span> <span style="color:#9ca3af;">3× plus de visibilité</span></li>
+            </ul>
+            <button onclick="choosePlan('gratuit')" style="width:100%;padding:12px;background:#16a34a;color:#fff;font-weight:700;font-size:.95rem;border:none;border-radius:8px;cursor:pointer;transition:background .2s;" onmouseover="this.style.background='#15803d'" onmouseout="this.style.background='#16a34a'">
+              Choisir GRATUIT →
+            </button>
+          </div>
+
+          <!-- PREMIUM -->
+          <div style="background:linear-gradient(160deg,#fffbeb 0%,#fef3c7 100%);border:2px solid #f59e0b;border-radius:16px;padding:28px 22px;text-align:center;position:relative;box-shadow:0 4px 24px rgba(245,158,11,.18);">
+            <!-- Badge "Recommandé" -->
+            <div style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:#f59e0b;color:#fff;font-size:.7rem;font-weight:800;padding:4px 16px;border-radius:20px;white-space:nowrap;">⭐ RECOMMANDÉ</div>
+            <span style="background:#fef3c7;color:#92400e;font-size:.72rem;font-weight:800;padding:4px 14px;border-radius:20px;display:inline-block;margin-bottom:14px;letter-spacing:.05em;">PREMIUM</span>
+            <div style="font-size:2.4rem;font-weight:900;color:#d97706;line-height:1;">50 000 <span style="font-size:1.1rem;font-weight:600;">FCFA</span></div>
+            <div style="font-size:.85rem;color:#6b7280;margin:6px 0 18px;">Visible pendant <strong>30 jours</strong></div>
+            <ul style="list-style:none;padding:0;margin:0 0 24px;font-size:.85rem;color:#374151;text-align:left;">
+              <li style="padding:5px 0;display:flex;gap:8px;align-items:flex-start;"><span style="color:#d97706;font-weight:700;flex-shrink:0;">✓</span> Diffusion par e-mail aux abonnés</li>
+              <li style="padding:5px 0;display:flex;gap:8px;align-items:flex-start;"><span style="color:#d97706;font-weight:700;flex-shrink:0;">✓</span> Validation sous 24–48 h ouvrées</li>
+              <li style="padding:5px 0;display:flex;gap:8px;align-items:flex-start;"><span style="color:#d97706;font-weight:700;flex-shrink:0;">✓</span> Carte standard dans la liste</li>
+              <li style="padding:5px 0;display:flex;gap:8px;align-items:flex-start;"><span style="color:#d97706;font-weight:700;flex-shrink:0;">★</span> <strong>En tête de liste (section Premium)</strong></li>
+              <li style="padding:5px 0;display:flex;gap:8px;align-items:flex-start;"><span style="color:#d97706;font-weight:700;flex-shrink:0;">★</span> <strong>Badge doré + carte XL remarquable</strong></li>
+              <li style="padding:5px 0;display:flex;gap:8px;align-items:flex-start;"><span style="color:#d97706;font-weight:700;flex-shrink:0;">★</span> <strong>3× plus de vues estimées</strong></li>
+            </ul>
+            <button onclick="choosePlan('premium')" style="width:100%;padding:12px;background:#f59e0b;color:#fff;font-weight:700;font-size:.95rem;border:none;border-radius:8px;cursor:pointer;transition:background .2s;" onmouseover="this.style.background='#d97706'" onmouseout="this.style.background='#f59e0b'">
+              Choisir PREMIUM ⭐ →
+            </button>
+          </div>
+        </div>
+
+        <!-- Tableau comparatif détaillé -->
+        <div style="max-width:720px;margin:0 auto 40px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden;">
+          <table style="width:100%;border-collapse:collapse;font-size:.88rem;">
+            <thead>
+              <tr style="background:#f9fafb;">
+                <th style="padding:14px 18px;text-align:left;font-weight:700;color:#374151;border-bottom:1px solid #e5e7eb;">Critère</th>
+                <th style="padding:14px 18px;text-align:center;font-weight:700;color:#16a34a;border-bottom:1px solid #e5e7eb;">GRATUIT</th>
+                <th style="padding:14px 18px;text-align:center;font-weight:700;color:#d97706;border-bottom:1px solid #e5e7eb;">⭐ PREMIUM</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid #f3f4f6;">
+                <td style="padding:12px 18px;color:#374151;">Prix</td>
+                <td style="padding:12px 18px;text-align:center;font-weight:700;color:#16a34a;">0 FCFA</td>
+                <td style="padding:12px 18px;text-align:center;font-weight:700;color:#d97706;">50 000 FCFA</td>
+              </tr>
+              <tr style="border-bottom:1px solid #f3f4f6;background:#fafafa;">
+                <td style="padding:12px 18px;color:#374151;">Durée de visibilité</td>
+                <td style="padding:12px 18px;text-align:center;">15 jours</td>
+                <td style="padding:12px 18px;text-align:center;font-weight:700;">30 jours</td>
+              </tr>
+              <tr style="border-bottom:1px solid #f3f4f6;">
+                <td style="padding:12px 18px;color:#374151;">Position dans la liste</td>
+                <td style="padding:12px 18px;text-align:center;">Standard</td>
+                <td style="padding:12px 18px;text-align:center;font-weight:700;color:#d97706;">🏆 En tête de liste</td>
+              </tr>
+              <tr style="border-bottom:1px solid #f3f4f6;background:#fafafa;">
+                <td style="padding:12px 18px;color:#374151;">Apparence de la carte</td>
+                <td style="padding:12px 18px;text-align:center;">Normale</td>
+                <td style="padding:12px 18px;text-align:center;font-weight:700;color:#d97706;">Carte XL + badge doré</td>
+              </tr>
+              <tr style="border-bottom:1px solid #f3f4f6;">
+                <td style="padding:12px 18px;color:#374151;">Diffusion e-mail abonnés</td>
+                <td style="padding:12px 18px;text-align:center;">✓</td>
+                <td style="padding:12px 18px;text-align:center;">✓</td>
+              </tr>
+              <tr style="border-bottom:1px solid #f3f4f6;background:#fafafa;">
+                <td style="padding:12px 18px;color:#374151;">Visibilité estimée</td>
+                <td style="padding:12px 18px;text-align:center;">Standard</td>
+                <td style="padding:12px 18px;text-align:center;font-weight:700;color:#d97706;">3× plus de vues</td>
+              </tr>
+              <tr>
+                <td style="padding:12px 18px;color:#374151;">Paiement</td>
+                <td style="padding:12px 18px;text-align:center;">—</td>
+                <td style="padding:12px 18px;text-align:center;">Mobile Money (KKiaPay)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Note rassurante -->
+        <p style="text-align:center;font-size:.85rem;color:#6b7280;max-width:560px;margin:0 auto;">
+          🔒 Votre annonce sera vérifiée par notre équipe avant publication. Inscription rapide et gratuite en 2 minutes.
+        </p>
       </div>
 
       <div id="pubContent" class="pub-layout">
@@ -403,12 +508,18 @@
     </div>
   </section>
 
-  <script src="js/app.js?v=20260916a"></script>
+  <script src="js/app.js?v=20260916b"></script>
   <script>
     // Publication freemium : GRATUIT (15j) ou PREMIUM (30j, paiement KKiaPay)
     let currentUser = null;
     let selectedPlan = 'free'; // 'free' ou 'premium'
     let premiumTransactionId = null; // transactionId KKiaPay après paiement réussi
+
+    // Visiteur non connecté : choix de formule → mémorise + redirige vers inscription
+    function choosePlan(plan) {
+      localStorage.setItem('am_pub_plan', plan);
+      window.location.href = '/inscription?plan=' + plan;
+    }
 
     function selectPlan(plan) {
       selectedPlan = plan;
@@ -498,26 +609,40 @@
       const tok = localStorage.getItem('am_token');
       const visitorBanner = document.getElementById('visitorBanner');
       const pubContent = document.getElementById('pubContent');
+      const pubLanding = document.getElementById('pubLanding');
+      const urlPlan = new URLSearchParams(location.search).get('plan');
 
       if (!tok) {
-        // Mode visiteur : banner visible + formulaire flouté
-        visitorBanner.style.display = 'block';
-        document.body.classList.add('pub-visitor-mode');
-        pubContent.style.display = 'grid';
-      } else {
-        // Connecté : banner caché + formulaire normal
-        visitorBanner.style.display = 'none';
+        // Visiteur non connecté : afficher le comparatif, masquer le formulaire
         document.body.classList.remove('pub-visitor-mode');
-        pubContent.style.display = 'grid';
-        
-        // Pré-remplir organisation
-        try {
-          currentUser = JSON.parse(localStorage.getItem('am_user') || '{}');
-          if (currentUser.organization) {
-            document.getElementById('orgField').value = currentUser.organization;
-          }
-        } catch (_) {}
+        if (visitorBanner) visitorBanner.style.display = 'none';
+        if (pubContent) pubContent.style.display = 'none';
+        if (pubLanding) pubLanding.style.display = 'block';
+        return; // pas de formulaire à initialiser
       }
+
+      // Utilisateur connecté : formulaire normal
+      if (pubLanding) pubLanding.style.display = 'none';
+      if (visitorBanner) visitorBanner.style.display = 'none';
+      document.body.classList.remove('pub-visitor-mode');
+      pubContent.style.display = 'grid';
+
+      // Pré-remplir organisation
+      try {
+        currentUser = JSON.parse(localStorage.getItem('am_user') || '{}');
+        if (currentUser.organization) {
+          document.getElementById('orgField').value = currentUser.organization;
+        }
+      } catch (_) {}
+
+      // Pré-sélectionner la formule depuis l'URL ou le localStorage
+      const storedPlan = urlPlan || localStorage.getItem('am_pub_plan');
+      if (storedPlan === 'premium') {
+        selectPlan('premium');
+      } else if (storedPlan === 'gratuit' || storedPlan === 'free') {
+        selectPlan('free');
+      }
+      localStorage.removeItem('am_pub_plan');
 
       // Gestion des 4 boutons de type d'annonce
       document.querySelectorAll('.pub-type-btn').forEach(btn => {

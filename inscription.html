@@ -13,9 +13,21 @@
   <meta name="description" content="Créez gratuitement votre compte AlerteMarché en 3 étapes et recevez les opportunités du Bénin par e-mail.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260803">
+  <link rel="stylesheet" href="css/style.css?v=20260916b">
 </head>
 <body>
+
+  <!-- Bandeau plan pré-choisi (affiché si vient de /publier) -->
+  <div id="pubPlanBanner" style="display:none;background:linear-gradient(135deg,#fffbeb,#fef3c7);border-bottom:2px solid #f59e0b;padding:14px 0;">
+    <div class="container" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+      <span style="font-size:1.3rem;">📢</span>
+      <div style="flex:1;min-width:200px;">
+        <b id="pubPlanBannerTitle" style="color:#92400e;font-size:.95rem;display:block;">Vous avez choisi le forfait GRATUIT</b>
+        <span style="color:#78350f;font-size:.82rem;">Créez votre compte pour publier votre annonce sur AlerteMarché.</span>
+      </div>
+      <span id="pubPlanBannerBadge" style="background:#d97706;color:#fff;font-weight:800;padding:5px 16px;border-radius:20px;font-size:.8rem;white-space:nowrap;"></span>
+    </div>
+  </div>
 
   <!-- Breadcrumb étapes (3 étapes) -->
   <section class="container" style="padding-top:28px;">
@@ -150,7 +162,7 @@
     </div>
   </section>
 
-  <script src="js/app.js?v=20260916a"></script>
+  <script src="js/app.js?v=20260916b"></script>
   <script>
     const PROFILE_META = {
       prestataire: {
@@ -210,6 +222,26 @@
     }
 
     function initPage() {
+      // Bandeau plan pré-choisi (vient de /publier)
+      const pubPlan = new URLSearchParams(location.search).get('plan') || localStorage.getItem('am_pub_plan');
+      if (pubPlan) {
+        const banner = document.getElementById('pubPlanBanner');
+        const title  = document.getElementById('pubPlanBannerTitle');
+        const badge  = document.getElementById('pubPlanBannerBadge');
+        if (banner) {
+          if (pubPlan === 'premium') {
+            title.textContent = 'Vous avez choisi le forfait ⭐ PREMIUM (50 000 FCFA / 30 jours)';
+            badge.textContent = '⭐ PREMIUM';
+            banner.style.background = 'linear-gradient(135deg,#fffbeb,#fef3c7)';
+          } else {
+            title.textContent = 'Vous avez choisi le forfait GRATUIT (0 FCFA / 15 jours)';
+            badge.textContent = 'GRATUIT';
+            badge.style.background = '#16a34a';
+          }
+          banner.style.display = 'block';
+        }
+      }
+
       // Pré-sélectionne l'indicatif téléphonique du pays choisi (BJ/TG/CI/SN/BF).
       (function(){ var dc = { BJ:'+229', TG:'+228', CI:'+225', SN:'+221', BF:'+226' }[(window.amCode?amCode():'BJ')] || '+229'; var sel = document.querySelector('select.cc[name="cc"]'); if (sel) sel.value = dc; })();
       // Adapte régions/villes/exemples aux réalités du pays courant.
