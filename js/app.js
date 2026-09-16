@@ -489,7 +489,8 @@ function renderNav() {
           <a href="/marches-publics" class="${isActive('/marches-publics')}">Marchés publics</a>
           <a href="/marches-prives" class="${isActive('/marches-prives')}">Marchés privés</a>
           <a href="/blog" class="${isActive('/blog')}">Blog</a>
-          <a href="/publier" class="nav-publier ${isActive('/publier')}">📢 Publier une annonce</a>
+          <a href="/annonces" class="${isActive('/annonces')}">📢 Annonces</a>
+          <a href="/publier" class="nav-publier ${isActive('/publier')}">Publier une annonce</a>
           <a href="/tarifs" class="${isActive('/tarifs')}">Offre gratuite</a>
           <span id="navAuthMobile">${authLinksMobile()}</span>
         </nav>
@@ -572,6 +573,7 @@ function renderFooter() {
             <a href="/marches-publics">Marchés publics</a>
             <a href="/marches-prives">Marchés privés</a>
             <a href="/blog">Blog & Guides</a>
+            <a href="/annonces">Annonces entreprises</a>
             <a href="/tarifs">Notre offre gratuite</a>
           </div>
           <div class="footer-col">

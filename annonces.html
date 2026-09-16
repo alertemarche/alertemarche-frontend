@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <!-- Google Ads (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-11514321686"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','AW-11514321686');</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=3"><link rel="icon" type="image/x-icon" href="/favicon.ico?v=3"><link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png?v=3">
+  <title>Annonces des entreprises — AlerteMarché</title>
+  <meta name="description" content="Opportunités de collaboration publiées par des entreprises au Bénin, Togo, Côte d'Ivoire, Sénégal et Burkina Faso. Contactez directement les entreprises.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=20260803">
+  <style>
+    /* ──────────────────────────────────────────────────────────
+       PAGE ANNONCES — Styles spécifiques
+    ────────────────────────────────────────────────────────── */
+    .ann-hero {
+      background: linear-gradient(135deg, #0a7d3f 0%, #064d27 100%);
+      color: #fff;
+      padding: 56px 0 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .ann-hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,<svg width="60" height="60" xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1" fill="rgba(255,255,255,0.05)"/></svg>');
+      opacity: 0.4;
+    }
+    .ann-hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 780px;
+    }
+    .ann-hero h1 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      margin: 0 0 14px;
+      line-height: 1.15;
+    }
+    .ann-hero p {
+      font-size: 1.15rem;
+      opacity: 0.92;
+      margin: 0 0 28px;
+      line-height: 1.5;
+    }
+    .ann-hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #f59e0b;
+      color: #fff;
+      font-weight: 700;
+      padding: 0.9rem 1.8rem;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+    }
+    .ann-hero-cta:hover {
+      background: #d97706;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+    }
+
+    /* Barre de filtres */
+    .ann-filters {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 24px;
+      margin: -32px 0 32px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      position: relative;
+      z-index: 2;
+    }
+    .ann-filters-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+    .ann-filter-group {
+      flex: 1;
+      min-width: 200px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .ann-filter-group label {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #334155;
+    }
+    .ann-filter-group input,
+    .ann-filter-group select {
+      padding: 0.75rem 1rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      background: #fff;
+      transition: border-color 0.15s;
+    }
+    .ann-filter-group input:focus,
+    .ann-filter-group select:focus {
+      outline: none;
+      border-color: #0a7d3f;
+      box-shadow: 0 0 0 3px rgba(10, 125, 63, 0.1);
+    }
+    .ann-filter-btn {
+      padding: 0.75rem 1.6rem;
+      background: #0a7d3f;
+      color: #fff;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .ann-filter-btn:hover {
+      background: #064d27;
+    }
+
+    /* Compteur */
+    .ann-count {
+      font-size: 1.05rem;
+      color: #64748b;
+      margin-bottom: 24px;
+    }
+    .ann-count b {
+      color: #0f172a;
+      font-weight: 700;
+    }
+
+    /* Grille d'annonces */
+    .ann-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    @media (max-width: 900px) {
+      .ann-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Carte d'annonce */
+    .ann-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 24px;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    .ann-card:hover {
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      border-color: #cbd5e1;
+    }
+    .ann-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .ann-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .ann-badge.bj { background: #fef3c7; color: #92400e; }
+    .ann-badge.tg { background: #d1fae5; color: #065f46; }
+    .ann-badge.ci { background: #fed7aa; color: #9a3412; }
+    .ann-badge.sn { background: #dbeafe; color: #1e40af; }
+    .ann-badge.bf { background: #e9d5ff; color: #6b21a8; }
+    .ann-time {
+      font-size: 0.8rem;
+      color: #94a3b8;
+    }
+
+    .ann-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0 0 14px;
+      line-height: 1.3;
+      text-transform: capitalize;
+    }
+
+    .ann-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 14px;
+      font-size: 0.9rem;
+      color: #475569;
+    }
+    .ann-meta-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .ann-meta-item svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      margin-top: 2px;
+      color: #64748b;
+    }
+
+    .ann-desc {
+      color: #475569;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 14px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .ann-desc.expanded {
+      display: block;
+      -webkit-line-clamp: unset;
+    }
+    .ann-desc-toggle {
+      color: #0a7d3f;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      user-select: none;
+      display: inline-block;
+      margin-top: 6px;
+    }
+    .ann-desc-toggle:hover {
+      text-decoration: underline;
+    }
+
+    .ann-contact {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #f59e0b;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 0.65rem 1.3rem;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .ann-contact:hover {
+      background: #d97706;
+    }
+    .ann-contact svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* État vide */
+    .ann-empty {
+      text-align: center;
+      padding: 80px 20px;
+      background: #f8fafc;
+      border: 2px dashed #cbd5e1;
+      border-radius: 12px;
+    }
+    .ann-empty-icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+    }
+    .ann-empty h3 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0 0 10px;
+    }
+    .ann-empty p {
+      color: #64748b;
+      font-size: 1rem;
+      margin: 0 0 24px;
+    }
+
+    /* État chargement */
+    .ann-loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: #64748b;
+    }
+    .ann-spinner {
+      border: 3px solid #e2e8f0;
+      border-top-color: #0a7d3f;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Pagination */
+    .ann-pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin-top: 40px;
+    }
+    .ann-page-btn {
+      padding: 0.65rem 1.3rem;
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .ann-page-btn:hover:not(:disabled) {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+    }
+    .ann-page-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .ann-page-info {
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <section class="ann-hero">
+    <div class="container">
+      <div class="ann-hero-content">
+        <h1>📢 Annonces des entreprises</h1>
+        <p>Opportunités de collaboration publiées par des entreprises au Bénin, Togo, Côte d'Ivoire, Sénégal et Burkina Faso. Contactez directement les entreprises pour vos prestations et services.</p>
+        <a href="/publier" class="ann-hero-cta">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;"><path d="M12 5v14M5 12h14"/></svg>
+          Publier une annonce
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filtres -->
+  <section class="container" style="margin-top: 40px;">
+    <div class="ann-filters">
+      <div class="ann-filters-row">
+        <div class="ann-filter-group" style="flex: 2;">
+          <label for="searchInput">🔍 Rechercher</label>
+          <input type="text" id="searchInput" placeholder="Ex: plombier, électricien, maçon...">
+        </div>
+        <div class="ann-filter-group">
+          <label for="countryFilter">Pays</label>
+          <select id="countryFilter">
+            <option value="">Tous les pays</option>
+            <option value="BJ">🇧🇯 Bénin</option>
+            <option value="TG">🇹🇬 Togo</option>
+            <option value="CI">🇨🇮 Côte d'Ivoire</option>
+            <option value="SN">🇸🇳 Sénégal</option>
+            <option value="BF">🇧🇫 Burkina Faso</option>
+          </select>
+        </div>
+        <button class="ann-filter-btn" onclick="loadAnnonces(1)">Rechercher</button>
+      </div>
+    </div>
+
+    <!-- Compteur -->
+    <div class="ann-count" id="annCount">Chargement...</div>
+
+    <!-- Grille d'annonces -->
+    <div id="annoncesList"></div>
+
+    <!-- Pagination -->
+    <div class="ann-pagination" id="pagination" style="display: none;">
+      <button class="ann-page-btn" id="prevBtn" onclick="loadAnnonces(currentPage - 1)" disabled>← Précédent</button>
+      <span class="ann-page-info" id="pageInfo">Page 1</span>
+      <button class="ann-page-btn" id="nextBtn" onclick="loadAnnonces(currentPage + 1)" disabled>Suivant →</button>
+    </div>
+  </section>
+
+  <script src="js/app.js?v=20260810i"></script>
+  <script>
+    const API_BASE = window.API_BASE || 'https://api.alertemarche.com';
+    const PAYS = {
+      'BJ': '🇧🇯 Bénin',
+      'TG': '🇹🇬 Togo',
+      'CI': '🇨🇮 Côte d\'Ivoire',
+      'SN': '🇸🇳 Sénégal',
+      'BF': '🇧🇫 Burkina Faso'
+    };
+
+    let currentPage = 1;
+    let lastData = null;
+
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function relativeTime(dateStr) {
+      const now = new Date();
+      const date = new Date(dateStr);
+      const diffMs = now - date;
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMs / 3600000);
+      const diffDays = Math.floor(diffMs / 86400000);
+
+      if (diffMins < 60) return diffMins <= 1 ? 'Il y a 1 minute' : `Il y a ${diffMins} minutes`;
+      if (diffHours < 24) return diffHours === 1 ? 'Il y a 1 heure' : `Il y a ${diffHours} heures`;
+      if (diffDays < 7) return diffDays === 1 ? 'Il y a 1 jour' : `Il y a ${diffDays} jours`;
+      if (diffDays < 30) {
+        const weeks = Math.floor(diffDays / 7);
+        return weeks === 1 ? 'Il y a 1 semaine' : `Il y a ${weeks} semaines`;
+      }
+      const months = Math.floor(diffDays / 30);
+      return months === 1 ? 'Il y a 1 mois' : `Il y a ${months} mois`;
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return null;
+      const d = new Date(dateStr);
+      return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+    }
+
+    function detectContactType(contact) {
+      if (!contact) return { type: null, href: '', label: contact };
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const phoneRegex = /^[\d\s\+\-\(\)]+$/;
+      
+      if (emailRegex.test(contact.trim())) {
+        return { type: 'email', href: `mailto:${contact}`, label: '📧 Contacter par email' };
+      }
+      if (phoneRegex.test(contact.trim())) {
+        return { type: 'phone', href: `tel:${contact.replace(/\s/g, '')}`, label: '📞 Appeler' };
+      }
+      return { type: 'other', href: '', label: contact };
+    }
+
+    function toggleDescription(id) {
+      const desc = document.getElementById(`desc-${id}`);
+      const toggle = document.getElementById(`toggle-${id}`);
+      if (desc.classList.contains('expanded')) {
+        desc.classList.remove('expanded');
+        toggle.textContent = 'Voir plus ▼';
+      } else {
+        desc.classList.add('expanded');
+        toggle.textContent = 'Voir moins ▲';
+      }
+    }
+
+    function renderAnnonce(item) {
+      const countryBadge = item.country ? `<span class="ann-badge ${item.country.toLowerCase()}">${PAYS[item.country] || item.country}</span>` : '';
+      const timeAgo = item.created_at ? `<span class="ann-time">${relativeTime(item.created_at)}</span>` : '';
+      
+      const metaItems = [];
+      if (item.employer_name) {
+        metaItems.push(`<div class="ann-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6v6H9z"/></svg><span><b>Entreprise :</b> ${esc(item.employer_name)}</span></div>`);
+      }
+      if (item.people_needed) {
+        metaItems.push(`<div class="ann-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span><b>Personnes :</b> ${esc(item.people_needed)}</span></div>`);
+      }
+      
+      const locality = [item.locality, item.region, PAYS[item.country] ? PAYS[item.country].replace(/🇧🇯|🇹🇬|🇨🇮|🇸🇳|🇧🇫/g, '').trim() : ''].filter(Boolean).join(', ');
+      if (locality) {
+        metaItems.push(`<div class="ann-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span>${esc(locality)}</span></div>`);
+      }
+      if (item.estimated_budget) {
+        metaItems.push(`<div class="ann-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span><b>Budget :</b> ${esc(item.estimated_budget)}</span></div>`);
+      }
+      if (item.duration) {
+        metaItems.push(`<div class="ann-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span><b>Durée :</b> ${esc(item.duration)}</span></div>`);
+      }
+      if (item.start_date) {
+        metaItems.push(`<div class="ann-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span><b>Début :</b> ${formatDate(item.start_date)}</span></div>`);
+      }
+
+      const description = item.description ? esc(item.description) : '';
+      const hasLongDesc = description.length > 150;
+      
+      const contact = detectContactType(item.contact);
+      const contactBtn = contact.type && contact.href 
+        ? `<a href="${contact.href}" class="ann-contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>${esc(contact.label)}</a>`
+        : contact.label ? `<div class="ann-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span><b>Contact :</b> ${esc(contact.label)}</span></div>` : '';
+
+      return `
+        <div class="ann-card">
+          <div class="ann-card-top">
+            ${countryBadge}
+            ${timeAgo}
+          </div>
+          <h3 class="ann-title">${esc(item.trade)}</h3>
+          <div class="ann-meta">
+            ${metaItems.join('')}
+          </div>
+          ${description ? `
+            <div class="ann-desc" id="desc-${item.id}">${description}</div>
+            ${hasLongDesc ? `<span class="ann-desc-toggle" id="toggle-${item.id}" onclick="toggleDescription(${item.id})">Voir plus ▼</span>` : ''}
+          ` : ''}
+          ${contactBtn}
+        </div>
+      `;
+    }
+
+    async function loadAnnonces(page = 1) {
+      const list = document.getElementById('annoncesList');
+      const count = document.getElementById('annCount');
+      const pagination = document.getElementById('pagination');
+      
+      // Afficher le loader
+      list.innerHTML = '<div class="ann-loading"><div class="ann-spinner"></div><p>Chargement des annonces...</p></div>';
+      count.textContent = 'Chargement...';
+      pagination.style.display = 'none';
+
+      // Récupérer les filtres
+      const search = document.getElementById('searchInput').value.trim();
+      const country = document.getElementById('countryFilter').value;
+
+      // Construire l'URL de l'API
+      const params = new URLSearchParams();
+      params.append('page', page);
+      if (country) params.append('country', country);
+      if (search) params.append('trade', search);
+
+      try {
+        const response = await fetch(`${API_BASE}/needs?${params.toString()}`);
+        const data = await response.json();
+        
+        lastData = data;
+        currentPage = data.current_page || 1;
+
+        // Afficher le compteur
+        const total = data.total || 0;
+        count.innerHTML = `<b>${total}</b> annonce${total > 1 ? 's' : ''} trouvée${total > 1 ? 's' : ''}`;
+
+        // Afficher les annonces ou l'état vide
+        if (data.data && data.data.length > 0) {
+          list.innerHTML = '<div class="ann-grid">' + data.data.map(renderAnnonce).join('') + '</div>';
+          
+          // Afficher la pagination
+          pagination.style.display = 'flex';
+          document.getElementById('prevBtn').disabled = !data.prev_page_url;
+          document.getElementById('nextBtn').disabled = !data.next_page_url;
+          document.getElementById('pageInfo').textContent = `Page ${currentPage} sur ${data.last_page || 1}`;
+        } else {
+          list.innerHTML = `
+            <div class="ann-empty">
+              <div class="ann-empty-icon">📢</div>
+              <h3>Aucune annonce pour le moment</h3>
+              <p>Soyez le premier à publier une opportunité de collaboration !</p>
+              <a href="/publier" class="ann-hero-cta" style="display:inline-flex;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;"><path d="M12 5v14M5 12h14"/></svg>
+                Publier une annonce
+              </a>
+            </div>
+          `;
+          pagination.style.display = 'none';
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des annonces:', error);
+        list.innerHTML = `
+          <div class="ann-empty">
+            <div class="ann-empty-icon">⚠️</div>
+            <h3>Erreur de chargement</h3>
+            <p>Impossible de charger les annonces. Veuillez réessayer.</p>
+            <button class="ann-filter-btn" onclick="loadAnnonces(${page})">Réessayer</button>
+          </div>
+        `;
+        count.textContent = 'Erreur';
+      }
+    }
+
+    // Charger les annonces au démarrage
+    document.addEventListener('DOMContentLoaded', () => {
+      loadAnnonces(1);
+    });
+
+    // Recherche au clavier (Entrée)
+    document.getElementById('searchInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') loadAnnonces(1);
+    });
+  </script>
+</body>
+</html>

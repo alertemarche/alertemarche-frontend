@@ -2094,12 +2094,17 @@
       const d = await adminApi('/admin/needs/pending');
       const items = d.data || d.needs || (Array.isArray(d) ? d : []);
       if (!items.length) { el.innerHTML = '<div class="empty">✅ Aucune annonce en attente de validation.</div>'; return; }
-      el.innerHTML = items.map(n => `
+      el.innerHTML = items.map(n => {
+        const typeBadge = n.is_premium 
+          ? '<span style="display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e;font-weight:700;font-size:.75rem;padding:4px 10px;border-radius:12px;border:1px solid #f59e0b;">⭐ PREMIUM</span>'
+          : '<span style="display:inline-flex;align-items:center;gap:4px;background:#f1f5f9;color:#475569;font-weight:600;font-size:.75rem;padding:4px 10px;border-radius:12px;border:1px solid #cbd5e1;">GRATUIT</span>';
+        return `
         <div class="need-card">
           <div class="need-card-top">
             <div>
               <h3>${n.trade||n.title||'Sans titre'}</h3>
               <div class="need-meta">
+                ${typeBadge}
                 ${n.employer_name||n.org_name?`<span>🏢 ${n.employer_name||n.org_name}</span>`:''}
                 ${n.locality?`<span>📍 ${n.locality}</span>`:''}
                 ${n.contact||n.phone?`<span>📞 ${n.contact||n.phone}</span>`:''}
@@ -2112,7 +2117,8 @@
             </div>
           </div>
           ${n.description?`<p style="font-size:.83rem;color:#475569;margin-top:8px;line-height:1.6;white-space:pre-wrap;">${n.description.substring(0,400)}${n.description.length>400?'…':''}</p>`:''}
-        </div>`).join('');
+        </div>`;
+      }).join('');
     } catch(e) { el.innerHTML = '<p class="empty">Impossible de charger les annonces.</p>'; }
   }
 
