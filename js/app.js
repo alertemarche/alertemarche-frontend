@@ -384,12 +384,15 @@ function authActions() {
 function authLinksMobile() {
     const path = location.pathname.split('/').pop() || '/index';
     const isActive = (h) => (('/' + path) === h) ? 'active' : '';
+    const annLinks = `
+          <a href="/annonces" class="nav-auth-mobile ${isActive('/annonces')}">📢 Annonces entreprises</a>
+          <a href="/publier" class="nav-auth-mobile nav-auth-mobile--pub ${isActive('/publier')}">➕ Publier une annonce</a>`;
     if (isLoggedIn()) {
-        return `
+        return annLinks + `
           <a href="/dashboard" class="nav-auth-mobile ${isActive('/dashboard')}">Tableau de bord</a>
           <a href="#" class="nav-auth-mobile am-logout">Déconnexion</a>`;
     }
-    return `
+    return annLinks + `
           <a href="/inscription" class="nav-auth-mobile ${isActive('/inscription')}">Créer un compte</a>
           <a href="/connexion" class="nav-auth-mobile ${isActive('/connexion')}">Se connecter</a>`;
 }
@@ -419,7 +422,8 @@ function refreshAuthUI() {
     const actions = document.getElementById('headerActions');
     if (actions) {
         const toggle = actions.querySelector('#navToggle');
-        actions.innerHTML = authActions() + (toggle ? toggle.outerHTML : '<button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>');
+        const pill = actions.querySelector('.nav-ann-pill');
+        actions.innerHTML = (pill ? pill.outerHTML : '') + authActions() + (toggle ? toggle.outerHTML : '<button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>');
         actions.querySelector('#navToggle')?.addEventListener('click', () => $('#mainNav').classList.toggle('open'));
     }
     const mob = document.getElementById('navAuthMobile');
@@ -488,17 +492,34 @@ function renderNav() {
           <a href="/index" class="${isActive('/index')}">Accueil</a>
           <a href="/marches-publics" class="${isActive('/marches-publics')}">Marchés publics</a>
           <a href="/marches-prives" class="${isActive('/marches-prives')}">Marchés privés</a>
-          <a href="/blog" class="${isActive('/blog')}">Blog</a>
-          <a href="/annonces" class="${isActive('/annonces')}">📢 Annonces</a>
-          <a href="/publier" class="nav-publier ${isActive('/publier')}">Publier une annonce</a>
-          <a href="/tarifs" class="${isActive('/tarifs')}">Offre gratuite</a>
           <span id="navAuthMobile">${authLinksMobile()}</span>
         </nav>
         <div class="header-actions" id="headerActions">
+          <div class="nav-ann-pill">
+            <a href="/annonces" class="nav-ann-pill__view ${isActive('/annonces')}">📢 Annonces</a>
+            <a href="/publier" class="nav-ann-pill__pub ${isActive('/publier')}">➕ Publier</a>
+          </div>
           ${authActions()}
           <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
         </div>
       </div>`;
+
+    // Styles du pill Annonces/Publier (injectés une seule fois)
+    if (!document.getElementById('nav-ann-pill-style')) {
+        const s = document.createElement('style');
+        s.id = 'nav-ann-pill-style';
+        s.textContent = `
+          .nav-ann-pill { display: flex; align-items: stretch; border: 2px solid #f59e0b; border-radius: 10px; overflow: hidden; flex-shrink: 0; }
+          .nav-ann-pill__view { display: flex; align-items: center; gap: 5px; padding: 0 14px; font-size: .85rem; font-weight: 700; color: #d97706; background: #fff; text-decoration: none; border-right: 2px solid #f59e0b; white-space: nowrap; transition: background .15s, color .15s; }
+          .nav-ann-pill__view:hover, .nav-ann-pill__view.active { background: #fffbeb; color: #b45309; }
+          .nav-ann-pill__pub { display: flex; align-items: center; gap: 5px; padding: 0 14px; font-size: .85rem; font-weight: 700; color: #fff; background: #f59e0b; text-decoration: none; white-space: nowrap; transition: background .15s; }
+          .nav-ann-pill__pub:hover, .nav-ann-pill__pub.active { background: #d97706; color: #fff; }
+          @media (max-width: 900px) { .nav-ann-pill { display: none; } }
+          .nav-auth-mobile--pub { color: #d97706 !important; font-weight: 700 !important; }
+        `;
+        document.head.appendChild(s);
+    }
+
     document.body.prepend(header);
     $('#navToggle')?.addEventListener('click', () => $('#mainNav').classList.toggle('open'));
     bindLogoutButtons();

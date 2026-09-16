@@ -54,6 +54,19 @@
           <div class="kpi"><b id="kAlerts">—</b><span>Alertes reçues</span></div>
           <div class="kpi"><b id="kSectors">—</b><span>Secteurs suivis</span></div>
         </div>
+        <!-- Bloc Annonces entreprises (accès direct) -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0;">
+          <a href="/annonces" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px 14px;background:#fff;border:2px solid #f59e0b;border-radius:12px;text-decoration:none;text-align:center;transition:box-shadow .2s,border-color .2s;" onmouseover="this.style.boxShadow='0 4px 16px rgba(245,158,11,.2)';this.style.borderColor='#d97706';" onmouseout="this.style.boxShadow='none';this.style.borderColor='#f59e0b';">
+            <span style="font-size:2rem;">📢</span>
+            <span style="font-weight:800;font-size:.95rem;color:#92400e;">Annonces entreprises</span>
+            <span style="font-size:.8rem;color:#78350f;opacity:.8;">Voir toutes les annonces</span>
+          </a>
+          <a href="/publier" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px 14px;background:linear-gradient(135deg,#f59e0b,#d97706);border:2px solid #f59e0b;border-radius:12px;text-decoration:none;text-align:center;transition:box-shadow .2s,opacity .2s;" onmouseover="this.style.boxShadow='0 4px 20px rgba(245,158,11,.45)';this.style.opacity='.92';" onmouseout="this.style.boxShadow='none';this.style.opacity='1';">
+            <span style="font-size:2rem;">➕</span>
+            <span style="font-weight:800;font-size:.95rem;color:#fff;">Publier une annonce</span>
+            <span style="font-size:.8rem;color:rgba(255,255,255,.85);">Gratuit · Visible 15 ou 30 jours</span>
+          </a>
+        </div>
         <!-- Bouton principal mis en avant -->
         <div class="dash-cta">
           <a href="/marches-publics" class="dash-cta__btn dash-cta__btn--secondary">📄 Consulter les marchés publics et privé</a>
@@ -67,6 +80,8 @@
           <div style="display:flex;gap:12px;flex-wrap:wrap;">
             <button class="btn btn--ghost" data-goto="interests">🎯 Modifier mes centres d'intérêt</button>
             <button class="btn btn--ghost" data-goto="alerts">🔔 Voir mes alertes</button>
+            <a href="/annonces" class="btn btn--ghost">📢 Annonces entreprises</a>
+            <a href="/publier" class="btn btn--primary" style="background:#f59e0b;border-color:#f59e0b;">➕ Publier une annonce</a>
           </div>
         </div>
       </section>
