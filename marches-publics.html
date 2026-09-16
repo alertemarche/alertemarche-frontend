@@ -264,7 +264,10 @@
       </article>`;
     }
 
-    function initPage() {
+    async function initPage() {
+      // Charger les annonces Premium du pays avant d'afficher les marchés
+      await loadPremiumAds();
+      
       // Adapte le titre au pays choisi (Bénin/Togo/Côte d'Ivoire).
       if (window.amMeta) { var _m = amMeta(); var _t = document.getElementById('pageTitle'); if (_t) _t.textContent = 'Marchés publics — ' + _m.name; var _st = document.getElementById('pageSubtitle'); if (_st) _st.textContent = 'Trouvez les meilleures opportunités ' + _m.heroTitle + ' en temps réel'; }
       // SEO : mise à jour des meta tags selon le pays
@@ -396,7 +399,53 @@
       }
 
       // ── ESPACE PUBLICITAIRE — encart natif intercalé dans le listing ──
+      // Si des annonces Premium existent pour le pays → les afficher en rotation
+      // Sinon → repli sur l'encart statique "Réserver cet espace"
+      let premiumAds = [];
+      let premiumIndex = 0;
+
+      async function loadPremiumAds() {
+        try {
+          const cc = window.amCode ? amCode() : 'BJ';
+          const res = await fetch(`${API_BASE}/needs?country=${cc}&is_premium=true&per_page=10`);
+          if (!res.ok) throw new Error('Failed to fetch premium ads');
+          const data = await res.json();
+          premiumAds = (data.data || []).filter(ad => ad.status === 'approved');
+        } catch (e) {
+          console.warn('Could not load premium ads:', e);
+          premiumAds = [];
+        }
+      }
+
       function advertCard() {
+        // S'il y a des annonces Premium → en afficher une (rotation)
+        if (premiumAds.length > 0) {
+          const ad = premiumAds[premiumIndex % premiumAds.length];
+          premiumIndex++;
+          
+          const PAYS = {BJ:'🇧🇯 Bénin',TG:'🇹🇬 Togo',CI:'🇨🇮 Côte d\'Ivoire',SN:'🇸🇳 Sénégal',BF:'🇧🇫 Burkina Faso'};
+          const location = [ad.locality, ad.region, PAYS[ad.country]].filter(Boolean).join(', ') || 'Non spécifiée';
+          
+          return `
+          <div style="grid-column:1/-1;display:flex;flex-direction:column;gap:12px;background:linear-gradient(135deg,#fffbeb 0%,#fef3c7 100%);border:2px solid #f59e0b;border-radius:14px;padding:20px 24px;box-shadow:0 4px 16px rgba(245,158,11,.15);">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <span style="background:#f59e0b;color:#fff;font-size:.7rem;font-weight:800;padding:4px 12px;border-radius:20px;letter-spacing:.05em;">⭐ ANNONCE PREMIUM</span>
+              <span style="font-size:.75rem;color:#92400e;font-weight:600;">${ad.employer_name || 'Entreprise'}</span>
+            </div>
+            <div style="font-weight:800;color:#1c1917;font-size:1.08rem;line-height:1.3;">${ad.trade || 'Besoin de prestation'}</div>
+            <div style="color:#57534e;font-size:.88rem;line-height:1.5;">${(ad.description || '').substring(0, 180)}${ad.description && ad.description.length > 180 ? '...' : ''}</div>
+            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:.82rem;color:#78716c;">
+              <span>📍 ${location}</span>
+              ${ad.estimated_budget ? `<span>💰 ${ad.estimated_budget}</span>` : ''}
+              ${ad.contact ? `<span>📞 ${ad.contact}</span>` : ''}
+            </div>
+            <a href="/annonces?id=${ad.id}" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;align-self:flex-start;background:#f59e0b;color:#fff;font-weight:800;padding:.6rem 1.4rem;border-radius:9px;text-decoration:none;font-size:.9rem;white-space:nowrap;box-shadow:0 3px 10px rgba(249,115,22,.3);transition:background .2s;" onmouseover="this.style.background='#d97706'" onmouseout="this.style.background='#f59e0b'">
+              Voir l'annonce complète →
+            </a>
+          </div>`;
+        }
+        
+        // Repli : encart statique "Réserver cet espace"
         return `
         <div style="grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;background:linear-gradient(120deg,#fff7ed 0%,#ffedd5 100%);border:1.5px dashed #f97316;border-radius:14px;padding:20px 24px;">
           <div style="display:flex;align-items:center;gap:16px;min-width:0;">

@@ -192,21 +192,53 @@
             </button>
           </div>
 
-          <!-- PREMIUM -->
+          <!-- PREMIUM (version enrichie) -->
           <div style="background:linear-gradient(160deg,#fffbeb 0%,#fef3c7 100%);border:2px solid #f59e0b;border-radius:16px;padding:28px 22px;text-align:center;position:relative;box-shadow:0 4px 24px rgba(245,158,11,.18);">
             <!-- Badge "Recommandé" -->
             <div style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:#f59e0b;color:#fff;font-size:.7rem;font-weight:800;padding:4px 16px;border-radius:20px;white-space:nowrap;">⭐ RECOMMANDÉ</div>
-            <span style="background:#fef3c7;color:#92400e;font-size:.72rem;font-weight:800;padding:4px 14px;border-radius:20px;display:inline-block;margin-bottom:14px;letter-spacing:.05em;">PREMIUM</span>
+            
+            <!-- Badge "Le + rentable" -->
+            <div style="background:#d97706;color:#fff;font-size:.65rem;font-weight:800;padding:6px 14px;border-radius:20px;display:inline-block;margin-bottom:12px;letter-spacing:.05em;">💰 LE PLUS RENTABLE</div>
+            
+            <span style="background:#fef3c7;color:#92400e;font-size:.72rem;font-weight:800;padding:4px 14px;border-radius:20px;display:inline-block;margin-bottom:8px;letter-spacing:.05em;">PREMIUM</span>
+            
             <div style="font-size:2.4rem;font-weight:900;color:#d97706;line-height:1;">50 000 <span style="font-size:1.1rem;font-weight:600;">FCFA</span></div>
+            
             <div style="font-size:.85rem;color:#6b7280;margin:6px 0 18px;">Visible pendant <strong>30 jours</strong></div>
-            <ul style="list-style:none;padding:0;margin:0 0 24px;font-size:.85rem;color:#374151;text-align:left;">
+            
+            <!-- Comparatif durée visuel -->
+            <div style="margin:12px 0 18px;padding:8px 12px;background:rgba(255,255,255,.5);border-radius:8px;">
+              <div style="font-size:.75rem;color:#6b7280;margin-bottom:5px;">Durée de visibilité :</div>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <div style="flex:0 0 80px;height:6px;background:#d1d5db;border-radius:3px;" title="GRATUIT : 15 jours"></div>
+                <span style="font-size:.7rem;color:#9ca3af;">vs</span>
+                <div style="flex:0 0 160px;height:8px;background:#f59e0b;border-radius:4px;box-shadow:0 2px 6px rgba(245,158,11,.3);" title="PREMIUM : 30 jours (2×)"></div>
+              </div>
+            </div>
+            
+            <ul style="list-style:none;padding:0;margin:0 0 20px;font-size:.85rem;color:#374151;text-align:left;">
               <li style="padding:5px 0;display:flex;gap:8px;align-items:flex-start;"><span style="color:#d97706;font-weight:700;flex-shrink:0;">✓</span> Diffusion par e-mail aux abonnés</li>
               <li style="padding:5px 0;display:flex;gap:8px;align-items:flex-start;"><span style="color:#d97706;font-weight:700;flex-shrink:0;">✓</span> Validation sous 24–48 h ouvrées</li>
               <li style="padding:5px 0;display:flex;gap:8px;align-items:flex-start;"><span style="color:#d97706;font-weight:700;flex-shrink:0;">✓</span> Carte standard dans la liste</li>
               <li style="padding:5px 0;display:flex;gap:8px;align-items:flex-start;"><span style="color:#d97706;font-weight:700;flex-shrink:0;">★</span> <strong>En tête de liste (section Premium)</strong></li>
               <li style="padding:5px 0;display:flex;gap:8px;align-items:flex-start;"><span style="color:#d97706;font-weight:700;flex-shrink:0;">★</span> <strong>Badge doré + carte XL remarquable</strong></li>
-              <li style="padding:5px 0;display:flex;gap:8px;align-items:flex-start;"><span style="color:#d97706;font-weight:700;flex-shrink:0;">★</span> <strong>3× plus de vues estimées</strong></li>
+              <li style="padding:5px 0;display:flex;gap:8px;align-items:flex-start;"><span style="color:#d97706;font-weight:700;flex-shrink:0;">🔥</span> <strong>Intercalée dans le fil des appels d'offres</strong></li>
+              <li style="padding:5px 0;display:flex;gap:8px;align-items:flex-start;"><span style="color:#d97706;font-weight:700;flex-shrink:0;">📊</span> <strong>Jusqu'à 3× plus de vues estimées</strong></li>
+              <li style="padding:5px 0;display:flex;gap:8px;align-items:flex-start;"><span style="color:#d97706;font-weight:700;flex-shrink:0;">🔗</span> Lien site web officiel cliquable</li>
             </ul>
+            
+            <!-- Encadré ROI -->
+            <div style="background:#fff;border:1px solid #fbbf24;border-radius:10px;padding:10px 12px;margin-bottom:18px;font-size:.8rem;color:#92400e;text-align:left;">
+              <strong>💡 Rentabilité :</strong><br>
+              <span style="font-size:.75rem;line-height:1.5;">1 seul contrat gagné = votre annonce rentabilisée 10× minimum</span>
+            </div>
+            
+            <!-- Réassurance paiement -->
+            <div style="font-size:.72rem;color:#78350f;margin-bottom:16px;line-height:1.4;">
+              🔒 Paiement sécurisé Mobile Money (KKiaPay)<br>
+              <span style="font-weight:600;">Remboursé si non validée</span>
+            </div>
+            
             <button onclick="choosePlan('premium')" style="width:100%;padding:12px;background:#f59e0b;color:#fff;font-weight:700;font-size:.95rem;border:none;border-radius:8px;cursor:pointer;transition:background .2s;" onmouseover="this.style.background='#d97706'" onmouseout="this.style.background='#f59e0b'">
               Choisir PREMIUM ⭐ →
             </button>
@@ -254,7 +286,12 @@
                 <td style="padding:12px 18px;text-align:center;">Standard</td>
                 <td style="padding:12px 18px;text-align:center;font-weight:700;color:#d97706;">3× plus de vues</td>
               </tr>
-              <tr>
+              <tr style="border-bottom:1px solid #f3f4f6;">
+                <td style="padding:12px 18px;color:#374151;">Présence dans le fil des marchés</td>
+                <td style="padding:12px 18px;text-align:center;">✗</td>
+                <td style="padding:12px 18px;text-align:center;font-weight:700;color:#d97706;">✓ Intercalée toutes les 6 lignes</td>
+              </tr>
+              <tr style="background:#fafafa;">
                 <td style="padding:12px 18px;color:#374151;">Paiement</td>
                 <td style="padding:12px 18px;text-align:center;">—</td>
                 <td style="padding:12px 18px;text-align:center;">Mobile Money (KKiaPay)</td>
