@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css?v=20260803">
+  <script src="https://cdn.kkiapay.me/k.js"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RRXKSCN05J"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RRXKSCN05J');gtag('config','AW-11514321686');</script>
   <style>
@@ -98,6 +99,34 @@
     .pub-confirm h2 { font-size: 1.5rem; font-weight: 800; color: #065f46; margin: 0 0 12px; }
 
     .req { color: #ef4444; }
+
+    /* Section choix freemium */
+    .pub-plan-choice { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 28px; }
+    @media (max-width: 560px) { .pub-plan-choice { grid-template-columns: 1fr; } }
+    .pub-plan-card {
+      border: 2px solid #e5e7eb; border-radius: 12px; padding: 20px 16px; cursor: pointer;
+      text-align: center; transition: all .2s; background: #fff; position: relative;
+    }
+    .pub-plan-card:hover { border-color: #d97706; }
+    .pub-plan-card.selected-free { border-color: #16a34a; background: #f0fdf4; box-shadow: 0 0 0 3px rgba(22,163,74,.12); }
+    .pub-plan-card.selected-premium { border-color: #d97706; background: #fffbeb; box-shadow: 0 0 0 3px rgba(217,119,6,.12); }
+    .pub-plan-card .plan-badge { font-size: .7rem; font-weight: 800; padding: 3px 10px; border-radius: 20px; display: inline-block; margin-bottom: 8px; }
+    .pub-plan-card.plan-free .plan-badge { background: #dcfce7; color: #15803d; }
+    .pub-plan-card.plan-premium .plan-badge { background: #fef3c7; color: #92400e; }
+    .pub-plan-card .plan-price { font-size: 1.7rem; font-weight: 900; line-height: 1; margin: 8px 0 4px; }
+    .pub-plan-card.plan-free .plan-price { color: #16a34a; }
+    .pub-plan-card.plan-premium .plan-price { color: #d97706; }
+    .pub-plan-card .plan-duration { font-size: .82rem; color: #6b7280; margin-bottom: 10px; }
+    .pub-plan-card .plan-features { list-style: none; padding: 0; margin: 0; font-size: .8rem; color: #374151; text-align: left; }
+    .pub-plan-card .plan-features li { padding: 2px 0; display: flex; gap: 6px; align-items: flex-start; }
+    /* Section KKiaPay */
+    .pub-kkiapay-section { background: linear-gradient(135deg, #fffbeb, #fef3c7); border: 2px solid #f59e0b; border-radius: 12px; padding: 20px; margin-bottom: 24px; text-align: center; display: none; }
+    .pub-kkiapay-section.active { display: block; }
+    .pub-kkiapay-section h4 { color: #92400e; font-size: 1rem; font-weight: 700; margin: 0 0 8px; }
+    .pub-kkiapay-btn { background: #f59e0b; color: #fff; font-weight: 700; padding: .85rem 2rem; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; transition: background .2s; }
+    .pub-kkiapay-btn:hover { background: #d97706; }
+    .pub-kkiapay-btn:disabled { opacity: .55; cursor: not-allowed; }
+    .pub-payment-success { background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 14px; margin-top: 12px; color: #15803d; font-weight: 600; font-size: .9rem; display: none; }
   </style>
 </head>
 <body>
@@ -159,6 +188,44 @@
           <!-- Le formulaire -->
           <div id="pubFormWrap">
             <h2>Votre annonce</h2>
+
+            <!-- CHOIX FREEMIUM -->
+            <div class="pub-section-title" style="margin-top:0;">Formule <span class="req">*</span></div>
+            <div class="pub-plan-choice">
+              <div class="pub-plan-card plan-free selected-free" id="planFreeCard" onclick="selectPlan('free')">
+                <span class="plan-badge">GRATUIT</span>
+                <div class="plan-price">0 <small style="font-size:1rem;font-weight:600;color:#16a34a;">FCFA</small></div>
+                <div class="plan-duration">Visible 15 jours</div>
+                <ul class="plan-features">
+                  <li><span style="color:#16a34a;font-weight:700;">✓</span> Diffusion aux abonnés</li>
+                  <li><span style="color:#16a34a;font-weight:700;">✓</span> Validation 24-48h ouvrées</li>
+                  <li><span style="color:#16a34a;font-weight:700;">✓</span> Lien site officiel inclus</li>
+                </ul>
+              </div>
+              <div class="pub-plan-card plan-premium" id="planPremiumCard" onclick="selectPlan('premium')">
+                <span class="plan-badge">⭐ PREMIUM</span>
+                <div class="plan-price">50 000 <small style="font-size:.9rem;font-weight:600;color:#d97706;">FCFA</small></div>
+                <div class="plan-duration">Visible 30 jours</div>
+                <ul class="plan-features">
+                  <li><span style="color:#d97706;font-weight:700;">★</span> Mise en avant en haut de page</li>
+                  <li><span style="color:#d97706;font-weight:700;">★</span> Badge PREMIUM doré</li>
+                  <li><span style="color:#d97706;font-weight:700;">★</span> Validation prioritaire</li>
+                  <li><span style="color:#d97706;font-weight:700;">★</span> Visibilité 2× plus longue</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Section paiement KKiaPay (visible uniquement si PREMIUM) -->
+            <div class="pub-kkiapay-section" id="kkiapaySection">
+              <h4>💳 Paiement sécurisé requis</h4>
+              <p style="font-size:.88rem;color:#78350f;margin:0 0 14px;">Réglez 50 000 FCFA via Mobile Money ou carte bancaire pour activer votre annonce PREMIUM.</p>
+              <button type="button" class="pub-kkiapay-btn" id="kkiapayBtn" onclick="startKkiapayPayment()">
+                Payer 50 000 FCFA via KKiaPay
+              </button>
+              <div class="pub-payment-success" id="paymentSuccess">
+                ✅ Paiement confirmé ! Vous pouvez maintenant soumettre votre annonce PREMIUM.
+              </div>
+            </div>
 
             <form id="pubForm" novalidate>
 
@@ -275,21 +342,6 @@
                 </div>
               </div>
 
-              <!-- Validation gratuite -->
-              <div class="pub-price-box" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-color:#16a34a;">
-                <h3 style="color:#065f46;">🎉 Publication gratuite</h3>
-                <div class="pub-price-big" style="color:#16a34a;">0 <small style="color:#059669;">FCFA</small></div>
-                <p style="margin:6px 0 0;font-size:.88rem;color:#065f46;font-weight:600;">Soumettez gratuitement — validation manuelle sous 24–48 h ouvrées.</p>
-                <ul class="pub-conds" style="color:#065f46;">
-                  <li>Diffusion aux abonnés correspondant à votre secteur</li>
-                  <li>Alerte e-mail instantanée après validation</li>
-                  <li>Affichage sur la page Appels d'offres privés</li>
-                  <li>Lien vers votre site officiel inclus</li>
-                  <li>Visible pendant 30 jours</li>
-                  <li>Validation éditoriale sous 24–48 h ouvrées</li>
-                </ul>
-              </div>
-
               <!-- Acceptation des conditions -->
               <div style="margin-top:20px;display:flex;gap:10px;align-items:flex-start;">
                 <input type="checkbox" id="acceptCGU" style="margin-top:4px;flex-shrink:0;width:16px;height:16px;">
@@ -353,8 +405,94 @@
 
   <script src="js/app.js?v=20260810i"></script>
   <script>
-    // Publication GRATUITE avec validation manuelle (plus de paiement KKiaPay)
+    // Publication freemium : GRATUIT (15j) ou PREMIUM (30j, paiement KKiaPay)
     let currentUser = null;
+    let selectedPlan = 'free'; // 'free' ou 'premium'
+    let premiumTransactionId = null; // transactionId KKiaPay après paiement réussi
+
+    function selectPlan(plan) {
+      selectedPlan = plan;
+      const freeCard = document.getElementById('planFreeCard');
+      const premiumCard = document.getElementById('planPremiumCard');
+      const kkiapaySection = document.getElementById('kkiapaySection');
+      const submitBtn = document.getElementById('pubSubmitBtn');
+
+      if (plan === 'premium') {
+        freeCard.classList.remove('selected-free');
+        premiumCard.classList.add('selected-premium');
+        kkiapaySection.classList.add('active');
+        // Bloquer le bouton submit jusqu'au paiement
+        if (!premiumTransactionId) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Payer d\'abord pour soumettre';
+          submitBtn.style.background = '#9ca3af';
+        } else {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Soumettre mon annonce PREMIUM';
+          submitBtn.style.background = '#d97706';
+        }
+      } else {
+        freeCard.classList.add('selected-free');
+        premiumCard.classList.remove('selected-premium');
+        kkiapaySection.classList.remove('active');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Soumettre l\'annonce gratuitement';
+        submitBtn.style.background = '#16a34a';
+      }
+    }
+
+    async function startKkiapayPayment() {
+      const btn = document.getElementById('kkiapayBtn');
+      btn.disabled = true;
+      btn.textContent = 'Chargement...';
+
+      try {
+        // Récupérer la config KKiaPay
+        const resp = await fetch(API_BASE + '/payments/kkiapay/config');
+        const cfg = await resp.json();
+        if (!cfg.configured) {
+          alert('Le paiement en ligne n\'est pas disponible pour le moment. Veuillez réessayer.');
+          btn.disabled = false;
+          btn.textContent = 'Payer 50 000 FCFA via KKiaPay';
+          return;
+        }
+
+        // Ouvrir le widget KKiaPay
+        openKkiapayWidget({
+          amount: 50000,
+          sandbox: cfg.sandbox,
+          key: cfg.public_key,
+          name: 'AlerteMarché',
+          theme: '#f59e0b',
+          data: JSON.stringify({ plan: 'annonce_premium' }),
+        });
+      } catch (err) {
+        console.error('KKiaPay config error:', err);
+        btn.disabled = false;
+        btn.textContent = 'Payer 50 000 FCFA via KKiaPay';
+        alert('Erreur de chargement du paiement. Veuillez réessayer.');
+      }
+    }
+
+    function addKkiapayListeners() {
+      // Callback KKiaPay après paiement réussi
+      window.addEventListener('kk-transaction-successful', function(e) {
+        const txId = e.detail?.transactionId || e.detail?.id || (typeof e.detail === 'string' ? e.detail : null);
+        if (!txId) return;
+        premiumTransactionId = txId;
+        document.getElementById('paymentSuccess').style.display = 'block';
+        document.getElementById('kkiapayBtn').style.display = 'none';
+        // Déverrouiller le formulaire
+        const submitBtn = document.getElementById('pubSubmitBtn');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Soumettre mon annonce PREMIUM';
+        submitBtn.style.background = '#d97706';
+      });
+      window.addEventListener('kk-transaction-failed', function() {
+        document.getElementById('kkiapayBtn').disabled = false;
+        document.getElementById('kkiapayBtn').textContent = 'Réessayer le paiement';
+      });
+    }
 
     async function initPage() {
       const tok = localStorage.getItem('am_token');
@@ -393,6 +531,9 @@
 
       // Soumission du formulaire
       document.getElementById('pubForm').addEventListener('submit', handleSubmit);
+
+      // Écouteurs de paiement KKiaPay (formule PREMIUM)
+      addKkiapayListeners();
     }
 
     async function handleSubmit(e) {
@@ -438,11 +579,17 @@
         return;
       }
 
+      // Vérification si PREMIUM sans paiement
+      if (selectedPlan === 'premium' && !premiumTransactionId) {
+        msg.textContent = '⚠️ Veuillez d\'abord effectuer le paiement PREMIUM.';
+        return;
+      }
+
       msg.textContent = '';
       btn.disabled = true;
       btn.textContent = 'Envoi en cours…';
 
-      // Soumettre l'annonce gratuitement (plus de paiement)
+      // Soumettre l'annonce (gratuite ou premium selon la formule choisie)
       const formData = {
         type: f.get('type'),
         sector: f.get('sector'),
@@ -457,7 +604,7 @@
         country: f.get('country'),
         locality: f.get('locality'),
       };
-      await submitAnnouncement(formData, null);
+      await submitAnnouncement(formData, premiumTransactionId);
     }
 
     async function submitAnnouncement(data, transactionId) {
@@ -490,7 +637,8 @@
             duration: '30 jours',
             people_needed: null,
             region: '',
-            // transaction_id pour traçabilité
+            // Formule PREMIUM si un paiement KKiaPay a été vérifié
+            is_premium: !!transactionId,
             ...(transactionId ? { payment_ref: transactionId } : {}),
           }
         });
