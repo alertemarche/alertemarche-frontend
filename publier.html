@@ -8,7 +8,7 @@
   <meta name="description" content="Publiez votre appel d'offres, besoin ou avis sur AlerteMarché. Touchez des milliers d'entreprises et prestataires qualifiés au Bénin et en Afrique de l'Ouest.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260916c">
+  <link rel="stylesheet" href="css/style.css?v=20260916d">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RRXKSCN05J"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RRXKSCN05J');gtag('config','AW-11514321686');</script>
   <style>
@@ -126,6 +126,21 @@
     .pub-kkiapay-btn:hover { background: #d97706; }
     .pub-kkiapay-btn:disabled { opacity: .55; cursor: not-allowed; }
     .pub-payment-success { background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 14px; margin-top: 12px; color: #15803d; font-weight: 600; font-size: .9rem; display: none; }
+
+    /* Upload zones PREMIUM */
+    .pub-upload-zone {
+      border: 2px dashed #d97706; border-radius: 10px; padding: 16px; text-align: center;
+      cursor: pointer; background: #fffbeb; transition: border-color .2s, background .2s;
+      position: relative; min-height: 130px; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 5px; user-select: none;
+    }
+    .pub-upload-zone:hover { border-color: #b45309; background: #fef3c7; }
+    .pub-upload-zone.has-image { border-style: solid; border-color: #f59e0b; }
+    .pub-upload-zone .upz-remove {
+      position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,.55); color: #fff;
+      border: none; border-radius: 50%; width: 22px; height: 22px; font-size: .7rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 2;
+    }
   </style>
 </head>
 <body>
@@ -480,6 +495,42 @@
                 </div>
               </div>
 
+              <!-- Section images PREMIUM (masquée par défaut, affichée si plan=premium) -->
+              <div id="premiumImagesSection" style="display:none; margin-top:24px;">
+                <div class="pub-section-title" style="color:#92400e;border-color:#f59e0b;">📸 Photos de l'annonce <span style="font-weight:400;font-size:.75em;color:#92400e;">(PREMIUM — optionnel, max 2 photos)</span></div>
+                <p style="font-size:.82rem;color:#78350f;margin:-8px 0 16px;padding:10px 14px;background:#fffbeb;border-radius:8px;border:1px solid #fde68a;">
+                  Ajoutez jusqu'à 2 photos pour illustrer votre annonce (logo, document, photo de chantier…). Formats acceptés : JPG, PNG, WEBP — max 2 Mo par photo. Visibles après validation par notre équipe.
+                </p>
+                <div class="pub-grid">
+                  <div class="pub-field">
+                    <label style="color:#92400e;">Photo 1 <span style="font-weight:400;color:#b45309;">(optionnel)</span></label>
+                    <div class="pub-upload-zone" id="uploadZone1" onclick="triggerUpload(1)">
+                      <input type="file" id="imgInput1" accept="image/jpeg,image/png,image/webp" style="display:none;" onchange="handleImageSelect(1, this)">
+                      <img id="imgPreview1" src="" alt="" style="display:none;max-height:96px;max-width:100%;border-radius:6px;object-fit:contain;">
+                      <div id="uploadPlaceholder1" style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+                        <div style="font-size:2rem;">📷</div>
+                        <div style="font-size:.82rem;color:#92400e;font-weight:600;">Cliquer pour ajouter</div>
+                        <div style="font-size:.72rem;color:#b45309;">JPG, PNG, WEBP — max 2 Mo</div>
+                      </div>
+                      <button type="button" class="upz-remove" id="removeBtn1" style="display:none;" onclick="event.stopPropagation(); removeImage(1)">✕</button>
+                    </div>
+                  </div>
+                  <div class="pub-field">
+                    <label style="color:#92400e;">Photo 2 <span style="font-weight:400;color:#b45309;">(optionnel)</span></label>
+                    <div class="pub-upload-zone" id="uploadZone2" onclick="triggerUpload(2)">
+                      <input type="file" id="imgInput2" accept="image/jpeg,image/png,image/webp" style="display:none;" onchange="handleImageSelect(2, this)">
+                      <img id="imgPreview2" src="" alt="" style="display:none;max-height:96px;max-width:100%;border-radius:6px;object-fit:contain;">
+                      <div id="uploadPlaceholder2" style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+                        <div style="font-size:2rem;">📷</div>
+                        <div style="font-size:.82rem;color:#92400e;font-weight:600;">Cliquer pour ajouter</div>
+                        <div style="font-size:.72rem;color:#b45309;">JPG, PNG, WEBP — max 2 Mo</div>
+                      </div>
+                      <button type="button" class="upz-remove" id="removeBtn2" style="display:none;" onclick="event.stopPropagation(); removeImage(2)">✕</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <!-- Acceptation des conditions -->
               <div style="margin-top:20px;display:flex;gap:10px;align-items:flex-start;">
                 <input type="checkbox" id="acceptCGU" style="margin-top:4px;flex-shrink:0;width:16px;height:16px;">
@@ -541,7 +592,7 @@
     </div>
   </section>
 
-  <script src="js/app.js?v=20260916c"></script>
+  <script src="js/app.js?v=20260916d"></script>
   <script>
     // Publication freemium : GRATUIT (15j) ou PREMIUM (30j, paiement APRÈS validation)
     let currentUser = null;
@@ -559,11 +610,13 @@
       const premiumCard = document.getElementById('planPremiumCard');
       const premiumInfo = document.getElementById('premiumInfo');
       const submitBtn = document.getElementById('pubSubmitBtn');
+      const imagesSection = document.getElementById('premiumImagesSection');
 
       if (plan === 'premium') {
         freeCard.classList.remove('selected-free');
         premiumCard.classList.add('selected-premium');
         premiumInfo.style.display = 'block';
+        if (imagesSection) imagesSection.style.display = 'block';
         submitBtn.disabled = false;
         submitBtn.textContent = 'Soumettre mon annonce (paiement après validation)';
         submitBtn.style.background = '#d97706';
@@ -571,10 +624,54 @@
         freeCard.classList.add('selected-free');
         premiumCard.classList.remove('selected-premium');
         premiumInfo.style.display = 'none';
+        if (imagesSection) { imagesSection.style.display = 'none'; removeImage(1); removeImage(2); }
         submitBtn.disabled = false;
         submitBtn.textContent = 'Soumettre l\'annonce gratuitement';
         submitBtn.style.background = '#16a34a';
       }
+    }
+
+    // ---- Gestion des photos PREMIUM ----
+    function triggerUpload(n) {
+      document.getElementById('imgInput' + n).click();
+    }
+
+    function handleImageSelect(n, input) {
+      const file = input.files[0];
+      if (!file) return;
+      if (file.size > 2 * 1024 * 1024) {
+        alert('⚠️ La photo ' + n + ' dépasse 2 Mo. Veuillez choisir un fichier plus léger.');
+        input.value = '';
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const preview = document.getElementById('imgPreview' + n);
+        const placeholder = document.getElementById('uploadPlaceholder' + n);
+        const zone = document.getElementById('uploadZone' + n);
+        const removeBtn = document.getElementById('removeBtn' + n);
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+        placeholder.style.display = 'none';
+        zone.classList.add('has-image');
+        removeBtn.style.display = 'flex';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeImage(n) {
+      const input = document.getElementById('imgInput' + n);
+      const preview = document.getElementById('imgPreview' + n);
+      const placeholder = document.getElementById('uploadPlaceholder' + n);
+      const zone = document.getElementById('uploadZone' + n);
+      const removeBtn = document.getElementById('removeBtn' + n);
+      if (!input) return;
+      input.value = '';
+      preview.src = '';
+      preview.style.display = 'none';
+      placeholder.style.display = 'flex';
+      zone.classList.remove('has-image');
+      removeBtn.style.display = 'none';
     }
 
 
@@ -703,33 +800,50 @@
         msg.style.color = 'var(--primary,#0a7d3f)';
         msg.textContent = '⏳ Soumission de l\'annonce en cours…';
 
-        await api('/needs', {
+        const tok = localStorage.getItem('am_token');
+
+        // Utiliser FormData (multipart) pour pouvoir joindre des photos
+        const fd = new FormData();
+        fd.append('trade', data.title);
+        fd.append('employer_name', data.org_name);
+        fd.append('description', [
+          'Type : ' + (data.type || ''),
+          'Secteur : ' + (data.sector || ''),
+          'Organisation : ' + (data.org_name || '') + (data.org_type ? ' (' + data.org_type + ')' : ''),
+          data.official_url ? 'Site officiel : ' + data.official_url : '',
+          'Budget : ' + (data.budget || 'Non précisé'),
+          '',
+          data.description || '',
+        ].filter(Boolean).join('\n'));
+        fd.append('locality', data.locality);
+        fd.append('country', data.country);
+        fd.append('contact', data.contact);
+        fd.append('estimated_budget', data.budget || '');
+        fd.append('start_date', '');
+        fd.append('duration', '30 jours');
+        fd.append('people_needed', '');
+        fd.append('region', '');
+        fd.append('wants_premium', selectedPlan === 'premium' ? '1' : '0');
+
+        // Joindre les photos si formule PREMIUM
+        if (selectedPlan === 'premium') {
+          const img1 = document.getElementById('imgInput1') && document.getElementById('imgInput1').files[0];
+          const img2 = document.getElementById('imgInput2') && document.getElementById('imgInput2').files[0];
+          if (img1) fd.append('image1', img1);
+          if (img2) fd.append('image2', img2);
+        }
+
+        const resp = await fetch(API_BASE + '/needs', {
           method: 'POST',
-          auth: true,
-          body: {
-            trade: data.title,
-            employer_name: data.org_name,
-            description: [
-              'Type : ' + (data.type || ''),
-              'Secteur : ' + (data.sector || ''),
-              'Organisation : ' + (data.org_name || '') + (data.org_type ? ' (' + data.org_type + ')' : ''),
-              data.official_url ? 'Site officiel : ' + data.official_url : '',
-              'Budget : ' + (data.budget || 'Non précisé'),
-              '',
-              data.description || '',
-            ].filter(Boolean).join('\n'),
-            locality: data.locality,
-            country: data.country,
-            contact: data.contact,
-            estimated_budget: data.budget || '',
-            start_date: null,
-            duration: '30 jours',
-            people_needed: null,
-            region: '',
-            // Indiquer si l'utilisateur veut la formule PREMIUM (paiement après validation)
-            wants_premium: selectedPlan === 'premium',
-          }
+          headers: { 'Authorization': 'Bearer ' + tok },
+          body: fd,
         });
+
+        if (!resp.ok) {
+          let errMsg = 'Erreur lors de la soumission';
+          try { const errData = await resp.json(); errMsg = errData.message || errData.error || errMsg; } catch (_) {}
+          throw new Error(errMsg);
+        }
 
         // Succès : afficher la confirmation
         sessionStorage.removeItem('am_pub_draft');
@@ -739,7 +853,7 @@
 
       } catch (err) {
         btn.disabled = false;
-        btn.textContent = 'Soumettre l\'annonce gratuitement';
+        btn.textContent = selectedPlan === 'premium' ? 'Soumettre mon annonce (paiement après validation)' : 'Soumettre l\'annonce gratuitement';
         msg.style.color = '#ef4444';
         msg.textContent = '⚠️ ' + (err.message || 'Erreur lors de la soumission. Veuillez réessayer.');
       }
