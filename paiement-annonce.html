@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=3"><link rel="icon" type="image/x-icon" href="/favicon.ico?v=3"><link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png?v=3">
+  <title>Paiement PREMIUM — AlerteMarché</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=20260916c">
+  <script src="https://cdn.kkiapay.me/k.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-RRXKSCN05J"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RRXKSCN05J');gtag('config','AW-11514321686');</script>
+  <style>
+    .pay-hero { background: linear-gradient(135deg, #0a7d3f 0%, #064d27 100%); color: #fff; padding: 48px 0; text-align: center; }
+    .pay-hero h1 { font-size: 2rem; font-weight: 800; margin: 0 0 8px; }
+    .pay-hero p { font-size: 1rem; opacity: .88; margin: 0; }
+    
+    .pay-container { max-width: 680px; margin: -40px auto 60px; padding: 0 20px; }
+    .pay-card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 32px; box-shadow: 0 4px 16px rgba(0,0,0,.08); }
+    
+    .pay-status { padding: 18px; border-radius: 10px; margin-bottom: 24px; text-align: center; font-weight: 600; }
+    .pay-status.loading { background: #f3f4f6; color: #6b7280; }
+    .pay-status.error { background: #fee; color: #dc2626; }
+    .pay-status.success { background: #f0fdf4; color: #15803d; }
+    
+    .pay-annonce { background: #fffbeb; border: 2px solid #f59e0b; border-radius: 10px; padding: 20px; margin: 24px 0; }
+    .pay-annonce h3 { margin: 0 0 12px; color: #92400e; font-size: 1.1rem; }
+    .pay-annonce .detail { display: flex; gap: 12px; margin: 8px 0; font-size: .9rem; }
+    .pay-annonce .detail strong { color: #78350f; min-width: 100px; }
+    
+    .pay-price { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; border-radius: 12px; padding: 24px; text-align: center; margin: 24px 0; }
+    .pay-price .amount { font-size: 2.5rem; font-weight: 900; line-height: 1; margin: 8px 0; }
+    .pay-price .label { font-size: 1rem; opacity: .9; }
+    
+    .pay-benefits { list-style: none; padding: 0; margin: 20px 0; }
+    .pay-benefits li { padding: 10px 0; border-bottom: 1px solid #f3f4f6; display: flex; gap: 10px; align-items: flex-start; }
+    .pay-benefits li:last-child { border-bottom: none; }
+    .pay-benefits li span { font-size: 1.2rem; }
+    
+    .pay-btn { width: 100%; background: #f59e0b; color: #fff; border: none; padding: 16px; border-radius: 8px; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: background .2s; }
+    .pay-btn:hover { background: #d97706; }
+    .pay-btn:disabled { opacity: .5; cursor: not-allowed; }
+    
+    .pay-secure { text-align: center; color: #6b7280; font-size: .85rem; margin-top: 16px; }
+  </style>
+</head>
+<body>
+
+  <section class="pay-hero">
+    <div class="container">
+      <h1>💳 Paiement PREMIUM</h1>
+      <p>Activez la formule PREMIUM pour votre annonce validée</p>
+    </div>
+  </section>
+
+  <div class="pay-container">
+    <div class="pay-card">
+      
+      <div class="pay-status loading" id="statusBox">
+        ⏳ Chargement des informations...
+      </div>
+
+      <div id="paymentContent" style="display:none;">
+        
+        <div class="pay-annonce" id="annonceBox">
+          <h3>📢 Votre annonce</h3>
+          <div class="detail"><strong>Métier :</strong> <span id="annTrade"></span></div>
+          <div class="detail"><strong>Employeur :</strong> <span id="annEmployer"></span></div>
+          <div class="detail"><strong>Localité :</strong> <span id="annLocality"></span></div>
+          <div class="detail"><strong>Budget estimé :</strong> <span id="annBudget"></span></div>
+        </div>
+
+        <div class="pay-price">
+          <div class="label">Montant à régler</div>
+          <div class="amount">50 000 <small style="font-size:1.2rem;">FCFA</small></div>
+          <div class="label">Paiement unique • Sécurisé via KKiaPay</div>
+        </div>
+
+        <h3 style="margin:24px 0 12px;font-size:1.1rem;">✨ Avantages PREMIUM</h3>
+        <ul class="pay-benefits">
+          <li><span>⭐</span> <strong>Badge PREMIUM doré</strong> en haut de la liste des annonces</li>
+          <li><span>📅</span> <strong>30 jours de visibilité</strong> au lieu de 15 jours</li>
+          <li><span>🔥</span> <strong>Insertion dans le fil des marchés publics/privés</strong> pour toucher les entreprises</li>
+          <li><span>📈</span> <strong>Jusqu'à 3× plus de vues estimées</strong></li>
+        </ul>
+
+        <button class="pay-btn" id="payBtn" onclick="launchPayment()">
+          💳 Payer 50 000 FCFA maintenant
+        </button>
+
+        <div class="pay-secure">
+          🔒 Paiement 100% sécurisé via Mobile Money (Orange Money, MTN Money, Moov Money) ou carte bancaire
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <script src="js/app.js?v=20260916c"></script>
+  <script>
+    let paymentToken = null;
+    let needData = null;
+    let kkiapayConfig = null;
+
+    async function initPage() {
+      const urlParams = new URLSearchParams(window.location.search);
+      paymentToken = urlParams.get('token');
+      
+      const statusBox = document.getElementById('statusBox');
+      const paymentContent = document.getElementById('paymentContent');
+
+      if (!paymentToken) {
+        statusBox.className = 'pay-status error';
+        statusBox.textContent = '❌ Lien invalide. Aucun token de paiement trouvé.';
+        return;
+      }
+
+      try {
+        // Charger les infos de l'annonce via le token
+        const resp = await fetch(API_BASE + '/payments/need-by-token?token=' + paymentToken);
+        if (!resp.ok) {
+          throw new Error('Annonce non trouvée ou lien expiré');
+        }
+        needData = await resp.json();
+
+        // Vérifier que l'annonce veut premium et n'est pas déjà premium
+        if (!needData.wants_premium) {
+          throw new Error('Cette annonce n\'a pas demandé la formule PREMIUM');
+        }
+        if (needData.is_premium) {
+          statusBox.className = 'pay-status success';
+          statusBox.innerHTML = '✅ Cette annonce est déjà PREMIUM ! <a href="/annonces" style="color:#15803d;font-weight:700;">Voir les annonces</a>';
+          return;
+        }
+
+        // Charger la config KKiaPay
+        const cfgResp = await fetch(API_BASE + '/payments/kkiapay/config');
+        kkiapayConfig = await cfgResp.json();
+        if (!kkiapayConfig.configured) {
+          throw new Error('Le paiement en ligne n\'est pas disponible pour le moment');
+        }
+
+        // Afficher les détails de l'annonce
+        document.getElementById('annTrade').textContent = needData.trade || 'Non précisé';
+        document.getElementById('annEmployer').textContent = needData.employer_name || 'Non précisé';
+        document.getElementById('annLocality').textContent = needData.locality || 'Non précisé';
+        document.getElementById('annBudget').textContent = needData.estimated_budget || 'Non précisé';
+
+        // Afficher le contenu de paiement
+        statusBox.style.display = 'none';
+        paymentContent.style.display = 'block';
+
+        // Ajouter les listeners KKiaPay
+        addKkiapayListeners();
+
+      } catch (err) {
+        console.error('Erreur init:', err);
+        statusBox.className = 'pay-status error';
+        statusBox.textContent = '❌ ' + err.message;
+      }
+    }
+
+    function launchPayment() {
+      const btn = document.getElementById('payBtn');
+      btn.disabled = true;
+      btn.textContent = 'Ouverture du paiement...';
+
+      try {
+        openKkiapayWidget({
+          amount: 50000,
+          sandbox: kkiapayConfig.sandbox,
+          key: kkiapayConfig.public_key,
+          name: 'AlerteMarché - Annonce PREMIUM',
+          theme: '#f59e0b',
+        });
+      } catch (err) {
+        console.error('KKiaPay error:', err);
+        btn.disabled = false;
+        btn.textContent = '💳 Payer 50 000 FCFA maintenant';
+        alert('Erreur lors de l\'ouverture du paiement. Veuillez réessayer.');
+      }
+    }
+
+    function addKkiapayListeners() {
+      window.addEventListener('kk-transaction-successful', async function(e) {
+        const txId = e.detail?.transactionId || e.detail?.id || (typeof e.detail === 'string' ? e.detail : null);
+        if (!txId) {
+          alert('Erreur : ID de transaction introuvable');
+          return;
+        }
+
+        const statusBox = document.getElementById('statusBox');
+        const paymentContent = document.getElementById('paymentContent');
+        
+        statusBox.className = 'pay-status loading';
+        statusBox.textContent = '⏳ Vérification du paiement en cours...';
+        statusBox.style.display = 'block';
+        paymentContent.style.display = 'none';
+
+        try {
+          // Vérifier et activer le PREMIUM via l'API
+          const resp = await fetch(API_BASE + '/payments/activate-premium-by-token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              payment_token: paymentToken,
+              transaction_id: txId,
+            }),
+          });
+
+          if (!resp.ok) {
+            const err = await resp.json();
+            throw new Error(err.message || 'Erreur lors de l\'activation');
+          }
+
+          const result = await resp.json();
+          
+          statusBox.className = 'pay-status success';
+          statusBox.innerHTML = `
+            <div style="font-size:2.5rem;margin-bottom:8px;">🎉</div>
+            <div style="font-size:1.2rem;margin-bottom:8px;">Paiement confirmé !</div>
+            <p style="margin:8px 0;font-weight:400;">Votre annonce est maintenant <strong>PREMIUM</strong> pour 30 jours avec mise en avant garantie.</p>
+            <a href="/annonces" class="btn btn--primary" style="display:inline-block;margin-top:16px;padding:12px 24px;border-radius:8px;text-decoration:none;">
+              📢 Voir les annonces
+            </a>
+          `;
+
+        } catch (err) {
+          console.error('Activation error:', err);
+          statusBox.className = 'pay-status error';
+          statusBox.innerHTML = `
+            ❌ ${err.message}<br>
+            <small>Si vous avez été débité, contactez-nous avec la référence de transaction : ${txId}</small>
+          `;
+        }
+      });
+
+      window.addEventListener('kk-transaction-failed', function() {
+        document.getElementById('payBtn').disabled = false;
+        document.getElementById('payBtn').textContent = '💳 Réessayer le paiement';
+      });
+    }
+
+    // Init au chargement
+    document.addEventListener('DOMContentLoaded', initPage);
+  </script>
+
+</body>
+</html>

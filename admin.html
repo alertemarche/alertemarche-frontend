@@ -2095,9 +2095,21 @@
       const items = d.data || d.needs || (Array.isArray(d) ? d : []);
       if (!items.length) { el.innerHTML = '<div class="empty">✅ Aucune annonce en attente de validation.</div>'; return; }
       el.innerHTML = items.map(n => {
-        const typeBadge = n.is_premium 
-          ? '<span style="display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e;font-weight:700;font-size:.75rem;padding:4px 10px;border-radius:12px;border:1px solid #f59e0b;">⭐ PREMIUM</span>'
-          : '<span style="display:inline-flex;align-items:center;gap:4px;background:#f1f5f9;color:#475569;font-weight:600;font-size:.75rem;padding:4px 10px;border-radius:12px;border:1px solid #cbd5e1;">GRATUIT</span>';
+        // Badge selon le statut premium
+        let typeBadge = '';
+        if (n.is_premium) {
+          typeBadge = '<span style="display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e;font-weight:700;font-size:.75rem;padding:4px 10px;border-radius:12px;border:1px solid #f59e0b;">⭐ PREMIUM</span>';
+        } else if (n.wants_premium) {
+          typeBadge = '<span style="display:inline-flex;align-items:center;gap:4px;background:#fff4e6;color:#ea580c;font-weight:700;font-size:.75rem;padding:4px 10px;border-radius:12px;border:1px solid #fb923c;">💳 VEUT PREMIUM</span>';
+        } else {
+          typeBadge = '<span style="display:inline-flex;align-items:center;gap:4px;background:#f1f5f9;color:#475569;font-weight:600;font-size:.75rem;padding:4px 10px;border-radius:12px;border:1px solid #cbd5e1;">GRATUIT</span>';
+        }
+        
+        // Bouton pour demander le paiement PREMIUM
+        const premiumPaymentBtn = (n.wants_premium && !n.is_premium)
+          ? `<button class="btn-a" style="background:#f59e0b;color:#fff;" onclick="requestPremiumPayment(${n.id})">💳 Demander paiement</button>`
+          : '';
+        
         return `
         <div class="need-card">
           <div class="need-card-top">
@@ -2111,7 +2123,8 @@
                 <span style="color:#94a3b8;">Soumis ${fmtDT(n.created_at)}</span>
               </div>
             </div>
-            <div class="td-actions" style="flex-shrink:0;">
+            <div class="td-actions" style="flex-shrink:0;display:flex;gap:8px;flex-wrap:wrap;">
+              ${premiumPaymentBtn}
               <button class="btn-a btn-primary" onclick="validateNeed(${n.id},true)">✅ Approuver</button>
               <button class="btn-a btn-danger" onclick="validateNeed(${n.id},false)">✕ Rejeter</button>
             </div>
@@ -2127,6 +2140,18 @@
       const d = await adminApi(`/admin/needs/${id}/validate`, { method: 'POST', body: { approve } });
       showResult(approve?'✅ Annonce approuvée !':'✕ Annonce rejetée', `<p>${d.message||''}</p>`);
       loadNeeds(); loadStats();
+    } catch(e) { alert('Erreur : ' + e.message); }
+  }
+
+  async function requestPremiumPayment(id) {
+    if (!confirm('Envoyer l\'email de demande de paiement PREMIUM à l\'éditeur de cette annonce ?')) return;
+    try {
+      const d = await adminApi(`/needs/${id}/request-premium-payment`, { method: 'POST' });
+      showResult('✅ Email envoyé !', `
+        <p>${d.message || 'L\'éditeur va recevoir un email avec un lien de paiement sécurisé.'}</p>
+        ${d.payment_url ? `<p style="font-size:.85rem;color:#6b7280;margin-top:8px;">Lien de paiement : <a href="${d.payment_url}" target="_blank" style="color:#0a7d3f;">${d.payment_url}</a></p>` : ''}
+      `);
+      loadNeeds();
     } catch(e) { alert('Erreur : ' + e.message); }
   }
 
