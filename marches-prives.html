@@ -258,6 +258,9 @@
     }
 
     async function initPage() {
+      // Annonces Premium du pays (déclarées avant tout appel pour éviter la TDZ)
+      let premiumAds = [];
+      let premiumIndex = 0;
       // Charger les annonces Premium du pays avant d'afficher les marchés
       await loadPremiumAds();
       
@@ -290,8 +293,7 @@
       // ── ESPACE PUBLICITAIRE — encart natif intercalé dans le listing ──
       // Si des annonces Premium existent pour le pays → les afficher en rotation
       // Sinon → repli sur l'encart statique "Réserver cet espace"
-      let premiumAds = [];
-      let premiumIndex = 0;
+      // (premiumAds et premiumIndex sont déclarés en haut de initPage)
 
       async function loadPremiumAds() {
         try {
