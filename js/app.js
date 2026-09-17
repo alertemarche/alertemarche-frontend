@@ -311,6 +311,14 @@ const AM_COUNTRIES = [
 const flagImg = (cc, alt) =>
     `<img class="flag-img" src="https://flagcdn.com/w40/${cc}.png" srcset="https://flagcdn.com/w80/${cc}.png 2x" width="22" height="16" alt="${alt}" loading="lazy">`;
 const currentCountry = () => {
+    // 1. Priorité : paramètre URL ?c=XX
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlCountry = urlParams.get('c');
+    if (urlCountry) {
+        const found = AM_COUNTRIES.find((c) => c.code === urlCountry.toUpperCase() && c.available);
+        if (found) return found;
+    }
+    // 2. Fallback : localStorage
     const saved = localStorage.getItem('am_country');
     return AM_COUNTRIES.find((c) => c.code === saved && c.available) || AM_COUNTRIES[0];
 };
