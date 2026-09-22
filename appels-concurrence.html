@@ -11,7 +11,7 @@
   <meta name="description" content="Appels d'offres et avis d'appel à concurrence des marchés publics au Bénin. Sources officielles du gouvernement, résumés IA, alertes par e-mail.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260803">
+  <link rel="stylesheet" href="css/style.css?v=20260922">
 </head>
 <body>
 
@@ -108,19 +108,32 @@
 
     function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
+    // Système d'urgence : jours restants, badge d'urgence et fraîcheur de publication.
+    function daysLeft(deadline){if(!deadline)return null;const d=new Date(deadline);if(isNaN(d.getTime()))return null;return Math.ceil((d.setHours(23,59,59,0)-Date.now())/864e5);}
+    function urgencyInfo(days){if(days===null)return null;if(days<0)return{label:'⛔ Délai dépassé',cls:'urg-expired',pin:false};if(days===0)return{label:'🚨 Expire AUJOURD\'HUI — Agissez maintenant !',cls:'urg-critical',pin:true};if(days<=2)return{label:`🚨 Expire dans ${days} jour${days>1?'s':''} — URGENT !`,cls:'urg-critical',pin:true};if(days<=5)return{label:`⚠️ ${days} jours restants — Ne tardez pas !`,cls:'urg-high',pin:true};if(days<=15)return{label:`⏳ ${days} jours restants`,cls:'urg-medium',pin:false};return{label:`✅ ${days} jours restants`,cls:'urg-low',pin:false};}
+    function pubInfo(freshDate){if(!freshDate)return{cls:'',icon:'📅'};const h=Math.floor((Date.now()-new Date(freshDate).getTime())/3.6e6);if(isNaN(h))return{cls:'',icon:'📅'};if(h<2)return{cls:'pub-hot',icon:'🟢'};if(h<24)return{cls:'pub-fresh',icon:'🕐'};return{cls:'',icon:'📅'};}
+
     function tenderCard(t) {
       const locked = (window.amIsLocked ? amIsLocked(t) : (window.AM_USER_STATUS !== 'subscribed'));
       const lots = (t.nbLots && t.nbLots > 1) ? `<span class="tag">${t.nbLots} lots</span>` : '';
+      const dl = t._daysLeft ?? null;
+      const urg = urgencyInfo(dl);
+      const urgCls = urg ? urg.cls : '';
+      const pi = pubInfo(t._freshDate);
+      const pubDate = t._pubDateFmt || null;
+      const urgBanner = urg ? `<div class="tc-urgency ${urg.cls}">${urg.label}</div>` : '';
+      const pubLine = pubDate ? `<div class="tc-pub-line ${pi.cls}"><span>${pi.icon}</span><span>Publié le ${pubDate}</span></div>` : '';
 
       if (locked) {
-        return `<article class="tender-card">
+        return `<article class="tender-card ${urgCls}">
           <div class="tc-top">
             <span class="sector-badge aac">Appel à concurrence</span>
             ${window.countryBadge ? countryBadge(t.country || (window.amCode ? amCode() : 'BJ')) : ''}
-            <span class="tc-time">${esc(t.time)}${t.isNew ? '<span class="tc-new">Nouveau</span>' : ''}</span>
+            <span class="tc-time">${esc(t.time)}${t.isNew ? '<span class="tc-new">✨ NOUVEAU</span>' : ''}</span>
           </div>
           <h3>${esc(t.title)}</h3>
           <div class="tc-meta">
+            ${pubLine}
             <div class="m">${svg.inst}<span>Structure : ${lockIcon}<span class="am-lock-val">••••••••••••</span></span></div>
             <div class="m">${svg.ref}<span>Référence : ${lockIcon}<span class="am-lock-val">•••••••••</span></span></div>
             <div class="m">${svg.pin}<span>${esc(t.loc)}</span></div>
@@ -128,6 +141,7 @@
             <div class="m">${svg.cal}<span>Date limite : ${lockIcon}<span class="am-lock-val">••/••/••••</span></span></div>
           </div>
           <div class="tc-tags">${t.tags.map(x => `<span class="tag">${esc(x)}</span>`).join('')}${lots}</div>
+          ${urgBanner}
           <div class="tc-actions">
             <button type="button" class="btn btn-ghost am-locked-details" style="opacity:.75;">${lockIcon} Voir les détails</button>
           </div>
@@ -142,14 +156,15 @@
       const officialBtn = officialUrl
         ? `<a href="${esc(officialUrl)}" target="_blank" rel="noopener" class="btn btn-primary">Voir sur le site officiel ${svg.ext}</a>`
         : `<a href="/inscription" class="btn btn-primary">Voir sur le site officiel ${svg.ext}</a>`;
-      return `<article class="tender-card">
+      return `<article class="tender-card ${urgCls}">
         <div class="tc-top">
           <span class="sector-badge aac">Appel à concurrence</span>
           ${window.countryBadge ? countryBadge(t.country || (window.amCode ? amCode() : 'BJ')) : ''}
-          <span class="tc-time">${esc(t.time)}${t.isNew ? '<span class="tc-new">Nouveau</span>' : ''}</span>
+          <span class="tc-time">${esc(t.time)}${t.isNew ? '<span class="tc-new">✨ NOUVEAU</span>' : ''}</span>
         </div>
         <h3>${esc(t.title)}</h3>
         <div class="tc-meta">
+          ${pubLine}
           <div class="m">${svg.inst}<span>${esc(t.inst)}</span></div>
           ${ref}
           <div class="m">${svg.pin}<span>${esc(t.loc)}</span></div>
@@ -157,6 +172,7 @@
           <div class="m">${svg.cal}<span>Date limite : ${esc(t.deadline)}</span></div>
         </div>
         <div class="tc-tags">${t.tags.map(x => `<span class="tag">${esc(x)}</span>`).join('')}${lots}</div>
+        ${urgBanner}
         <div class="tc-actions">
           <a href="/inscription" class="btn btn-ghost">Recevoir les alertes</a>
           ${officialBtn}
@@ -196,9 +212,15 @@
           return true;
         });
         const sort = document.getElementById('fSort').value;
-        if (sort === 'budget') list.sort((a,b) => (b.budget||0) - (a.budget||0));
-        else if (sort === 'deadline') list.sort((a,b) => new Date(a._deadline||'2999-01-01') - new Date(b._deadline||'2999-01-01'));
-        render(list);
+        // Sépare les marchés urgents (deadline ≤ 5 jours, non expirés) des autres.
+        const urgents = list.filter(t => t._daysLeft !== null && t._daysLeft >= 0 && t._daysLeft <= 5);
+        const expired = list.filter(t => t._daysLeft !== null && t._daysLeft < 0);
+        const normals = list.filter(t => t._daysLeft === null || t._daysLeft > 5);
+        urgents.sort((a,b) => a._daysLeft - b._daysLeft);
+        if (sort === 'budget') normals.sort((a,b) => (b.budget||0) - (a.budget||0));
+        else if (sort === 'deadline') normals.sort((a,b) => new Date(a._deadline||'2999-01-01') - new Date(b._deadline||'2999-01-01'));
+        else normals.sort((a,b) => new Date(b._freshDate || 0) - new Date(a._freshDate || 0));
+        render([...urgents, ...normals, ...expired]);
       }
 
       document.getElementById('searchInput').addEventListener('input', applyFilters);
@@ -208,7 +230,7 @@
       document.getElementById('resetFilters').addEventListener('click', () => {
         document.querySelectorAll('#searchInput,#fKeyword,#fMin,#fMax,#fFrom,#fTo').forEach(e => e.value='');
         document.querySelectorAll('.market-toolbar select, .filters-panel select').forEach(s => s.selectedIndex = 0);
-        render(data);
+        applyFilters();
       });
       document.querySelectorAll('.view-toggle button').forEach(b => b.addEventListener('click', () => {
         document.querySelectorAll('.view-toggle button').forEach(x => x.classList.remove('active'));
@@ -243,17 +265,21 @@
           const now = Date.now();
           data = items.map(t => {
             const sector = deriveSector(t.market_type);
-            const isNew = t.publication_date ? (now - new Date(t.publication_date).getTime()) < 2 * 864e5 : false;
+            const freshDate = t.publication_date || t.collected_at || null;
+            const isNew = freshDate ? (now - new Date(freshDate).getTime()) < 2 * 864e5 : false;
             return {
               country: t.country || null,
               sector,
-              time: relTime(t.publication_date), isNew,
+              time: relTime(freshDate), isNew,
               title: t.title, inst: t.institution || 'Institution publique',
               loc: t.location || (window.amByCode ? amByCode(t.country).name : ''),
               reference: t.reference || null,
               nbLots: t.nb_lots || null,
               url: t.source_url || null,
               _deadline: t.deadline || null,
+              _daysLeft: daysLeft(t.deadline || null),
+              _freshDate: freshDate,
+              _pubDateFmt: freshDate ? new Date(freshDate).toLocaleDateString('fr-FR', {day:'2-digit',month:'short',year:'numeric'}) : null,
               budget: (t.estimated_amount && /\d/.test(String(t.estimated_amount))) ? parseInt(String(t.estimated_amount).replace(/\D/g,'')) || null : null,
               deadline: t.deadline ? new Date(t.deadline).toLocaleDateString('fr-FR') : 'À confirmer',
               tags: [t.market_type].filter(Boolean),
@@ -264,7 +290,7 @@
           const rLocs = [...new Set(data.map(t => t.loc))].filter(Boolean).sort();
           ['fInstitution','fInstitution2'].forEach(id => { const s=document.getElementById(id); s.length=1; rInsts.forEach(i=>{const o=document.createElement('option');o.textContent=i;s.appendChild(o);}); });
           ['fLocation','fLocation2'].forEach(id => { const s=document.getElementById(id); s.length=1; rLocs.forEach(i=>{const o=document.createElement('option');o.textContent=i;s.appendChild(o);}); });
-          render(data);
+          applyFilters();
           const showEl = document.querySelector('.market-showing');
           if (showEl) showEl.textContent = `Affichage de ${data.length} avis d'appel à concurrence — ${window.amMeta ? amMeta().name : ''}`;
           document.getElementById('updatedAt').textContent = "Mis à jour à l'instant";

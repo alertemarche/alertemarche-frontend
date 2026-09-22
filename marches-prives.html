@@ -10,7 +10,7 @@
   <meta name="description" content="Consultations des ONG, agences des Nations Unies et organismes internationaux au Bénin : recevez les appels d'offres privés en temps réel par e-mail.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260803">
+  <link rel="stylesheet" href="css/style.css?v=20260922">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RRXKSCN05J"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RRXKSCN05J');gtag('config','AW-11514321686');</script>
 </head>
@@ -150,6 +150,31 @@
       return new Date(d).toLocaleDateString('fr-FR');
     }
 
+    // ── Urgence / publication (communes) ──────────────────
+    function daysLeft(deadline) {
+      if (!deadline) return null;
+      const d = new Date(deadline);
+      if (isNaN(d.getTime())) return null;
+      return Math.ceil((d.setHours(23,59,59,0) - Date.now()) / 864e5);
+    }
+    function urgencyInfo(days) {
+      if (days === null) return null;
+      if (days < 0)  return { label: '⛔ Délai dépassé',                                    cls: 'urg-expired',  pin: false };
+      if (days === 0) return { label: '🚨 Expire AUJOURD\'HUI — Agissez maintenant !',        cls: 'urg-critical', pin: true  };
+      if (days <= 2) return { label: `🚨 Expire dans ${days} jour${days>1?'s':''} — URGENT !`, cls: 'urg-critical', pin: true  };
+      if (days <= 5) return { label: `⚠️ ${days} jours restants — Ne tardez pas !`,           cls: 'urg-high',     pin: true  };
+      if (days <= 15) return { label: `⏳ ${days} jours restants`,                             cls: 'urg-medium',   pin: false };
+      return              { label: `✅ ${days} jours restants`,                               cls: 'urg-low',      pin: false };
+    }
+    function pubInfo(freshDate) {
+      if (!freshDate) return { cls: '', icon: '📅' };
+      const h = Math.floor((Date.now() - new Date(freshDate).getTime()) / 3.6e6);
+      if (isNaN(h)) return { cls: '', icon: '📅' };
+      if (h < 2)  return { cls: 'pub-hot',   icon: '🟢' };
+      if (h < 24) return { cls: 'pub-fresh', icon: '🕐' };
+      return               { cls: '',         icon: '📅' };
+    }
+
     // Stocke les données de chaque consultation (indexé par id) pour la modale « Voir les détails ».
     const tendersDataMap = new Map();
 
@@ -209,23 +234,33 @@
     function tenderCard(t) {
       const c = COUNTRIES[t.country] || { flag: '🌍', name: t.country || '' };
       const locked = (window.amIsLocked ? amIsLocked(t) : (window.AM_USER_STATUS !== 'subscribed'));
+      // Urgence & publication (communes locked/unlocked)
+      const dl = t._daysLeft ?? null;
+      const urg = urgencyInfo(dl);
+      const urgCls = urg ? urg.cls : '';
+      const pi = pubInfo(t._freshDate);
+      const pubDate = t._pubDateFmt || t._pubDate || null;
+      const urgBanner = urg ? `<div class="tc-urgency ${urg.cls}">${urg.label}</div>` : '';
+      const pubLine = pubDate ? `<div class="tc-pub-line ${pi.cls}"><span>${pi.icon}</span><span>Publié le ${pubDate}</span></div>` : '';
 
       if (locked) {
         // Consultation verrouillée : référence + date limite masquées,
         // bouton officiel caché, « Voir les détails » grisé.
-        return `<article class="tender-card">
+        return `<article class="tender-card ${urgCls}">
           <div class="tc-top">
             <span class="sector-badge" style="background:var(--purple-050);color:var(--purple);">🤝 Privé</span>
             ${window.countryBadge ? countryBadge(t.country || (window.amCode ? amCode() : 'BJ')) : ''}
-            <span class="tc-time">${esc(t.time)}${t.isNew ? '<span class="tc-new">Nouveau</span>' : ''}</span>
+            <span class="tc-time">${esc(t.time)}${t.isNew ? ' <span class="tc-new">✨ NOUVEAU</span>' : ''}</span>
           </div>
           <h3>${esc(t.title)}</h3>
           <div class="tc-meta">
+            ${pubLine}
             <div class="m">${svg.inst}<span>Structure : ${lockIcon}<span class="am-lock-val">••••••••••••</span></span></div>
             <div class="m">${svg.ref}<span>Référence : ${lockIcon}<span class="am-lock-val">•••••••••</span></span></div>
             <div class="m">${svg.pin}<span>${esc(t.loc)} <span class="tag" style="margin-left:6px;">${c.flag} ${esc(c.name)}</span></span></div>
             <div class="m">${svg.cal}<span>Date limite : ${lockIcon}<span class="am-lock-val">••/••/••••</span></span></div>
           </div>
+          ${urgBanner}
           <div class="tc-actions">
             <button type="button" class="btn btn-ghost am-locked-details" style="opacity:.75;">${lockIcon} Voir les détails</button>
           </div>
@@ -238,19 +273,21 @@
       const btn = url
         ? `<a href="${esc(url)}" target="_blank" rel="noopener" class="btn btn-purple">Voir sur le site officiel ${svg.ext}</a>`
         : `<a href="/inscription" class="btn btn-purple">Voir sur le site officiel ${svg.ext}</a>`;
-      return `<article class="tender-card">
+      return `<article class="tender-card ${urgCls}">
         <div class="tc-top">
           <span class="sector-badge" style="background:var(--purple-050);color:var(--purple);">🤝 Privé</span>
           ${window.countryBadge ? countryBadge(t.country || (window.amCode ? amCode() : 'BJ')) : ''}
-          <span class="tc-time">${esc(t.time)}${t.isNew ? '<span class="tc-new">Nouveau</span>' : ''}</span>
+          <span class="tc-time">${esc(t.time)}${t.isNew ? ' <span class="tc-new">✨ NOUVEAU</span>' : ''}</span>
         </div>
         <h3>${esc(t.title)}</h3>
         <div class="tc-meta">
+          ${pubLine}
           <div class="m">${svg.inst}<span>${esc(t.inst)}</span></div>
           ${ref}
           <div class="m">${svg.pin}<span>${esc(t.loc)} <span class="tag" style="margin-left:6px;">${c.flag} ${esc(c.name)}</span></span></div>
           <div class="m">${svg.cal}<span>Date limite : <b>${esc(t.deadline)}</b></span></div>
         </div>
+        ${urgBanner}
         <div class="tc-actions">
           <button type="button" class="btn btn-ghost am-detail-btn" data-id="${esc(t.id)}">Voir les détails</button>
           ${btn}
@@ -383,10 +420,19 @@
           if (to && t._deadline && new Date(t._deadline) > new Date(to)) return false;
           return true;
         });
+        // 1. Urgents (≤5j et non expirés) → toujours en tête, triés par jours ASC
+        const urgents = list.filter(t => t._daysLeft !== null && t._daysLeft >= 0 && t._daysLeft <= 5)
+          .sort((a, b) => (a._daysLeft ?? 999) - (b._daysLeft ?? 999));
+        // 2. Normaux (>5j ou deadline inconnue) → tri selon filtre utilisateur
+        const normals = list.filter(t => t._daysLeft === null || t._daysLeft > 5);
+        // 3. Expirés → toujours à la fin
+        const expired = list.filter(t => t._daysLeft !== null && t._daysLeft < 0);
+
         const sort = document.getElementById('fSort').value;
-        if (sort === 'deadline') list.sort((a, b) => new Date(a._deadline || '2999-01-01') - new Date(b._deadline || '2999-01-01'));
-        else list.sort((a, b) => new Date(b._published || 0) - new Date(a._published || 0));
-        render(list);
+        if (sort === 'deadline') normals.sort((a, b) => new Date(a._deadline || '2999-01-01') - new Date(b._deadline || '2999-01-01'));
+        else normals.sort((a, b) => new Date(b._freshDate || b._published || 0) - new Date(a._freshDate || a._published || 0));
+
+        render([...urgents, ...normals, ...expired]);
       }
 
       document.getElementById('searchInput').addEventListener('input', applyFilters);
@@ -432,6 +478,10 @@
               _deadline: t.deadline || null,
               _published: t.publication_date || t.collected_at || null,
               _pubDate: t.publication_date ? fmtDate(t.publication_date) : null,
+              _daysLeft: daysLeft(t.deadline || null),
+              _freshDate: freshDate,
+              _freshHours: freshDate ? Math.floor((now - new Date(freshDate).getTime()) / 3.6e6) : null,
+              _pubDateFmt: freshDate ? new Date(freshDate).toLocaleDateString('fr-FR', {day:'2-digit', month:'short', year:'numeric'}) : null,
               deadline: fmtDate(t.deadline),
             };
             // Indexe chaque consultation par son id pour la modale « Voir les détails ».
