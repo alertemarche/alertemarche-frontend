@@ -268,6 +268,15 @@
         // Stocke le profil pour pré-remplir le paiement KKiaPay (téléphone/email/nom).
         if (res.user) { try { localStorage.setItem('am_user', JSON.stringify(res.user)); } catch (_) {} }
         gtag('event', 'login');
+
+        // Email non vérifié → rediriger vers /verification avant tout accès.
+        if (res.otp_required || res.email_verified === false) {
+          sessionStorage.setItem('am_identifier', identifier);
+          msg.innerHTML = '<div class="notice notice--warning">⚠️ Votre email n\'est pas encore vérifié. Un code vient de vous être envoyé.</div>';
+          setTimeout(() => location.href = '/verification', 1200);
+          return;
+        }
+
         // Priorité à la destination demandée (ex: e-mail de rappel → /tarifs).
         const target = resolveRedirectTarget();
         if (target) { location.href = target; return; }

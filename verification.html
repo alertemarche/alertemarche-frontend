@@ -127,8 +127,11 @@
       try {
         await api('/auth/otp/verify', { method: 'POST', body: { identifier: identifier, code: code } });
         msg.style.color = 'var(--green)';
-        msg.textContent = '✓ Compte vérifié !';
-        setTimeout(() => location.href="compte-cree", 700);
+        msg.textContent = '✓ Email vérifié !';
+        // Si l'utilisateur avait déjà un token (connexion avec email non vérifié)
+        // → rediriger vers le dashboard. Sinon → page compte-cree (nouvel inscrit).
+        const dest = localStorage.getItem('am_token') ? 'dashboard' : 'compte-cree';
+        setTimeout(() => location.href = dest, 700);
       } catch (err) {
         btn.disabled = false;
         msg.style.color = '#ef4444';
