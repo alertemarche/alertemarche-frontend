@@ -144,8 +144,23 @@
     .modal-footer{padding:16px 24px;border-top:1px solid #f1f5f9;display:flex;justify-content:flex-end;gap:8px;}
     .mf-group{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
     .mf-group label{font-weight:600;font-size:.83rem;color:#374151;}
-    .mf-group input,.mf-group select{padding:.6rem .8rem;border:1.5px solid #e2e8f0;border-radius:7px;font-size:.88rem;}
-    .mf-group input:focus,.mf-group select:focus{outline:none;border-color:#0a7d3f;}
+    .mf-group input,.mf-group select,.mf-group textarea{padding:.6rem .8rem;border:1.5px solid #e2e8f0;border-radius:7px;font-size:.88rem;font-family:inherit;}
+    .mf-group input:focus,.mf-group select:focus,.mf-group textarea:focus{outline:none;border-color:#0a7d3f;}
+    /* Marchés manuels : zone d'upload + miniatures */
+    .mt-drop{border:2px dashed #cbd5e1;border-radius:12px;padding:26px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;background:#f8fafc;}
+    .mt-drop:hover,.mt-drop.dragover{border-color:#0a7d3f;background:#f0fdf4;}
+    .mt-drop-inner p{margin:4px 0;}
+    .mt-thumbs{display:flex;flex-wrap:wrap;gap:14px;margin-top:16px;}
+    .mt-thumb{width:190px;border:1.5px solid #e2e8f0;border-radius:10px;overflow:hidden;background:#fff;display:flex;flex-direction:column;}
+    .mt-thumb img{width:100%;height:130px;object-fit:cover;background:#f1f5f9;}
+    .mt-thumb .mt-thumb-body{padding:8px;display:flex;flex-direction:column;gap:6px;}
+    .mt-thumb .mt-thumb-name{font-size:.72rem;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .mt-thumb .mt-badge{font-size:.7rem;font-weight:700;padding:2px 7px;border-radius:20px;align-self:flex-start;}
+    .mt-badge.pending{background:#f1f5f9;color:#64748b;}
+    .mt-badge.done{background:#dcfce7;color:#166534;}
+    .mt-badge.error{background:#fee2e2;color:#b91c1c;}
+    .spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;animation:mtspin .7s linear infinite;vertical-align:-2px;}
+    @keyframes mtspin{to{transform:rotate(360deg);}}
     .mf-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
     .modal-msg{font-size:.85rem;min-height:20px;margin-bottom:4px;}
     .modal-msg.ok{color:#059669;}
@@ -315,6 +330,7 @@
       <a href="#" data-tab="subs">💳 Abonnements</a>
       <a href="#" data-tab="payments">💰 Paiements</a>
       <div class="nav-section">Contenu</div>
+      <a href="#" data-tab="tenders">📸 Marchés manuels</a>
       <a href="#" data-tab="needs">📢 Annonces à valider</a>
       <a href="#" data-tab="scrapers">🤖 Scrapers</a>
       <div class="nav-section">Communication</div>
@@ -756,6 +772,99 @@
       </div>
     </div>
 
+    <!-- ===== MARCHÉS MANUELS (saisie assistée par IA) ===== -->
+    <div id="panel-tenders" class="admin-panel hidden">
+      <div class="panel-header">
+        <h1>📸 Marchés manuels</h1>
+        <div class="panel-actions">
+          <button class="btn-a btn-ghost" onclick="loadManualTenders()">↻ Rafraîchir</button>
+        </div>
+      </div>
+      <p style="color:#64748b;font-size:.85rem;margin-bottom:18px;max-width:820px;">
+        Photographiez un avis de marché affiché en mairie/préfecture, laissez l'IA extraire les données,
+        vérifiez-les puis publiez en un clic. Le marché apparaît sur le site public et déclenche les alertes
+        des abonnés concernés, comme les avis collectés automatiquement.
+      </p>
+
+      <!-- Étape 1 : Upload + analyse IA -->
+      <div class="acard" style="margin-bottom:20px;">
+        <h3>1️⃣ Photos de l'avis</h3>
+        <div id="mtDrop" class="mt-drop" onclick="document.getElementById('mtFile').click()">
+          <input type="file" id="mtFile" accept="image/jpeg,image/png,image/webp" multiple style="display:none;" onchange="mtHandleFiles(this.files)">
+          <div class="mt-drop-inner">
+            <div style="font-size:2rem;">📷</div>
+            <p style="font-weight:700;color:#334155;">Cliquez ou glissez-déposez une ou plusieurs photos</p>
+            <p style="font-size:.8rem;color:#94a3b8;">Formats acceptés : JPG, PNG, WEBP — 12 Mo max par image</p>
+          </div>
+        </div>
+        <div id="mtThumbs" class="mt-thumbs"></div>
+      </div>
+
+      <!-- Étape 2 : Formulaire (pré-rempli par l'IA) -->
+      <div class="acard" style="margin-bottom:20px;">
+        <h3>2️⃣ Données du marché</h3>
+        <p id="mtFormHint" style="font-size:.8rem;color:#94a3b8;margin-bottom:14px;">
+          Analysez une photo pour pré-remplir automatiquement, ou saisissez les champs manuellement.
+        </p>
+        <div class="mf-grid">
+          <div class="mf-group" style="grid-column:1 / -1;">
+            <label>Objet / Titre du marché *</label>
+            <textarea id="mtTitle" rows="2" placeholder="Ex : Réalisation des travaux de finition du 1er étage du PC de la Base aérienne de Cotonou"></textarea>
+          </div>
+          <div class="mf-group"><label>Autorité contractante *</label><input id="mtInstitution" placeholder="Ex : Ministère de la défense nationale"></div>
+          <div class="mf-group"><label>Pays *</label>
+            <select id="mtCountry">
+              <option value="BJ">🇧🇯 Bénin</option>
+              <option value="TG">🇹🇬 Togo</option>
+              <option value="CI">🇨🇮 Côte d'Ivoire</option>
+              <option value="SN">🇸🇳 Sénégal</option>
+              <option value="BF">🇧🇫 Burkina Faso</option>
+            </select>
+          </div>
+          <div class="mf-group"><label>Type</label>
+            <select id="mtType">
+              <option value="public">Public</option>
+              <option value="prive">Privé</option>
+            </select>
+          </div>
+          <div class="mf-group"><label>Catégorie</label>
+            <select id="mtMarketType">
+              <option value="">—</option>
+              <option value="drp">DRP</option>
+              <option value="travaux">Travaux</option>
+              <option value="fournitures">Fournitures</option>
+              <option value="services">Services</option>
+              <option value="aoo">AOO (Appel d'offres ouvert)</option>
+              <option value="aor">AOR (Appel d'offres restreint)</option>
+            </select>
+          </div>
+          <div class="mf-group"><label>Réf. SIGMAP</label><input id="mtReference" placeholder="Ex : T_EMAA_124187"></div>
+          <div class="mf-group"><label>Avis n°</label><input id="mtAvisNumber" placeholder="Ex : 101/MDN/PRMP/SP-PRMP/SA"></div>
+          <div class="mf-group"><label>Montant estimé (FCFA)</label><input id="mtAmount" type="number" min="0" placeholder="Ex : 26059500"></div>
+          <div class="mf-group"><label>Date limite de soumission</label><input id="mtDeadline" type="date"></div>
+          <div class="mf-group"><label>Date de publication</label><input id="mtPubDate" type="date"></div>
+          <div class="mf-group"><label>Lieu d'exécution</label><input id="mtLocation" placeholder="Ex : Cotonou"></div>
+          <div class="mf-group" style="grid-column:1 / -1;">
+            <label>Description</label>
+            <textarea id="mtDescription" rows="3" placeholder="Description courte de ce qui est demandé"></textarea>
+          </div>
+        </div>
+        <p id="mtMsg" class="modal-msg" style="margin-top:6px;"></p>
+        <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
+          <button class="btn-a btn-primary btn-lg" id="mtPublishBtn" onclick="publishManualTender()">✅ Publier le marché</button>
+          <button class="btn-a btn-ghost btn-lg" onclick="resetManualForm()">🔄 Réinitialiser</button>
+        </div>
+      </div>
+
+      <!-- Étape 3 : Liste des marchés manuels -->
+      <div class="acard" style="padding:0;">
+        <div style="padding:16px 20px 12px;border-bottom:1px solid #f1f5f9;">
+          <h3 style="margin:0;">📋 Marchés publiés manuellement</h3>
+        </div>
+        <div id="mtList" class="table-wrap"><p class="loading">Chargement…</p></div>
+      </div>
+    </div>
+
   </main>
 </div>
 
@@ -943,6 +1052,54 @@
     <div class="modal-body" id="resultBody"></div>
     <div class="modal-footer">
       <button class="btn-a btn-primary" onclick="closeModal('modalResult')">Fermer</button>
+    </div>
+  </div>
+
+  <!-- MODALE : Modifier un marché manuel -->
+  <div id="modalEditTender" class="modal-box" style="display:none;" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2>✏️ Modifier le marché</h2>
+      <button class="modal-close" onclick="closeModal('modalEditTender')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="etId">
+      <div class="mf-grid">
+        <div class="mf-group" style="grid-column:1 / -1;"><label>Objet / Titre *</label><textarea id="etTitle" rows="2"></textarea></div>
+        <div class="mf-group"><label>Autorité contractante *</label><input id="etInstitution"></div>
+        <div class="mf-group"><label>Pays *</label>
+          <select id="etCountry">
+            <option value="BJ">🇧🇯 Bénin</option>
+            <option value="TG">🇹🇬 Togo</option>
+            <option value="CI">🇨🇮 Côte d'Ivoire</option>
+            <option value="SN">🇸🇳 Sénégal</option>
+            <option value="BF">🇧🇫 Burkina Faso</option>
+          </select>
+        </div>
+        <div class="mf-group"><label>Type</label>
+          <select id="etType"><option value="public">Public</option><option value="prive">Privé</option></select>
+        </div>
+        <div class="mf-group"><label>Catégorie</label>
+          <select id="etMarketType">
+            <option value="">—</option>
+            <option value="drp">DRP</option>
+            <option value="travaux">Travaux</option>
+            <option value="fournitures">Fournitures</option>
+            <option value="services">Services</option>
+            <option value="aoo">AOO</option>
+            <option value="aor">AOR</option>
+          </select>
+        </div>
+        <div class="mf-group"><label>Réf. SIGMAP</label><input id="etReference"></div>
+        <div class="mf-group"><label>Montant estimé (FCFA)</label><input id="etAmount" type="number" min="0"></div>
+        <div class="mf-group"><label>Date limite</label><input id="etDeadline" type="date"></div>
+        <div class="mf-group"><label>Lieu d'exécution</label><input id="etLocation"></div>
+        <div class="mf-group" style="grid-column:1 / -1;"><label>Description</label><textarea id="etDescription" rows="3"></textarea></div>
+      </div>
+      <p id="etMsg" class="modal-msg"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-a btn-ghost" onclick="closeModal('modalEditTender')">Annuler</button>
+      <button class="btn-a btn-primary" id="etBtn" onclick="saveEditTender()">Enregistrer</button>
     </div>
   </div>
 
@@ -1186,6 +1343,7 @@
     if (tab === 'users')    loadUsers();
     if (tab === 'subs')     loadSubs();
     if (tab === 'payments') loadPayments();
+    if (tab === 'tenders')  loadManualTenders();
     if (tab === 'needs')    loadNeeds();
     if (tab === 'scrapers') loadScrapers();
     if (tab === 'bugpay')   loadBugPay();
@@ -2685,6 +2843,263 @@
       el.innerHTML = `<p class="empty">Impossible de charger l'historique.</p>`;
     }
   }
+
+  /* ====================== MARCHÉS MANUELS (IA VISION) ====================== */
+  const MT_CAT_LABEL = { drp:'DRP', travaux:'Travaux', fournitures:'Fournitures', services:'Services', aoo:'AOO', aor:'AOR', cotation:'Cotation' };
+  let MT_IMAGES = []; // { id, file, dataUrl, status: 'pending'|'analyzing'|'done'|'error' }
+  let MT_SEQ = 0;
+
+  // Sélection / dépôt de fichiers
+  function mtHandleFiles(fileList) {
+    const files = Array.from(fileList || []).filter(f => /^image\/(jpe?g|png|webp)$/i.test(f.type));
+    if (!files.length) return;
+    files.forEach(f => {
+      if (f.size > 12 * 1024 * 1024) {
+        alert(`« ${f.name} » dépasse 12 Mo et a été ignorée.`);
+        return;
+      }
+      const reader = new FileReader();
+      const id = ++MT_SEQ;
+      reader.onload = e => {
+        MT_IMAGES.push({ id, file: f, dataUrl: e.target.result, status: 'pending' });
+        renderMtThumbs();
+      };
+      reader.readAsDataURL(f);
+    });
+    document.getElementById('mtFile').value = '';
+  }
+
+  function renderMtThumbs() {
+    const wrap = document.getElementById('mtThumbs');
+    if (!MT_IMAGES.length) { wrap.innerHTML = ''; return; }
+    wrap.innerHTML = MT_IMAGES.map(img => {
+      const badge = {
+        pending:  '<span class="mt-badge pending">À analyser</span>',
+        analyzing:'<span class="mt-badge pending">Analyse…</span>',
+        done:     '<span class="mt-badge done">✓ Analysée</span>',
+        error:    '<span class="mt-badge error">Échec</span>',
+      }[img.status] || '';
+      const btnLabel = img.status === 'analyzing'
+        ? '<span class="spin"></span> Analyse…'
+        : '🔍 Analyser';
+      return `<div class="mt-thumb">
+        <img src="${img.dataUrl}" alt="">
+        <div class="mt-thumb-body">
+          <span class="mt-thumb-name">${esc(img.file.name)}</span>
+          ${badge}
+          <button class="btn-a btn-primary" style="justify-content:center;" ${img.status==='analyzing'?'disabled':''} onclick="mtAnalyze(${img.id})">${btnLabel}</button>
+          <button class="btn-a btn-ghost" style="justify-content:center;" onclick="mtRemoveImage(${img.id})">🗑️ Retirer</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function mtRemoveImage(id) {
+    MT_IMAGES = MT_IMAGES.filter(i => i.id !== id);
+    renderMtThumbs();
+  }
+
+  // Analyse IA d'une image → pré-remplit le formulaire
+  async function mtAnalyze(id) {
+    const img = MT_IMAGES.find(i => i.id === id);
+    if (!img) return;
+    img.status = 'analyzing'; renderMtThumbs();
+    const msg = document.getElementById('mtMsg');
+    msg.className = 'modal-msg'; msg.textContent = '⏳ Analyse de l\'image par l\'IA en cours…';
+    try {
+      const fd = new FormData();
+      fd.append('image', img.file);
+      const res = await fetch(API_BASE + '/admin/tenders/extract-image', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json', 'Authorization': 'Bearer ' + adminToken() },
+        body: fd,
+      });
+      if (res.status === 401) { sessionStorage.removeItem(ADMIN_TOKEN_KEY); location.reload(); return; }
+      const d = await res.json();
+      if (!res.ok || !d.data) throw new Error(d.message || 'Analyse impossible.');
+      fillManualForm(d.data);
+      img.status = 'done'; renderMtThumbs();
+      msg.className = 'modal-msg ok';
+      msg.textContent = '✅ Données extraites. Vérifiez puis cliquez sur « Publier le marché ».';
+    } catch(e) {
+      img.status = 'error'; renderMtThumbs();
+      msg.className = 'modal-msg err';
+      msg.textContent = '⚠️ ' + (e.message || 'Échec de l\'analyse. Saisissez les champs manuellement.');
+    }
+  }
+
+  // Remplit le formulaire à partir du JSON extrait par l'IA
+  function fillManualForm(d) {
+    const set = (elid, val) => { const el = document.getElementById(elid); if (el != null && val != null && val !== '') el.value = val; };
+    set('mtTitle', d.title);
+    set('mtInstitution', d.institution);
+    if (d.country) { const cc = String(d.country).toUpperCase(); if (['BJ','TG','CI','SN','BF'].includes(cc)) document.getElementById('mtCountry').value = cc; }
+    if (d.type && ['public','prive'].includes(d.type)) document.getElementById('mtType').value = d.type;
+    if (d.market_type) {
+      const mt = String(d.market_type).toLowerCase();
+      const opt = [...document.getElementById('mtMarketType').options].find(o => o.value === mt);
+      if (opt) document.getElementById('mtMarketType').value = mt;
+    }
+    set('mtReference', d.reference);
+    set('mtAvisNumber', d.avis_number);
+    if (d.estimated_amount != null && d.estimated_amount !== '') {
+      const num = String(d.estimated_amount).replace(/[^\d]/g, '');
+      if (num) document.getElementById('mtAmount').value = num;
+    }
+    if (d.deadline && /^\d{4}-\d{2}-\d{2}$/.test(d.deadline)) set('mtDeadline', d.deadline);
+    if (d.publication_date && /^\d{4}-\d{2}-\d{2}$/.test(d.publication_date)) set('mtPubDate', d.publication_date);
+    set('mtLocation', d.location);
+    set('mtDescription', d.description);
+    document.getElementById('mtFormHint').innerHTML = '✨ <span style="color:#059669;">Champs pré-remplis par l\'IA — vérifiez avant de publier.</span>';
+  }
+
+  function resetManualForm() {
+    ['mtTitle','mtInstitution','mtReference','mtAvisNumber','mtAmount','mtDeadline','mtPubDate','mtLocation','mtDescription'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('mtCountry').value = 'BJ';
+    document.getElementById('mtType').value = 'public';
+    document.getElementById('mtMarketType').value = '';
+    document.getElementById('mtMsg').textContent = '';
+    document.getElementById('mtFormHint').textContent = 'Analysez une photo pour pré-remplir automatiquement, ou saisissez les champs manuellement.';
+  }
+
+  // Publication du marché
+  async function publishManualTender() {
+    const msg = document.getElementById('mtMsg');
+    const btn = document.getElementById('mtPublishBtn');
+    msg.className = 'modal-msg'; msg.textContent = '';
+    const title = document.getElementById('mtTitle').value.trim();
+    const institution = document.getElementById('mtInstitution').value.trim();
+    if (!title || !institution) {
+      msg.className = 'modal-msg err'; msg.textContent = '⚠️ L\'objet et l\'autorité contractante sont obligatoires.'; return;
+    }
+    btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Publication…';
+    try {
+      const body = {
+        title, institution,
+        country: document.getElementById('mtCountry').value,
+        type: document.getElementById('mtType').value,
+        market_type: document.getElementById('mtMarketType').value || null,
+        reference: document.getElementById('mtReference').value.trim() || null,
+        avis_number: document.getElementById('mtAvisNumber').value.trim() || null,
+        estimated_amount: document.getElementById('mtAmount').value.trim() || null,
+        deadline: document.getElementById('mtDeadline').value || null,
+        publication_date: document.getElementById('mtPubDate').value || null,
+        location: document.getElementById('mtLocation').value.trim() || null,
+        description: document.getElementById('mtDescription').value.trim() || null,
+      };
+      const d = await adminApi('/admin/tenders', { method: 'POST', body });
+      msg.className = 'modal-msg ok';
+      msg.textContent = '✅ ' + (d.message || 'Marché publié.');
+      resetManualForm();
+      MT_IMAGES = []; renderMtThumbs();
+      loadManualTenders();
+    } catch(e) {
+      msg.className = 'modal-msg err'; msg.textContent = '⚠️ ' + (e.message || 'Erreur lors de la publication.');
+    } finally {
+      btn.disabled = false; btn.innerHTML = '✅ Publier le marché';
+    }
+  }
+
+  // Liste des marchés manuels
+  let MT_CACHE = [];
+  async function loadManualTenders() {
+    const el = document.getElementById('mtList');
+    el.innerHTML = '<p class="loading">Chargement…</p>';
+    try {
+      const d = await adminApi('/admin/tenders');
+      MT_CACHE = d.data || [];
+      if (!MT_CACHE.length) {
+        el.innerHTML = '<p class="empty" style="padding:16px 20px;">Aucun marché saisi manuellement pour l\'instant.</p>';
+        return;
+      }
+      el.innerHTML = `<table class="data-table">
+        <thead><tr>
+          <th>Objet</th><th>Autorité</th><th>Pays</th><th>Catégorie</th>
+          <th>Date limite</th><th>Montant</th><th>Actions</th>
+        </tr></thead>
+        <tbody>${MT_CACHE.map(t => `<tr>
+          <td style="max-width:320px;"><b>${esc(t.title || '—')}</b> <span class="badge-manual">Manuel</span></td>
+          <td>${esc(t.institution || '—')}</td>
+          <td>${COUNTRIES[t.country] || t.country || '—'}</td>
+          <td>${t.market_type ? (MT_CAT_LABEL[t.market_type] || esc(t.market_type)) : '—'}</td>
+          <td style="white-space:nowrap;">${fmtD(t.deadline)}</td>
+          <td style="white-space:nowrap;">${t.estimated_amount ? esc(String(t.estimated_amount)) : '—'}</td>
+          <td class="td-actions" style="white-space:nowrap;">
+            <button class="btn-a btn-ghost" onclick="openEditTender(${t.id})">✏️ Modifier</button>
+            <button class="btn-a btn-ghost" style="color:#dc2626;" onclick="deleteManualTender(${t.id})">🗑️ Supprimer</button>
+          </td>
+        </tr>`).join('')}</tbody></table>`;
+    } catch(e) {
+      el.innerHTML = `<p class="empty" style="padding:16px 20px;">Impossible de charger la liste : ${esc(e.message||'')}</p>`;
+    }
+  }
+
+  function openEditTender(id) {
+    const t = MT_CACHE.find(x => x.id === id);
+    if (!t) return;
+    document.getElementById('etId').value = t.id;
+    document.getElementById('etTitle').value = t.title || '';
+    document.getElementById('etInstitution').value = t.institution || '';
+    document.getElementById('etCountry').value = ['BJ','TG','CI','SN','BF'].includes(t.country) ? t.country : 'BJ';
+    document.getElementById('etType').value = (t.type === 'prive') ? 'prive' : 'public';
+    document.getElementById('etMarketType').value = [...document.getElementById('etMarketType').options].some(o => o.value === t.market_type) ? t.market_type : '';
+    document.getElementById('etReference').value = t.reference || '';
+    document.getElementById('etAmount').value = t.estimated_amount ? String(t.estimated_amount).replace(/[^\d]/g,'') : '';
+    document.getElementById('etDeadline').value = (t.deadline && /^\d{4}-\d{2}-\d{2}/.test(t.deadline)) ? t.deadline.slice(0,10) : '';
+    document.getElementById('etLocation').value = t.location || '';
+    document.getElementById('etDescription').value = t.ai_summary || '';
+    document.getElementById('etMsg').textContent = '';
+    openModal('modalEditTender');
+  }
+
+  async function saveEditTender() {
+    const msg = document.getElementById('etMsg');
+    const btn = document.getElementById('etBtn');
+    msg.className = 'modal-msg'; msg.textContent = '';
+    const id = document.getElementById('etId').value;
+    const title = document.getElementById('etTitle').value.trim();
+    const institution = document.getElementById('etInstitution').value.trim();
+    if (!title || !institution) { msg.className = 'modal-msg err'; msg.textContent = '⚠️ Objet et autorité obligatoires.'; return; }
+    btn.disabled = true; btn.textContent = 'Enregistrement…';
+    try {
+      const body = {
+        title, institution,
+        country: document.getElementById('etCountry').value,
+        type: document.getElementById('etType').value,
+        market_type: document.getElementById('etMarketType').value || null,
+        reference: document.getElementById('etReference').value.trim() || null,
+        estimated_amount: document.getElementById('etAmount').value.trim() || null,
+        deadline: document.getElementById('etDeadline').value || null,
+        location: document.getElementById('etLocation').value.trim() || null,
+        description: document.getElementById('etDescription').value.trim() || null,
+      };
+      await adminApi('/admin/tenders/' + id, { method: 'PATCH', body });
+      closeModal('modalEditTender');
+      loadManualTenders();
+    } catch(e) {
+      msg.className = 'modal-msg err'; msg.textContent = '⚠️ ' + (e.message || 'Erreur.');
+    } finally { btn.disabled = false; btn.textContent = 'Enregistrer'; }
+  }
+
+  async function deleteManualTender(id) {
+    const t = MT_CACHE.find(x => x.id === id);
+    if (!confirm(`Supprimer définitivement ce marché ?\n\n${t ? t.title : ''}`)) return;
+    try {
+      await adminApi('/admin/tenders/' + id, { method: 'DELETE' });
+      loadManualTenders();
+    } catch(e) { alert('⚠️ ' + (e.message || 'Suppression impossible.')); }
+  }
+
+  // Drag & drop sur la zone d'upload
+  (function initMtDrop(){
+    document.addEventListener('DOMContentLoaded', () => {
+      const drop = document.getElementById('mtDrop');
+      if (!drop) return;
+      ['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('dragover'); }));
+      ['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('dragover'); }));
+      drop.addEventListener('drop', e => { if (e.dataTransfer && e.dataTransfer.files) mtHandleFiles(e.dataTransfer.files); });
+    });
+  })();
 </script>
 </body>
 </html>
