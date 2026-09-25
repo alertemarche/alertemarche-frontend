@@ -43,8 +43,9 @@
           <option value="public,aac">Appels d'offres publics</option>
           <option value="avis_general">Avis généraux</option>
           <option value="plan_passation">Plans de passation</option>
+          <option value="drp">DRP (Demandes de renseignements et de prix)</option>
         </select></div>
-        <div class="filter-select"><select id="fSector"><option value="">Type de marché</option><option>Travaux</option><option>Fournitures</option><option>Services</option><option>DRP</option></select></div>
+        <div class="filter-select"><select id="fSector"><option value="">Type de marché</option><option>Travaux</option><option>Fournitures</option><option>Services</option></select></div>
         <div class="filter-select"><select id="fInstitution"><option value="">Institution</option></select></div>
         <div class="filter-select"><select id="fLocation"><option value="">Localisation</option></select></div>
         <div class="filter-select"><select id="fSort"><option value="recent">Trier par : Plus récents</option><option value="deadline">Date limite</option><option value="budget">Budget</option></select></div>
@@ -59,6 +60,7 @@
         <div class="fp-head"><b>Filtres</b><a id="resetFilters">Réinitialiser</a></div>
         <div class="filter-group"><label>Mots clés</label><input type="text" id="fKeyword" placeholder="Ex : construction, fourniture, etc."></div>
         <div class="filter-group"><label>Catégorie / Secteur</label><select id="fSector2"><option value="">Sélectionner</option><option>Travaux</option><option>Fournitures</option><option>Services</option><option>DRP</option></select></div>
+<!-- DRP géré via fCategory -->
         <div class="filter-group"><label>Institution</label><select id="fInstitution2"><option value="">Toutes les institutions</option></select></div>
         <div class="filter-group"><label>Localisation</label><select id="fLocation2"><option value="">Toutes les localisations</option></select></div>
         <div class="filter-group"><label>Budget</label><div class="filter-range"><input type="number" id="fMin" placeholder="Min (FCFA)"><span>à</span><input type="number" id="fMax" placeholder="Max (FCFA)"></div></div>
@@ -340,8 +342,8 @@
       // Catégories regroupées sous « Marchés publics ». Par défaut : tout
       // (appels d'offres publics + avis d'appel à concurrence + avis généraux
       // + plans de passation). Le paramètre active=1 exclut les avis expirés.
-      const DEFAULT_TYPES = 'public,aac,avis_general,plan_passation';
-      const state = { q: '', types: DEFAULT_TYPES, page: 1, perPage: 50, total: 0, lastPage: 1, loading: false, all: [] };
+      const DEFAULT_TYPES = 'public,aac,avis_general,plan_passation,drp';
+      const state = { q: '', types: DEFAULT_TYPES, page: 1, perPage: 50, total: 0, lastPage: 1, loading: false, all: [], sectorFilter: '' };
 
       // Déduit le secteur/badge à partir du type de marché officiel.
       function deriveSector(mt) {
@@ -423,7 +425,7 @@
       // Raffinement client (sur les avis déjà chargés) : type de marché,
       // institution, localisation, budget, dates, tri.
       function refine(items) {
-        const market = (val('fSector') || val('fSector2')).trim();
+        const market = (state.sectorFilter || val('fSector') || val('fSector2')).trim();
         const inst = (val('fInstitution') || val('fInstitution2')).trim();
         const loc = (val('fLocation') || val('fLocation2')).trim();
         const min = parseFloat(val('fMin')) || null, max = parseFloat(val('fMax')) || null;
@@ -572,9 +574,19 @@
       document.getElementById('searchInput').addEventListener('input', onSearch);
       const fkw = document.getElementById('fKeyword'); if (fkw) fkw.addEventListener('input', onSearch);
 
-      // --- Catégorie (serveur) ---
+      // --- Catégorie (serveur + filtre client pour DRP) ---
       document.getElementById('fCategory').addEventListener('change', e => {
-        state.types = e.target.value || DEFAULT_TYPES; fetchPage(true);
+        const v = e.target.value;
+        if (v === 'drp') {
+          // Les DRP sont des marchés publics → on garde DEFAULT_TYPES
+          // mais on filtre côté client sur sector = DRP
+          state.types = DEFAULT_TYPES;
+          state.sectorFilter = 'DRP';
+        } else {
+          state.types = v || DEFAULT_TYPES;
+          state.sectorFilter = '';
+        }
+        fetchPage(true);
       });
 
       // --- Filtres secondaires (raffinement client) ---
@@ -587,7 +599,7 @@
       document.getElementById('resetFilters').addEventListener('click', () => {
         document.querySelectorAll('#searchInput,#fKeyword,#fMin,#fMax,#fFrom,#fTo').forEach(e => e.value = '');
         document.querySelectorAll('.market-toolbar select, .filters-panel select').forEach(s => s.selectedIndex = 0);
-        state.q = ''; state.types = DEFAULT_TYPES; fetchPage(true);
+        state.q = ''; state.types = DEFAULT_TYPES; state.sectorFilter = ''; fetchPage(true);
       });
 
       document.querySelectorAll('.view-toggle button').forEach(b => b.addEventListener('click', () => {
