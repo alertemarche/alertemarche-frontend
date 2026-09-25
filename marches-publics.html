@@ -44,7 +44,7 @@
           <option value="avis_general">Avis généraux</option>
           <option value="plan_passation">Plans de passation</option>
         </select></div>
-        <div class="filter-select"><select id="fSector"><option value="">Type de marché</option><option>Travaux</option><option>Fournitures</option><option>Services</option></select></div>
+        <div class="filter-select"><select id="fSector"><option value="">Type de marché</option><option>Travaux</option><option>Fournitures</option><option>Services</option><option>DRP</option></select></div>
         <div class="filter-select"><select id="fInstitution"><option value="">Institution</option></select></div>
         <div class="filter-select"><select id="fLocation"><option value="">Localisation</option></select></div>
         <div class="filter-select"><select id="fSort"><option value="recent">Trier par : Plus récents</option><option value="deadline">Date limite</option><option value="budget">Budget</option></select></div>
@@ -58,7 +58,7 @@
       <aside class="filters-panel">
         <div class="fp-head"><b>Filtres</b><a id="resetFilters">Réinitialiser</a></div>
         <div class="filter-group"><label>Mots clés</label><input type="text" id="fKeyword" placeholder="Ex : construction, fourniture, etc."></div>
-        <div class="filter-group"><label>Catégorie / Secteur</label><select id="fSector2"><option value="">Sélectionner</option><option>Travaux</option><option>Fournitures</option><option>Services</option></select></div>
+        <div class="filter-group"><label>Catégorie / Secteur</label><select id="fSector2"><option value="">Sélectionner</option><option>Travaux</option><option>Fournitures</option><option>Services</option><option>DRP</option></select></div>
         <div class="filter-group"><label>Institution</label><select id="fInstitution2"><option value="">Toutes les institutions</option></select></div>
         <div class="filter-group"><label>Localisation</label><select id="fLocation2"><option value="">Toutes les localisations</option></select></div>
         <div class="filter-group"><label>Budget</label><div class="filter-range"><input type="number" id="fMin" placeholder="Min (FCFA)"><span>à</span><input type="number" id="fMax" placeholder="Max (FCFA)"></div></div>
@@ -349,6 +349,7 @@
         if (s.includes('travaux')) return { sector: 'Travaux', badge: 'travaux' };
         if (s.includes('fourn') || s.includes('bien')) return { sector: 'Fournitures', badge: 'fournitures' };
         if (s.includes('service') || s.includes('prestation') || s.includes('intellect')) return { sector: 'Services', badge: 'services' };
+        if (s.includes('drp') || s.includes('demande de renseignement') || s.includes('renseignement') || s.includes('prix')) return { sector: 'DRP', badge: 'drp' };
         return { sector: 'Marché public', badge: 'travaux' };
       }
       // Ancienneté lisible à partir de la date de publication.

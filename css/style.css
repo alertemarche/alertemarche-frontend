@@ -551,6 +551,7 @@ p { color: var(--text); }
 .sector-badge.travaux { background: var(--green-050); color: var(--green-700); }
 .sector-badge.fournitures { background: var(--blue-050); color: var(--blue); }
 .sector-badge.services { background: #e0f2f1; color: #0d9488; }
+.sector-badge.drp { background: #fff7ed; color: #c2410c; }
 .sector-badge.aac { background: var(--green-050); color: var(--green-700); }
 .sector-badge.avis-general { background: var(--orange-050); color: #b45309; }
 .sector-badge.plan-ppm { background: var(--indigo-050); color: #4338ca; }
